@@ -1,0 +1,32 @@
+# WebsiteBench
+
+> WebsiteBench asks whether AI agents can rebuild a website they can only explore through a browser. It has 74 expert-built websites and 50,356 hidden tests. Nine models were evaluated; the best, Claude Opus 5.5, passes 22.5% of the hidden tests.
+
+## Task
+- An agent explores a locally hosted reference website through a browser gateway: screenshots, interface state, navigation, clicks, typing and media downloads.
+- It never sees the reference's HTML, JavaScript, CSS, API responses or server code.
+- It builds a full-stack site that runs offline, within 16 hours, and may revisit the reference while coding and testing.
+- Hidden tests then compare candidate and reference. Request (T1) tests check page responses and form submissions. Browser (T2) tests run journeys at three levels: immediate responses (L1), state changes read back (L2), and persistence, other users and recovery (L3). System (T3) tests check builds, restarts, process health and security.
+- A test scores 1 only if its functional checks pass and every visual checkpoint reaches a baseline-normalized SSIM of at least 0.75. Journey tests must pass under both Playwright and Browser Use.
+
+## Leaderboard (percent of hidden tests passed, overall / Request / Browser / System)
+- Claude Opus 5.5: 22.5 / 63.5 / 18.0 / 34.8
+- Claude Opus 5: 18.7 / 43.1 / 14.0 / 33.2
+- GPT 5.6 Sol: 15.6 / 38.2 / 10.1 / 37.4
+- GPT 5.6 Luna: 13.2 / 29.8 / 8.9 / 30.0
+- Grok 4.6: 11.6 / 37.8 / 7.8 / 29.6
+- GLM 5.3 Flash: 9.7 / 20.4 / 6.6 / 23.1
+- Kimi K3: 8.9 / 22.6 / 4.7 / 27.1
+- DeepSeek V4.1 Flash: 8.5 / 23.7 / 4.2 / 26.5
+- Qwen 3.8 Max: 5.7 / 22.6 / 1.8 / 20.2
+
+## Findings
+- Underexploration: before their first code edit, agents visited 124 of 127 core page families and started 121 of 122 core workflows, but followed only 4 to their final outcome.
+- Human exploration traces raised the mean score on 18 paired websites from 2.8% to 9.8% (10 higher, 6 equal, 2 lower; sign test p = 0.039).
+- Of 111 observed requirements, 1 was implemented correctly.
+- Early stopping: the median run ended after 3.57 of 16 hours. Forcing Kimi K3 to continue on one task raised its score from 0% to 31.3%.
+- Deeper workflows go with lower scores (Spearman rho = -0.81 among sites with nonzero scores); breadth does not (rho = -0.14).
+
+## Links
+- [Project page](index.html): the full page, with the live demo, leaderboard and findings
+- [Citation metadata](CITATION.cff)

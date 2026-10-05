@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Martian+Mono:wdth,wght@75..112.5,300..700&display=swap">
+<style>
+html,body{margin:0;width:1200px;height:630px;background:#fff;color:#14171D;font-family:'Schibsted Grotesk',sans-serif}
+.card{position:relative;box-sizing:border-box;width:1200px;height:630px;padding:58px 72px;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;gap:14px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.top svg{width:30px;height:30px}
+.top span.v{margin-left:auto;font:500 17px 'Martian Mono',monospace;color:#5F6778;letter-spacing:0}
+.t{position:relative;display:inline-block;margin-top:54px;font-size:150px;font-weight:850;line-height:.9;letter-spacing:-.05em;padding-top:.06em}
+.t .r{display:block;clip-path:inset(-.3em calc(100% - var(--x)) -.3em -.2em)}
+.t .c{position:absolute;left:0;top:.06em;white-space:nowrap;font-family:'Times New Roman',Times,'Liberation Serif',serif;font-weight:700;font-size:1.1em;line-height:.9;clip-path:inset(-.3em -.3em -.3em var(--x))}
+.t .s{position:absolute;top:-.02em;bottom:-.14em;left:var(--x);width:4px;margin-left:-2px;background:#2D5BE3;border-radius:2px}
+.q{margin:26px 0 0;font-size:42px;font-weight:650;letter-spacing:-.028em;line-height:1.1;max-width:900px}
+.facts{margin-top:auto;display:flex;gap:0;border-top:3px solid #14171D}
+.facts div{padding:16px 40px 0 0}
+.facts div+div{padding-left:40px;border-left:1px solid #E2E5EB}
+.facts b{display:block;font-size:44px;font-weight:800;letter-spacing:-.035em;line-height:1}
+.facts span{display:block;margin-top:6px;font-size:18px;color:#5F6778}
+</style></head><body><div class="card">
+<div class="top"><svg viewBox="0 0 32 32"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="#14171D" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="#14171D"/><path d="M16 1.5v29" stroke="#2D5BE3" stroke-width="2.5"/></svg>WebsiteBench</div>
+<div><span class="t" id="t" style="--x:0px"><span class="r">WebsiteBench</span><span class="c" id="c">WebsiteBench</span><span class="s"></span></span></div>
+<p class="q">Can AI agents rebuild websites through browser exploration?</p>
+<div class="facts"><div><b>74</b><span>expert-built websites</span></div><div><b>50,356</b><span>hidden tests</span></div><div><b>2,107</b><span>steps per site, best model</span></div><div><b>22.5%</b><span>best score</span></div></div>
+</div>
+<script>
+document.fonts.ready.then(()=>{const t=document.getElementById('t'),r=t.querySelector('.r'),c=document.getElementById('c');
+c.style.letterSpacing='0px';const rw=r.getBoundingClientRect().width,cw=c.getBoundingClientRect().width;c.style.letterSpacing=((rw-cw)/12)+'px';
+const p=()=>{const s=document.createElement('span');s.style.cssText='display:inline-block;width:0;height:0;vertical-align:baseline';return s};
+const a=p(),b=p();r.appendChild(a);c.appendChild(b);const dy=a.getBoundingClientRect().top-b.getBoundingClientRect().top;a.remove();b.remove();c.style.transform='translateY('+dy+'px)';
+t.style.setProperty('--x',(rw*0.655)+'px');document.body.dataset.ready='1';});
+</script></body></html>

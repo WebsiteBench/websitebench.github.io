@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?</title>
+<meta name="description" content="WebsiteBench asks whether AI agents can rebuild a website they can only explore through a browser. 74 expert-built websites, 50,356 hidden tests, nine models. The best model passes 22.5%.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WebsiteBench: Can AI agents rebuild websites through browser exploration?">
+<meta property="og:description" content="74 expert-built websites, 50,356 hidden tests, nine models. The best model passes 22.5% of the hidden tests.">
+<meta property="og:image" content="assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='5' width='26' height='22' rx='4' fill='%23fff' stroke='%2314171D' stroke-width='2.5'/%3E%3Cpath d='M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z' fill='%2314171D'/%3E%3Cpath d='M16 2v28' stroke='%232D5BE3' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..700&family=Martian+Mono:wdth,wght@75..112.5,300..700&family=Noto+Sans+Math&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<noscript><style>.divider, .ghost, .title-seam, .title-tag, #run-tests, #restart, #reset, #tree-replay { display: none !important; } .tree.is-armed .leaf, .tree.is-armed .cat-node, .tree.is-armed .root-node, .tree.is-armed .root-l2 { opacity: 1 !important; scale: 1 !important; translate: 0 !important; }</style></noscript>
+<script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#top" aria-label="WebsiteBench, back to top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--accent)" stroke-width="2.5"/></svg>
+      <span>WebsiteBench</span>
+    </a>
+    <nav class="toc" id="toc" aria-label="Sections">
+      <a href="#task">Task</a>
+      <a href="#results">Results</a>
+      <a href="#findings">Findings</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#related">Related</a>
+      <a href="#faq">FAQ</a>
+      <a href="#cite">Cite</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="toc" aria-label="Sections"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="btn btn-ink btn-sm" href="#cite">Cite</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero wrap" id="top">
+  <h1 class="headline">
+    <span class="title">
+      <span class="title-in" id="title">
+        <span class="title-ref">WebsiteBench</span>
+        <span class="title-cand" aria-hidden="true">WebsiteBench</span>
+        <span class="title-seam" aria-hidden="true"></span>
+        <span class="title-tag" aria-hidden="true">font fell back</span>
+      </span>
+    </span>
+    <span class="sr-only">: Can AI agents rebuild websites through browser exploration?</span>
+  </h1>
+  <div class="hero-row">
+    <p class="question" aria-hidden="true">Can AI agents rebuild websites through browser exploration?</p>
+    <div class="actions">
+      <a class="btn btn-ink" href="#results">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16V9M11 16V5M16 16v-6M21 16V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        See the results
+      </a>
+      <a class="btn" href="#cite">Cite</a>
+      <!-- Replace this note with Paper, Code and Data buttons once they are public. -->
+      <span class="soon">Paper, code and data coming soon</span>
+    </div>
+  </div>
+
+  <figure class="tree is-armed" id="tree" aria-labelledby="tree-cap">
+    <div class="tree-grid" id="tree-grid">
+      <div class="group" data-cat="1">
+        <span class="leaf" style="grid-row:1"><i>1</i>Quits flows before the end</span>
+        <span class="leaf" style="grid-row:2"><i>1</i>~10 paths tried per site</span>
+        <span class="leaf" style="grid-row:3"><i>1</i>Final outcome rarely seen</span>
+      </div>
+      <a class="cat-node" data-cat="1" href="#f1-h" style="grid-row:1 / 4"><b><i>1</i>Underexploration</b><span><strong>4 of 122</strong> workflows followed to the end before the first code edit</span></a>
+      <div class="group" data-cat="2">
+        <span class="leaf" style="grid-row:4"><i>2</i>Right labels, wrong images</span>
+        <span class="leaf" style="grid-row:5"><i>2</i>?tab=coming-soon ignored</span>
+        <span class="leaf" style="grid-row:6"><i>2</i>Booking routes return 404</span>
+        <span class="leaf" style="grid-row:7"><i>2</i>Review fails after restart</span>
+      </div>
+      <a class="cat-node" data-cat="2" href="#f2-h" style="grid-row:4 / 8"><b><i>2</i>Failure to implement observed behavior</b><span><strong>1 of 111</strong> observed requirements built correctly</span></a>
+      <div class="group" data-cat="3">
+        <span class="leaf" style="grid-row:8"><i>3</i>Stops at 1.0 h of 16 with 0%</span>
+        <span class="leaf" style="grid-row:9"><i>3</i>Declares done, bugs remain</span>
+      </div>
+      <a class="cat-node" data-cat="3" href="#f3-h" style="grid-row:8 / 10"><b><i>3</i>Early stopping</b><span>Median run ends at <strong>3.57 of 16</strong> hours</span></a>
+      <div class="root-node" id="root-node" style="grid-row:1 / 10">
+        <span class="root-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--accent)" stroke-width="2.5"/></svg>WebsiteBench</span>
+        <b class="root-big">2,107</b>
+        <span class="root-l1">average steps per site for the best model</span>
+        <span class="root-l2">and still only <em>22.5%</em> of hidden tests pass</span>
+      </div>
+    </div>
+    <svg class="tree-lines" id="tree-lines" aria-hidden="true"></svg>
+    <div class="tree-foot">
+      <figcaption id="tree-cap">The three failure modes the paper identifies, with examples drawn from its analyses and case studies.</figcaption>
+      <button class="dt-btn dt-btn-quiet" id="tree-replay" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</button>
+    </div>
+  </figure>
+
+  <dl class="facts">
+    <div><dt>expert-built websites</dt><dd>74</dd></div>
+    <div><dt>hidden tests</dt><dd>50,356</dd></div>
+    <div><dt>models evaluated</dt><dd>9</dd></div>
+    <div><dt>hours per run</dt><dd>16</dd></div>
+  </dl>
+</section>
+
+<!-- ============ TASK ============ -->
+<section class="section wrap" id="task" aria-labelledby="task-h">
+  <header class="sec-head">
+    <h2 id="task-h">The agent can use the website but never read its code</h2>
+    <a class="route" href="#task">/task</a>
+  </header>
+
+  <div class="task-intro">
+    <div class="intro-col">
+      <p class="intro">Websites combine interfaces, application logic and stored data, and each browser interaction reveals only part of them. A form shows its fields, but only trying it shows which inputs it accepts and whether the new account works later. To rebuild a site, an agent has to choose which pages, actions and states to probe, and then reproduce what it found.</p>
+      <p class="intro-2">Each task starts from a local reference that an expert built to reproduce selected features of a widely used service. The agent explores it through a browser gateway and writes a full-stack site with pages, back-end logic and persistent data, returning to the reference while it codes and tests, within 16 hours. The submission is then built offline in a separate container and checked by hidden tests. The agent never sees those tests and gets no feedback from the evaluator during the run.</p>
+    </div>
+    <figure class="epigraph">
+      <blockquote>“What I cannot create, I do not understand.”</blockquote>
+      <figcaption>Richard Feynman, the paper’s epigraph</figcaption>
+    </figure>
+  </div>
+
+  <figure class="demo" id="demo" aria-labelledby="demo-cap">
+    <div class="demo-head">
+      <span class="demo-mock"><span class="long">Illustrative mock, not a benchmark task</span><span class="short">Illustrative mock</span></span>
+      <span class="demo-run">
+        <span class="dt-score" id="dt-score" aria-live="polite"><b>2</b> of 6 hidden tests passed</span>
+        <button class="dt-btn dt-btn-primary" id="run-tests" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>Run tests</button>
+      </span>
+    </div>
+    <div class="stage" id="stage">
+      <div class="layer is-ref" data-impl="reference"></div>
+      <div class="layer is-cand" data-impl="candidate" aria-hidden="true"></div>
+      <div class="divider" id="divider" role="slider" tabindex="0" aria-label="Divider between the mock reference site and the mock rebuild" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62" aria-valuetext="62 percent reference">
+        <span class="side side-ref" aria-hidden="true">Reference</span>
+        <span class="side side-cand" aria-hidden="true">Rebuild</span>
+        <span class="grip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <div class="ghost" id="ghost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#14171D" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+      <div class="tip" id="tip" role="tooltip" hidden></div>
+      <noscript><p class="noscript">This interactive example needs JavaScript. The list of hidden tests below describes what it shows.</p></noscript>
+    </div>
+    <div class="devtools" id="devtools">
+      <div class="dt-bar">
+        <span class="dt-tab">Hidden tests</span>
+        <span class="dt-actions">
+          <button class="dt-btn" id="restart" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Restart<span class="long"> servers</span></button>
+          <button class="dt-btn dt-btn-quiet" id="reset" type="button">Reset</button>
+        </span>
+      </div>
+      <ul class="dt-list" id="dt-list" aria-label="Hidden test results for this example"><li class="dt-row ok" data-test="t-header"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span class="dt-group">Browser L1</span><span class="dt-text"><span class="sr-only">Passed. </span>Header and navigation match the reference</span><span class="dt-detail">similarity 0.93 ≥ 0.75</span></li><li class="dt-row bad" data-test="t-tiles"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></span><span class="dt-group">Browser L1</span><span class="dt-text"><span class="sr-only">Failed. </span><i class="dt-n" aria-hidden="true">1</i>Category tiles match the reference</span><span class="dt-detail">similarity 0.41 &lt; 0.75</span></li><li class="dt-row bad" data-test="t-tab"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></span><span class="dt-group">Request</span><span class="dt-text"><span class="sr-only">Failed. </span><i class="dt-n" aria-hidden="true">2</i>GET /shop?tab=deals opens the Deals tab</span><span class="dt-detail">opened All</span></li><li class="dt-row bad" data-test="t-book"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></span><span class="dt-group">Browser L2</span><span class="dt-text"><span class="sr-only">Failed. </span><i class="dt-n" aria-hidden="true">3</i>Book grooming, then see the confirmation</span><span class="dt-detail">404 /grooming/book</span></li><li class="dt-row bad" data-test="t-restart"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></span><span class="dt-group">Browser L3</span><span class="dt-text"><span class="sr-only">Failed. </span><i class="dt-n" aria-hidden="true">4</i>Cart items survive a server restart</span><span class="dt-detail">2 items became 0</span></li><li class="dt-row ok" data-test="t-health"><span class="dt-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span class="dt-group">System</span><span class="dt-text"><span class="sr-only">Passed. </span>Builds offline and answers /healthz</span><span class="dt-detail">{"status":"ok"}</span></li></ul><!--/dt-list-->
+    </div>
+    <figcaption id="demo-cap">Drag the divider to compare a mock reference site with a mock rebuild. Click around, restart the servers or run the tests. Each defect mirrors a failure reported in the paper. Real tasks average about 680 hidden tests each.</figcaption>
+  </figure>
+
+
+  <div class="access">
+    <div class="access-col">
+      <h3><span class="access-ico ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>What the agent can use</h3>
+      <ul>
+        <li>Screenshots and interface state of the reference</li>
+        <li>Navigation, clicks, typing, scrolling and form submissions</li>
+        <li>Images and other media files from the reference</li>
+        <li>Its own email inbox for sign-up and verification flows</li>
+        <li>The task instructions and the runtime contract</li>
+        <li>A shell, build tools and a local browser for its own site</li>
+      </ul>
+    </div>
+    <div class="access-col sealed">
+      <h3><span class="access-ico lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>What stays sealed</h3>
+      <ul>
+        <li>The reference’s HTML, JavaScript and CSS</li>
+        <li>API responses and arbitrary scripts run in the page</li>
+        <li>The server’s source code</li>
+        <li>The hidden tests, reference captures and scores</li>
+      </ul>
+    </div>
+  </div>
+
+  <button class="link-btn fig-link fig-link-lg" type="button" data-zoom="assets/figures/overview.png" data-alt="Figure 1 from the paper. Top: an apple falls, prompting observation, questioning and a hidden law. Panel a, Observation: an interactive local reference with sealed backend logic and stored state. Panel b, Exploration and implementation: the coding agent navigates, clicks, types, scrolls, submits and reopens pages, then builds an offline clone. Panel c, Evaluation: Request, Browser and System checks. Bottom: underexploration, failure to implement behavior, and early stopping."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 15l5-4.5 4 3.5 3-2.5 5 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>View Figure 1 from the paper, the task at a glance</button>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section class="section wrap" id="results" aria-labelledby="results-h">
+  <header class="sec-head">
+    <h2 id="results-h">Even the best agent passes fewer than one in four hidden tests</h2>
+    <a class="route" href="#results">/results</a>
+  </header>
+  <p class="intro">Nine models ran on all 74 websites in the same Claude Code harness, at maximum reasoning effort, with 16 hours per run. A score is the share of hidden tests passed, pooled across websites.<span class="sort-hint"> Select a column to sort.</span></p>
+
+  <div class="board-tools">
+    <div class="legend" aria-hidden="true">
+      <span><i class="dot g-frontier"></i>Frontier model</span>
+      <span><i class="dot g-open"></i>Open-source model</span>
+    </div>
+    <button class="link-btn" id="board-csv" type="button" data-site-only><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button>
+  </div>
+  <div class="board-wrap" tabindex="0" role="region" aria-label="Leaderboard, scrolls sideways on small screens">
+    <table class="board" id="board">
+      <caption class="sr-only">Reconstruction performance and mean resource use per task for nine models on 74 websites.</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="rank">#</th>
+          <th scope="col" class="model">Model</th>
+          <th scope="col" class="col-overall" aria-sort="descending"><button type="button" data-sort="overall">Overall<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="request">Request<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="browser">Browser<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="system">System<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="cost">Cost<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="tokens">Tokens<span class="arrow" aria-hidden="true"></span></button></th>
+          <th scope="col"><button type="button" data-sort="turns">Turns<span class="arrow" aria-hidden="true"></span></button></th>
+        </tr>
+      </thead>
+      <tbody id="board-body"><tr data-model="opus55"><td class="rank">1</td><td class="model"><span class="m-name"><i class="dot g-frontier" aria-hidden="true"></i>Claude Opus 5.5</span><span class="m-org">Anthropic<span class="sr-only">, frontier model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>63.5</span><span><em>B</em>18.0</span><span><em>S</em>34.8</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="frontier" style="width:22.5%"></i></span><b class="best">22.5</b></span></td><td class="best">63.5</td><td class="best">18.0</td><td>34.8</td><td>$261.1</td><td>930.5M</td><td>2,107.1</td></tr><tr data-model="opus5"><td class="rank">2</td><td class="model"><span class="m-name"><i class="dot g-frontier" aria-hidden="true"></i>Claude Opus 5</span><span class="m-org">Anthropic<span class="sr-only">, frontier model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>43.1</span><span><em>B</em>14.0</span><span><em>S</em>33.2</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="frontier" style="width:18.7%"></i></span><b>18.7</b></span></td><td>43.1</td><td>14.0</td><td>33.2</td><td>$221.7</td><td>429.2M</td><td>980.5</td></tr><tr data-model="sol"><td class="rank">3</td><td class="model"><span class="m-name"><i class="dot g-frontier" aria-hidden="true"></i>GPT 5.6 Sol</span><span class="m-org">OpenAI<span class="sr-only">, frontier model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>38.2</span><span><em>B</em>10.1</span><span><em>S</em>37.4</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="frontier" style="width:15.6%"></i></span><b>15.6</b></span></td><td>38.2</td><td>10.1</td><td class="best">37.4</td><td>$115</td><td>20.5M</td><td>212.3</td></tr><tr data-model="luna"><td class="rank">4</td><td class="model"><span class="m-name"><i class="dot g-frontier" aria-hidden="true"></i>GPT 5.6 Luna</span><span class="m-org">OpenAI<span class="sr-only">, frontier model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>29.8</span><span><em>B</em>8.9</span><span><em>S</em>30.0</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="frontier" style="width:13.2%"></i></span><b>13.2</b></span></td><td>29.8</td><td>8.9</td><td>30.0</td><td>$3.8</td><td>14.3M</td><td>174.0</td></tr><tr data-model="grok"><td class="rank">5</td><td class="model"><span class="m-name"><i class="dot g-frontier" aria-hidden="true"></i>Grok 4.6</span><span class="m-org">xAI<span class="sr-only">, frontier model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>37.8</span><span><em>B</em>7.8</span><span><em>S</em>29.6</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="frontier" style="width:11.6%"></i></span><b>11.6</b></span></td><td>37.8</td><td>7.8</td><td>29.6</td><td>$76.9</td><td>38.0M</td><td>403.9</td></tr><tr data-model="glm" class="group-break"><td class="rank">6</td><td class="model"><span class="m-name"><i class="dot g-open" aria-hidden="true"></i>GLM 5.3 Flash</span><span class="m-org">Z.ai<span class="sr-only">, open-source model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>20.4</span><span><em>B</em>6.6</span><span><em>S</em>23.1</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="open" style="width:9.7%"></i></span><b>9.7</b></span></td><td>20.4</td><td>6.6</td><td>23.1</td><td>$2.4</td><td>37.0M</td><td>318.8</td></tr><tr data-model="kimi"><td class="rank">7</td><td class="model"><span class="m-name"><i class="dot g-open" aria-hidden="true"></i>Kimi K3</span><span class="m-org">Kimi<span class="sr-only">, open-source model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>22.6</span><span><em>B</em>4.7</span><span><em>S</em>27.1</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="open" style="width:8.9%"></i></span><b>8.9</b></span></td><td>22.6</td><td>4.7</td><td>27.1</td><td>$37.2</td><td>91.6M</td><td>604.3</td></tr><tr data-model="deepseek"><td class="rank">8</td><td class="model"><span class="m-name"><i class="dot g-open" aria-hidden="true"></i>DeepSeek V4.1 Flash</span><span class="m-org">DeepSeek<span class="sr-only">, open-source model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>23.7</span><span><em>B</em>4.2</span><span><em>S</em>26.5</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="open" style="width:8.5%"></i></span><b>8.5</b></span></td><td>23.7</td><td>4.2</td><td>26.5</td><td>$4.6</td><td>167.8M</td><td>572.6</td></tr><tr data-model="qwen"><td class="rank">9</td><td class="model"><span class="m-name"><i class="dot g-open" aria-hidden="true"></i>Qwen 3.8 Max</span><span class="m-org">Qwen Team<span class="sr-only">, open-source model</span></span><span class="m-sub" aria-hidden="true"><span><em>R</em>22.6</span><span><em>B</em>1.8</span><span><em>S</em>20.2</span></span></td><td class="col-overall"><span class="ov"><span class="bar" aria-hidden="true"><i class="open" style="width:5.7%"></i></span><b>5.7</b></span></td><td>22.6</td><td>1.8</td><td>20.2</td><td>$9.5</td><td>38.3M</td><td>252.1</td></tr></tbody><!--/board-body-->
+    </table>
+  </div>
+  <p class="table-note"><strong>Every frontier model beats every open-source model,</strong> overall and in each test group; a heavier rule separates the two groups. Overall, Request, Browser and System are percentages of hidden tests passed. Cost, tokens and turns are means per task; tokens count input and output. Bold marks the best value in each score column. Bars in the Overall column run from 0 to 100%, and the tick in each bar marks 25%, one test in four. Results as reported in the paper.<span class="phone-only"> Under each model, R, B and S give its Request, Browser and System pass rates.</span></p>
+
+
+  <div class="groups-chart">
+    <h3>Browser tests are the hardest for every model</h3>
+    <p class="chart-sub">Browser pass rates run from 1.8% to 18.0%, against 20.4% to 63.5% for Request tests and 20.2% to 37.4% for System tests. Browser tests are also the largest group, so they weigh most on the overall score. The three panels share one scale.</p>
+    <div class="gbars" id="gbars" role="img" aria-label="Pass rates by test group for nine models. Request ranges from 20.4 to 63.5 percent, Browser from 1.8 to 18.0 percent, and System from 20.2 to 37.4 percent."><div class="gb-row gb-head"><span></span><span>Request</span><span>Browser</span><span>System</span></div><div class="gb-row" data-model="opus55"><span class="gb-name"><i class="dot g-frontier" aria-hidden="true"></i>Claude Opus 5.5</span><span class="gb-cell" style="--w:79.38%"><span class="gb-track"><i class="frontier"></i></span><b class="best">63.5</b></span><span class="gb-cell" style="--w:22.50%"><span class="gb-track"><i class="frontier"></i></span><b class="best">18.0</b></span><span class="gb-cell" style="--w:43.50%"><span class="gb-track"><i class="frontier"></i></span><b>34.8</b></span></div><div class="gb-row" data-model="opus5"><span class="gb-name"><i class="dot g-frontier" aria-hidden="true"></i>Claude Opus 5</span><span class="gb-cell" style="--w:53.88%"><span class="gb-track"><i class="frontier"></i></span><b>43.1</b></span><span class="gb-cell" style="--w:17.50%"><span class="gb-track"><i class="frontier"></i></span><b>14.0</b></span><span class="gb-cell" style="--w:41.50%"><span class="gb-track"><i class="frontier"></i></span><b>33.2</b></span></div><div class="gb-row" data-model="sol"><span class="gb-name"><i class="dot g-frontier" aria-hidden="true"></i>GPT 5.6 Sol</span><span class="gb-cell" style="--w:47.75%"><span class="gb-track"><i class="frontier"></i></span><b>38.2</b></span><span class="gb-cell" style="--w:12.63%"><span class="gb-track"><i class="frontier"></i></span><b>10.1</b></span><span class="gb-cell" style="--w:46.75%"><span class="gb-track"><i class="frontier"></i></span><b class="best">37.4</b></span></div><div class="gb-row" data-model="luna"><span class="gb-name"><i class="dot g-frontier" aria-hidden="true"></i>GPT 5.6 Luna</span><span class="gb-cell" style="--w:37.25%"><span class="gb-track"><i class="frontier"></i></span><b>29.8</b></span><span class="gb-cell" style="--w:11.13%"><span class="gb-track"><i class="frontier"></i></span><b>8.9</b></span><span class="gb-cell" style="--w:37.50%"><span class="gb-track"><i class="frontier"></i></span><b>30.0</b></span></div><div class="gb-row" data-model="grok"><span class="gb-name"><i class="dot g-frontier" aria-hidden="true"></i>Grok 4.6</span><span class="gb-cell" style="--w:47.25%"><span class="gb-track"><i class="frontier"></i></span><b>37.8</b></span><span class="gb-cell" style="--w:9.75%"><span class="gb-track"><i class="frontier"></i></span><b>7.8</b></span><span class="gb-cell" style="--w:37.00%"><span class="gb-track"><i class="frontier"></i></span><b>29.6</b></span></div><div class="gb-row" data-model="glm"><span class="gb-name"><i class="dot g-open" aria-hidden="true"></i>GLM 5.3 Flash</span><span class="gb-cell" style="--w:25.50%"><span class="gb-track"><i class="open"></i></span><b>20.4</b></span><span class="gb-cell" style="--w:8.25%"><span class="gb-track"><i class="open"></i></span><b>6.6</b></span><span class="gb-cell" style="--w:28.88%"><span class="gb-track"><i class="open"></i></span><b>23.1</b></span></div><div class="gb-row" data-model="kimi"><span class="gb-name"><i class="dot g-open" aria-hidden="true"></i>Kimi K3</span><span class="gb-cell" style="--w:28.25%"><span class="gb-track"><i class="open"></i></span><b>22.6</b></span><span class="gb-cell" style="--w:5.88%"><span class="gb-track"><i class="open"></i></span><b>4.7</b></span><span class="gb-cell" style="--w:33.88%"><span class="gb-track"><i class="open"></i></span><b>27.1</b></span></div><div class="gb-row" data-model="deepseek"><span class="gb-name"><i class="dot g-open" aria-hidden="true"></i>DeepSeek V4.1 Flash</span><span class="gb-cell" style="--w:29.63%"><span class="gb-track"><i class="open"></i></span><b>23.7</b></span><span class="gb-cell" style="--w:5.25%"><span class="gb-track"><i class="open"></i></span><b>4.2</b></span><span class="gb-cell" style="--w:33.13%"><span class="gb-track"><i class="open"></i></span><b>26.5</b></span></div><div class="gb-row" data-model="qwen"><span class="gb-name"><i class="dot g-open" aria-hidden="true"></i>Qwen 3.8 Max</span><span class="gb-cell" style="--w:28.25%"><span class="gb-track"><i class="open"></i></span><b>22.6</b></span><span class="gb-cell" style="--w:2.25%"><span class="gb-track"><i class="open"></i></span><b>1.8</b></span><span class="gb-cell" style="--w:25.25%"><span class="gb-track"><i class="open"></i></span><b>20.2</b></span></div><div class="gb-row gb-axis" aria-hidden="true"><span></span><span class="gb-cell"><span class="gb-ticks"><em>0%</em><em>40%</em><em>80%</em></span><b></b></span><span class="gb-cell"><span class="gb-ticks"><em>0%</em><em>40%</em><em>80%</em></span><b></b></span><span class="gb-cell"><span class="gb-ticks"><em>0%</em><em>40%</em><em>80%</em></span><b></b></span></div></div><!--/gbars-->
+  </div>
+
+  <div class="chart-block">
+    <h3>Spending more does not reliably buy a better rebuild</h3>
+    <div class="tabs" role="tablist" aria-label="Horizontal axis" id="scatter-tabs">
+      <button class="tab" role="tab" type="button" aria-selected="true" data-metric="cost" id="tab-cost" aria-controls="scatter">Cost<span class="long"> per task</span></button>
+      <button class="tab" role="tab" type="button" aria-selected="false" data-metric="tokens" id="tab-tokens" aria-controls="scatter" tabindex="-1">Tokens<span class="long"> per task</span></button>
+      <button class="tab" role="tab" type="button" aria-selected="false" data-metric="turns" id="tab-turns" aria-controls="scatter" tabindex="-1">Turns<span class="long"> per task</span></button>
+    </div>
+    <div class="legend chart-legend" aria-hidden="true">
+      <span><i class="dot g-frontier"></i>Frontier model</span>
+      <span><i class="dot g-open"></i>Open-source model</span>
+      <span><i class="dash"></i>On the dashed line: no cheaper model scores higher</span>
+    </div>
+    <div class="scatter" id="scatter" role="tabpanel" aria-labelledby="tab-cost"></div>
+    <p class="chart-note">GPT 5.6 Luna scores 13.2% at $3.8 per task and Grok 4.6 scores 11.6% at $76.9. GLM 5.3 Flash earns the most score per dollar, 4.04 points. The two Claude Opus models earn the least, under 0.1 points per dollar. Horizontal axes use log scales.</p>
+  </div>
+</section>
+
+<!-- ============ FINDINGS ============ -->
+<section class="section wrap" id="findings" aria-labelledby="findings-h">
+  <header class="sec-head">
+    <h2 id="findings-h">Three ways the rebuilds go wrong</h2>
+    <a class="route" href="#findings">/findings</a>
+  </header>
+  <p class="intro">We traced 20 Grok 4.6 runs from what the agent observed, to the code it wrote, to the tests it failed. We also compared runs with and without a human exploration trace, and tried a stricter stopping rule on one task. Three failure modes stand out.</p>
+
+  <article class="finding" aria-labelledby="f1-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>1</span>Underexploration</p>
+      <h3 id="f1-h">Agents visit nearly every page but finish almost no workflow</h3>
+      <p>Before their first code edit, agents in 17 runs had visited 124 of 127 core page families and started 121 of 122 core workflows. They followed only 4 of those workflows to their final outcome.</p>
+      <p>A checkout that is never completed, or a review that is never read back, leaves the agent guessing at exactly the behavior the hidden tests check.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Before the first code edit, 17 runs</p>
+      <div class="loadbars">
+        <div class="loadbar"><span class="lb-label">Core page families visited</span><span class="lb-track"><i style="width:97.6%"></i></span><span class="lb-val"><b>97.6%</b> 124 of 127</span></div>
+        <div class="loadbar"><span class="lb-label">Core workflows started</span><span class="lb-track"><i style="width:99.2%"></i></span><span class="lb-val"><b>99.2%</b> 121 of 122</span></div>
+      </div>
+      <p class="viz-title grid-title">Workflows followed to their final outcome: <b>4 of 122, 3.3%</b></p>
+      <div class="wf-grid" id="wf-grid" role="img" aria-label="Before the first code edit, 4 of 122 core workflows had been followed to their final outcome, 117 had been started but not finished, and 1 had not been started."><span class="u wf-done"></span><span class="u wf-done"></span><span class="u wf-done"></span><span class="u wf-done"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-started"></span><span class="u wf-none"></span></div><!--/wf-grid-->
+      <div class="unit-legend"><span><i class="u wf-done"></i>4 followed to the end</span><span><i class="u wf-started"></i>117 started, not finished before the first edit</span><span><i class="u wf-none"></i>1 not started</span></div>
+    </div>
+  </article>
+
+  <article class="finding finding-sub" aria-labelledby="f1b-h">
+    <div class="finding-text">
+      <p class="finding-tag is-note">Paired test</p>
+      <h3 id="f1b-h">A human’s exploration trace more than triples the score</h3>
+      <p>On 18 paired websites, the agent also received a read-only log of browser actions recorded by an expert exploring the reference. The log holds actions only, with no page content, so the agent still had to explore for itself.</p>
+      <p>The mean score rose from 2.8% to 9.8%. The trace helped on 10 sites, tied on 6 and hurt on 2, a significant difference by an exact sign test (p&nbsp;=&nbsp;0.039). Most of the gain came from sites where the unaided agent passed no tests at all.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Mean score on 18 paired websites</p>
+      <div class="pair-bars">
+        <div class="pb"><span class="pb-label">Agent explores alone</span><span class="pb-track"><i style="width:23.3%"></i></span><span class="pb-val">2.8%</span></div>
+        <div class="pb is-up"><span class="pb-label">Agent with a human trace</span><span class="pb-track"><i style="width:81.7%"></i></span><span class="pb-val">9.8%</span></div>
+        <div class="pb pb-axis" aria-hidden="true"><span></span><span class="ticks"><em style="left:0">0%</em><em style="left:33.33%">4%</em><em style="left:66.67%">8%</em><em style="left:100%">12%</em></span><span></span></div>
+      </div>
+      <p class="viz-title">Per website, with the trace</p>
+      <div class="units" role="img" aria-label="With the trace, 10 websites scored higher, 6 scored the same and 2 scored lower.">
+        <span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u up"></span><span class="u eq"></span><span class="u eq"></span><span class="u eq"></span><span class="u eq"></span><span class="u eq"></span><span class="u eq"></span><span class="u down"></span><span class="u down"></span>
+      </div>
+      <div class="unit-legend"><span><i class="u up"></i>10 higher</span><span><i class="u eq"></i>6 equal</span><span><i class="u down"></i>2 lower</span></div>
+      <table class="mini-compare">
+        <caption class="sr-only">Human and agent exploration compared</caption>
+        <thead><tr><th scope="col"></th><th scope="col">Time</th><th scope="col">Actions</th><th scope="col">Reach</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Human expert</th><td>median just over 5 min</td><td>450+ actions</td><td>28 pages</td></tr>
+          <tr><th scope="row">Agent</th><td>1.5 to 2.5 h</td><td>200 to 300 steps</td><td>about 10 paths</td></tr>
+        </tbody>
+      </table>
+      <button class="link-btn fig-link" type="button" data-zoom="assets/figures/human-trace.png" data-alt="Figure 4 from the paper: matched runs with and without a human trace, mean score 2.8% versus 9.8%, workflow coverage, and paired outcomes of 10 wins, 2 losses and 6 ties, p = 0.039."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 15l5-4.5 4 3.5 3-2.5 5 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>View Figure 4 from the paper</button>
+    </div>
+  </article>
+
+  <article class="finding" aria-labelledby="f2-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>2</span>Failure to implement observed behavior</p>
+      <h3 id="f2-h">What agents observe rarely reaches their code</h3>
+      <p>Across 20 websites we found 111 requirements that the agent had observed during exploration, with enough evidence to check its implementation: page content, workflows and persistence. One was implemented correctly. The other 110 did not match what the agent had seen.</p>
+      <p>Effort is lopsided too. More than half of all tool calls explored the reference, and only one in ten edited code.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">111 observed requirements</p>
+      <div class="waffle" id="waffle" role="img" aria-label="Of 111 observed requirements, 1 was implemented correctly and 110 were mismatched."><span class="u ok"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span><span class="u bad"></span></div><!--/waffle-->
+      <div class="unit-legend"><span><i class="u ok"></i>1 implemented correctly</span><span><i class="u bad"></i>110 mismatched</span></div>
+      <p class="viz-title">13,359 tool calls in 20 runs</p>
+      <div class="stack" role="img" aria-label="Tool calls: exploration 54.8 percent, validation 27.0 percent, implementation 10.0 percent, other 8.2 percent.">
+        <span class="seg t-explore" style="width:54.8%"><b>54.8%</b></span><span class="seg t-edit" style="width:10%"><b>10.0%</b></span><span class="seg t-check" style="width:27%"><b>27.0%</b></span><span class="seg t-other" style="width:8.2%"></span>
+      </div>
+      <div class="stack-legend">
+        <span><i class="sw t-explore"></i>Exploring the reference <b>54.8%</b></span>
+        <span><i class="sw t-edit"></i>Editing code <b>10.0%</b></span>
+        <span><i class="sw t-check"></i>Checking the candidate <b>27.0%</b></span>
+        <span><i class="sw t-other"></i>Other, such as setup <b>8.2%</b></span>
+      </div>
+      <button class="link-btn fig-link" type="button" data-zoom="assets/figures/gaps.png" data-alt="Figure 5 from the paper: trajectory analysis with 13,359 tool calls, broad page coverage of 124 of 127, shallow workflow exploration with 4 of 122 terminal outcomes, and 1 of 111 observed requirements implemented correctly."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 15l5-4.5 4 3.5 3-2.5 5 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>View Figure 5 from the paper</button>
+    </div>
+  </article>
+
+  <article class="finding" aria-labelledby="f3-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>3</span>Early stopping</p>
+      <h3 id="f3-h">Agents stop with most of the clock left</h3>
+      <p>Runs may take 16 hours, yet the median run ended after 3.57 hours. We then enabled Claude Code’s <code>/goal</code> hook for Kimi K3 on the Lowe’s task, so that a review had to accept each attempt to stop.</p>
+      <p>At 10.25 hours the agent declared its repairs complete. The hook rejected the exit, and the agent went on to check that cart, order, account and session state survived a restart. The score rose from 0% to 31.3%.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Run length on a 16-hour budget</p>
+      <div class="timeline" id="timeline">
+        <div class="tl-row"><span class="tl-label">Median run</span><span class="tl-track"><i class="tl-bar" style="width:22.3%"></i><i class="tl-unused" style="left:22.3%"></i><span class="tl-end" style="left:22.3%">3.57 h</span></span></div>
+        <div class="tl-row"><span class="tl-label">Kimi K3 on Lowe’s</span><span class="tl-track"><i class="tl-bar alt" style="width:6.25%"></i><span class="tl-end" style="left:6.25%">1.0 h, score 0%</span></span></div>
+        <div class="tl-row"><span class="tl-label">Same task with /goal</span><span class="tl-track"><i class="tl-bar good" style="width:68.1%"></i><i class="tl-mark" style="left:64.1%" title="Exit rejected at 10.25 h"></i><span class="tl-end tl-in" style="left:62%">10.9 h, score 31.3%</span></span></div>
+        <div class="tl-axis" aria-hidden="true"><span style="left:0">0 h</span><span style="left:25%">4 h</span><span style="left:50%">8 h</span><span style="left:75%">12 h</span><span style="left:100%">16 h</span></div>
+      </div>
+      <p class="tl-note"><i class="tl-mark-key" aria-hidden="true"></i>At 10.25 h the hook rejected the agent’s first attempt to stop.</p>
+      <dl class="deltas">
+        <div><dt>Hours</dt><dd>1.0 <span>→</span> 10.9</dd></div>
+        <div><dt>Steps</dt><dd>130 <span>→</span> 879</dd></div>
+        <div><dt>Tokens</dt><dd>10.6M <span>→</span> 87.9M</dd></div>
+        <div><dt>Score</dt><dd>0% <span>→</span> 31.3%</dd></div>
+      </dl>
+    </div>
+  </article>
+
+  <article class="finding" aria-labelledby="f4-h">
+    <div class="finding-text">
+      <p class="finding-tag is-note">What makes a site hard</p>
+      <h3 id="f4-h">Deep workflows, more than big sites, are what agents fail to rebuild</h3>
+      <p>We measured each site’s depth, the number of steps in a typical workflow, and its breadth, the number of distinct pages and workflows. Deeper sites scored lower. Among sites with nonzero scores, depth and score are strongly rank-correlated (Spearman ρ&nbsp;=&nbsp;−0.81, p&nbsp;=&nbsp;0.016). Breadth shows no such link (ρ&nbsp;=&nbsp;−0.14).</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Mean score by workflow depth, 20 websites</p>
+      <div class="depth">
+        <div class="d-row"><span class="d-label">5 shallowest sites</span><span class="d-track"><i style="width:91%"></i></span><span class="d-val">5.46%</span></div>
+        <div class="d-row"><span class="d-label">7 middle sites</span><span class="d-track"><i style="width:45.8%"></i></span><span class="d-val">2.75%</span></div>
+        <div class="d-row"><span class="d-label">8 deepest sites</span><span class="d-track"><i style="width:16.7%"></i></span><span class="d-val">1.00%</span></div>
+        <div class="d-row d-axis" aria-hidden="true"><span></span><span class="ticks"><em style="left:0">0%</em><em style="left:33.33%">2%</em><em style="left:66.67%">4%</em><em style="left:100%">6%</em></span><span></span></div>
+      </div>
+      <p class="viz-foot">Depth ranges from 2 to 7.5 steps per workflow, breadth from 10 to 32 pages and workflows.</p>
+      <figure class="epigraph pull-fig">
+        <blockquote>“A site is hard to rebuild not because it does many things but because each thing takes many steps.”</blockquote>
+        <figcaption>The paper, Appendix I.3</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <div class="cases" id="cases">
+    <h3 class="cases-h">Three runs, step by step</h3>
+    <p class="cases-sub">Each case follows one workflow from what the agent observed to the first visible difference in its build. All three runs used Grok 4.6, and step labels such as s49:c1 name a trajectory step and a tool call. The drawings are schematics based on the paper’s descriptions, not captures from the runs.</p>
+    <div class="tabs" role="tablist" aria-label="Case studies" id="case-tabs">
+      <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="case-fandango" id="ct-fandango">Fandango</button>
+      <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="case-amc" id="ct-amc" tabindex="-1">AMC Theatres</button>
+      <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="case-petsmart" id="ct-petsmart" tabindex="-1">PetSmart</button>
+    </div>
+
+    <div class="case" role="tabpanel" id="case-fandango" aria-labelledby="ct-fandango">
+      <div class="case-head">
+        <p class="case-title">A booking that works in the agent’s own test</p>
+        <span class="verdict ok">Local check passed</span>
+      </div>
+      <div class="evidence" data-ev="fandango"><figure class="ev"><figcaption>Reference booking</figcaption><div class="ev-frame"><div class="ev-url"><b>reference.local</b></div><div class="ev-screen">Screen</div><div class="ev-seats"><div class="ev-seatrow"><em>D</em><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div><div class="ev-seatrow"><em>E</em><i class=""></i><i class="sel"></i><i class="sel"></i><i class="sel"></i><i class=""></i><i class=""></i></div><div class="ev-seatrow"><em>F</em><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div><p class="ev-total"><span>Seats E2 to E4</span><b>$67.87</b></p></div></figure><figure class="ev is-good"><figcaption>Agent’s own check at s233 to s235</figcaption><div class="ev-term"><p><span class="k">confirm checkout</span> HTTP 201</p><p><span class="k">total</span> 6,787 cents</p><p><span class="ok">✓</span> booking stored</p><p><span class="ok">✓</span> selection cleared</p><p><span class="ok">✓</span> stored booking read back</p></div></figure></div><!--/ev-fandango-->
+      <div class="case-grid">
+        <div class="case-ref">
+          <p class="case-k">Reference behavior</p>
+          <p>Book three seats, E2 to E4, for <em>Mutiny</em> at Regal Union Square, totaling $67.87, then reach the confirmation and the ticket history.</p>
+        </div>
+        <ol class="trace">
+          <li><code>s49:c1 s50:c0 s51:c0</code><span>Reviews the reference booking and its confirmation: seats E2 to E4 for $67.87.</span></li>
+          <li><code>s224:c0 s228:c0</code><span>Writes the catalogue and the server, including <code>/api/checkout/confirm</code>.</span></li>
+          <li class="good"><code>s233:c0 s235:c0</code><span>Calls its own API: confirmation returns HTTP 201 with a total of 6,787 cents. The booking is stored and the selection cleared.</span></li>
+        </ol>
+        <div class="case-out">
+          <p class="case-k">Final state</p>
+          <p>The build has the confirmation endpoint and the client code that calls it, and the local API check reproduced the booking outcome.</p>
+          <p class="case-twist">Appendix I.3, which covers Grok 4.6 runs on the same 20 websites, reports that the Fandango rebuild returned 404 for the ticket submission and the seat-selection route. The paper does not say whether that is this run.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" role="tabpanel" id="case-amc" aria-labelledby="ct-amc" hidden>
+      <div class="case-head">
+        <p class="case-title">The URL query does not select the tab</p>
+        <span class="verdict bad">Hidden checks failed</span>
+      </div>
+      <div class="evidence" data-ev="amc"><figure class="ev"><figcaption>Reference</figcaption><div class="ev-frame"><div class="ev-url"><b>reference.local</b>/movies?tab=coming-soon</div><div class="ev-tabs"><span>All movies</span><span class="on">Coming Soon</span></div><div class="ev-posters"><i style="background:linear-gradient(160deg,hsl(200 55% 62%),hsl(200 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(280 55% 62%),hsl(280 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(20 55% 62%),hsl(20 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(160 55% 62%),hsl(160 45% 34%))"></i></div></div></figure><figure class="ev is-bad"><figcaption>Rebuild, same URL</figcaption><div class="ev-frame"><div class="ev-url"><b>candidate.local</b>/movies?tab=coming-soon</div><div class="ev-tabs"><span class="on">All movies</span><span>Coming Soon</span></div><div class="ev-posters"><i style="background:linear-gradient(160deg,hsl(40 55% 62%),hsl(40 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(330 55% 62%),hsl(330 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(120 55% 62%),hsl(120 45% 34%))"></i><i style="background:linear-gradient(160deg,hsl(250 55% 62%),hsl(250 45% 34%))"></i></div></div></figure></div><!--/ev-amc-->
+      <div class="case-grid">
+        <div class="case-ref">
+          <p class="case-k">Reference behavior</p>
+          <p>The Movies page has a Coming Soon state, and opening <code>/movies?tab=coming-soon</code> selects it.</p>
+        </div>
+        <ol class="trace">
+          <li><code>s64:c0</code><span>Observes the Movies page: Coming Soon navigation, filters and a 23-movie listing.</span></li>
+          <li><code>s100:c0 s101:c0</code><span>Opens <code>/movies?tab=coming-soon</code> and captures the result.</span></li>
+          <li><code>s218:c0 s221:c0</code><span>Adds the movie catalogue and the Movies page handler.</span></li>
+          <li class="bad"><code>s233:c2</code><span>Implements tab switching by reading <code>data-movies-tab</code> in the browser, but never parses the query parameter.</span></li>
+        </ol>
+        <div class="case-out">
+          <p class="case-k">Final state</p>
+          <p>Clicking the tabs works. Opening the URL with a tab query does not select the requested state, and the evaluation recorded failed checks for this interface.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="case" role="tabpanel" id="case-petsmart" aria-labelledby="ct-petsmart" hidden>
+      <div class="case-head">
+        <p class="case-title">Correct labels, wrong images</p>
+        <span class="verdict bad">Visible mismatch</span>
+      </div>
+      <div class="evidence" data-ev="petsmart"><figure class="ev"><figcaption>Reference homepage</figcaption><div class="ev-frame"><div class="ev-url"><b>reference.local</b>/</div><div class="ev-tiles"><span class="ev-tile" style="background:#DDF0FA"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M44 32L59 19v26z" fill="#E9782F"></path><ellipse cx="29" cy="32" rx="20" ry="14" fill="#F59A45"></ellipse><path d="M22 19q7-7 14 0" fill="#E9782F"></path><path d="M24 45q6 5 11 0" fill="#E9782F"></path><circle cx="18" cy="29" r="3" fill="#fff"></circle><circle cx="18.5" cy="29.5" r="1.8" fill="#1E2A38"></circle><path d="M31 21q5 11 0 22" fill="none" stroke="#E07024" stroke-width="2"></path></svg><b>Fish</b></span><span class="ev-tile" style="background:#FFF3CF"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 38q-8 8 0 12l10-6z" fill="#2F6FC4"></path><circle cx="31" cy="33" r="17" fill="#4C8DDB"></circle><ellipse cx="31" cy="40" rx="10.5" ry="9" fill="#F7D774"></ellipse><path d="M46 29l10 3.5-10 4z" fill="#F2A33A"></path><circle cx="38" cy="27" r="3" fill="#fff"></circle><circle cx="38.6" cy="27.4" r="1.8" fill="#1E2A38"></circle><path d="M20 34q2 9 11 8" fill="none" stroke="#2F6FC4" stroke-width="3" stroke-linecap="round"></path><path d="M27 16q3-6 7-2" fill="none" stroke="#2F6FC4" stroke-width="2.6" stroke-linecap="round"></path></svg><b>Bird</b></span><span class="ev-tile" style="background:#F1E6FA"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="19" cy="19" r="6.5" fill="#D39A62"></circle><circle cx="45" cy="19" r="6.5" fill="#D39A62"></circle><circle cx="19" cy="19" r="3.4" fill="#F2B3AC"></circle><circle cx="45" cy="19" r="3.4" fill="#F2B3AC"></circle><ellipse cx="32" cy="36" rx="21" ry="18" fill="#E6B47C"></ellipse><ellipse cx="32" cy="43" rx="12.5" ry="9.5" fill="#FBEBD6"></ellipse><circle cx="24.5" cy="32" r="2.5" fill="#23160E"></circle><circle cx="39.5" cy="32" r="2.5" fill="#23160E"></circle><ellipse cx="32" cy="37.5" rx="2.6" ry="1.9" fill="#E07B72"></ellipse><circle cx="18" cy="39" r="3.2" fill="#F2B3AC" opacity=".75"></circle><circle cx="46" cy="39" r="3.2" fill="#F2B3AC" opacity=".75"></circle></svg><b>Small Pet</b></span></div></div></figure><figure class="ev is-bad"><figcaption>Rebuilt homepage at s324</figcaption><div class="ev-frame"><div class="ev-url"><b>candidate.local</b>/</div><div class="ev-tiles"><span class="ev-tile" style="background:#DDF0FA"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="16" cy="29" rx="8" ry="15" fill="#7A4A2A" transform="rotate(20 16 29)"></ellipse><ellipse cx="48" cy="29" rx="8" ry="15" fill="#7A4A2A" transform="rotate(-20 48 29)"></ellipse><circle cx="32" cy="33" r="17" fill="#C98D58"></circle><ellipse cx="32" cy="41" rx="10" ry="7.5" fill="#F2DCC2"></ellipse><circle cx="25.5" cy="30" r="2.5" fill="#23160E"></circle><circle cx="38.5" cy="30" r="2.5" fill="#23160E"></circle><ellipse cx="32" cy="37.5" rx="4" ry="2.8" fill="#23160E"></ellipse><path d="M28.5 43q3.5 3 7 0" fill="none" stroke="#23160E" stroke-width="1.8" stroke-linecap="round"></path></svg><b>Fish</b></span><span class="ev-tile" style="background:#FFF3CF"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="16" cy="30" rx="8" ry="14" fill="#B7832F" transform="rotate(24 16 30)"></ellipse><ellipse cx="48" cy="30" rx="8" ry="14" fill="#B7832F" transform="rotate(-24 48 30)"></ellipse><circle cx="32" cy="33" r="17" fill="#E6B865"></circle><ellipse cx="32" cy="41" rx="10" ry="7.5" fill="#FBEBCF"></ellipse><circle cx="25.5" cy="30" r="2.5" fill="#23160E"></circle><circle cx="38.5" cy="30" r="2.5" fill="#23160E"></circle><ellipse cx="32" cy="37.5" rx="4" ry="2.8" fill="#23160E"></ellipse><path d="M30 42.5v4a2.5 2.5 0 0 0 5 0v-4" fill="#E27B7B"></path></svg><b>Bird</b></span><span class="ev-tile" style="background:#F1E6FA"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="16" cy="29" rx="8" ry="15" fill="#1E1E24" transform="rotate(20 16 29)"></ellipse><ellipse cx="48" cy="29" rx="8" ry="15" fill="#1E1E24" transform="rotate(-20 48 29)"></ellipse><circle cx="32" cy="33" r="17" fill="#FBFBF8" stroke="#D5D5CF"></circle><circle cx="23" cy="22.5" r="3" fill="#1E1E24"></circle><circle cx="41.5" cy="21.5" r="2.2" fill="#1E1E24"></circle><circle cx="44" cy="40" r="2.6" fill="#1E1E24"></circle><circle cx="20" cy="40" r="2" fill="#1E1E24"></circle><circle cx="25.5" cy="30" r="2.5" fill="#1E1E24"></circle><circle cx="38.5" cy="30" r="2.5" fill="#1E1E24"></circle><ellipse cx="32" cy="37.5" rx="4" ry="2.8" fill="#1E1E24"></ellipse></svg><b>Small Pet</b></span></div></div></figure></div><!--/ev-petsmart-->
+      <div class="case-grid">
+        <div class="case-ref">
+          <p class="case-k">Reference behavior</p>
+          <p>The Fish, Bird and Small Pet category cards each show the matching animal.</p>
+        </div>
+        <ol class="trace">
+          <li><code>s8:c0</code><span>Screenshots the reference homepage, which pairs each label with its animal artwork.</span></li>
+          <li><code>s280:c1</code><span>Writes the catalogue, assigning image files to category keys.</span></li>
+          <li><code>s283:c0</code><span>Writes the renderer: each card picks its image through <code>img(key)</code>.</span></li>
+          <li class="bad"><code>s324:c0</code><span>Its own homepage screenshot shows dog artwork under Fish, Bird and Small Pet.</span></li>
+          <li><code>s325:c0 to c2, s326:c0</code><span>Rebuilds the files and finishes. The image mapping is never repaired.</span></li>
+        </ol>
+        <div class="case-out">
+          <p class="case-k">Final state</p>
+          <p>The keys point to unrelated files: two dog “Deals” images and a Dalmatian grooming image. Checking each rendered image against its label would have caught it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="caught">
+    <h3>More failures the hidden tests caught</h3>
+    <ul>
+      <li><b>Medium.</b> The tests found no email input, no verification email was sent, and the session checks that followed failed.</li>
+      <li><b>Tripadvisor.</b> The review workflow failed at submission, at reading the review back, and again after a restart.</li>
+      <li><b>Runtime delivery.</b> A build that fails to compile or breaks the runtime contract scores zero on every test.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ BENCHMARK ============ -->
+<section class="section wrap" id="benchmark" aria-labelledby="bench-h">
+  <header class="sec-head">
+    <h2 id="bench-h">74 expert-built sites, 50,356 tests, no partial credit</h2>
+    <a class="route" href="#benchmark">/benchmark</a>
+  </header>
+
+  <div class="corpus">
+    <div class="corpus-text">
+      <h3>74 websites across nine categories</h3>
+      <p>Sixteen web developers designed and built the tasks under shared guidelines. For each website, one expert implements the reference and another reviews it for correctness and workflow coverage, then writes the hidden tests. Each site reproduces selected pages and workflows of a widely used service, with email and payments replaced by local services.</p>
+      <p class="named">Sites named in the paper reproduce features of</p>
+      <ul class="chips" aria-label="Services named in the paper">
+        <li>AMC Theatres</li><li>Backcountry</li><li>Fandango</li><li>L.L.Bean</li><li>Lowe’s</li><li>Medium</li><li>Meetup</li><li>Petfinder</li><li>PetSmart</li><li>Samsung</li><li>Target</li><li>Tripadvisor</li>
+      </ul>
+    </div>
+    <div class="corpus-viz" id="corpus" role="img" aria-label="Websites per category: E-commerce and retail 22, Food and dining 11, Content and community 9, Professional services 9, Productivity and SaaS 5, Travel and outdoors 5, Events and entertainment 5, Education 5, Jobs and careers 3."><div class="cat"><span class="cat-name">E-commerce &amp; retail</span><span class="cat-n">22</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Food &amp; dining</span><span class="cat-n">11</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Content &amp; community</span><span class="cat-n">9</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Professional services</span><span class="cat-n">9</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Productivity &amp; SaaS</span><span class="cat-n">5</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Travel &amp; outdoors</span><span class="cat-n">5</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Events &amp; entertainment</span><span class="cat-n">5</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Education</span><span class="cat-n">5</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i><i class="win"></i></span></div><div class="cat"><span class="cat-name">Jobs &amp; careers</span><span class="cat-n">3</span><span class="wins" aria-hidden="true"><i class="win"></i><i class="win"></i><i class="win"></i></span></div></div><!--/corpus-->
+  </div>
+
+  <div class="groups">
+    <h3>Three groups of hidden tests</h3>
+    <div class="groups-grid">
+      <div class="grp">
+        <p class="grp-k">T1</p>
+        <h4>Request</h4>
+        <p>Direct HTTP checks of page responses and native form submissions.</p>
+      </div>
+      <div class="grp grp-wide">
+        <p class="grp-k">T2</p>
+        <h4>Browser</h4>
+        <p>Scripted journeys through the real interface, at three levels.</p>
+        <ol class="levels">
+          <li><b>L1</b><span>An immediate response on one page, such as input validation.</span></li>
+          <li><b>L2</b><span>A state change read back later, such as an edited record on its detail page.</span></li>
+          <li><b>L3</b><span>Persistence, other users and recovery, such as data after a restart.</span></li>
+        </ol>
+        <p class="grp-note">Some Browser tests add visual checkpoints that compare screenshots of marked regions with the reference.</p>
+      </div>
+      <div class="grp">
+        <p class="grp-k">T3</p>
+        <h4>System</h4>
+        <p>Runtime requirements: offline builds, restarts, process health and security.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scoring">
+    <div class="scoring-text">
+      <h3>All or nothing, test by test</h3>
+      <ul class="ticks">
+        <li>A test earns its point only if its functional checks pass and every visual checkpoint reaches the threshold τ&nbsp;=&nbsp;0.75.</li>
+        <li>Journey tests must pass under two independent executors, Playwright and Browser Use.</li>
+        <li>Visual similarity is SSIM measured against a flat-color baseline, so large blank areas count for much less.</li>
+        <li>Every test weighs the same and there is no partial credit. A submission that copies the reference scores zero.</li>
+      </ul>
+    </div>
+    <div class="formula" aria-label="Scoring formula">
+      <math display="block" class="formula-eq">
+        <mrow>
+          <msub><mi>p</mi><mi>i</mi></msub><mo>=</mo><msub><mi>F</mi><mi>i</mi></msub>
+          <munder><mo>∏</mo><mrow><mi>k</mi><mo>∈</mo><msub><mi>V</mi><mi>i</mi></msub></mrow></munder>
+          <mn>𝟙</mn><mo stretchy="false">[</mo><msub><mi>v</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>≥</mo><mi>τ</mi><mo stretchy="false">]</mo>
+        </mrow>
+      </math>
+      <math display="block" class="formula-eq">
+        <mrow>
+          <msub><mi>S</mi><mi>s</mi></msub><mo>=</mo><mfrac><mn>100</mn><msub><mi>N</mi><mi>s</mi></msub></mfrac>
+          <munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>s</mi></msub></munderover><msub><mi>p</mi><mi>i</mi></msub>
+        </mrow>
+      </math>
+      <dl class="formula-key">
+        <div><dt><i>F</i><sub>i</sub></dt><dd>1 if the functional checks of test <i>i</i> pass</dd></div>
+        <div><dt><i>v</i><sub>ik</sub></dt><dd>similarity at visual checkpoint <i>k</i></dd></div>
+        <div><dt><i>S</i><sub>s</sub></dt><dd>percentage of the <i>N</i><sub>s</sub> tests of site <i>s</i> passed</dd></div>
+      </dl>
+      <div class="try" id="try">
+        <p class="try-h">Try the rule on one test with two visual checkpoints</p>
+        <label class="try-row try-check"><input type="checkbox" id="try-f" checked> Functional checks pass</label>
+        <div class="try-row"><label for="try-v1">Checkpoint 1</label><input type="range" id="try-v1" min="0" max="1" step="0.01" value="0.93"><output for="try-v1" id="try-o1">0.93</output></div>
+        <div class="try-row"><label for="try-v2">Checkpoint 2</label><input type="range" id="try-v2" min="0" max="1" step="0.01" value="0.71"><output for="try-v2" id="try-o2">0.71</output></div>
+        <p class="try-out" id="try-out" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="validity">
+    <h3>Tests that are checked before they count</h3>
+    <p>Every assertion is reviewed with three questions: where could an agent discover this behavior, do the test’s actions actually exercise it, and does the assertion separate success from a plausible wrong implementation. A suite is included only after a complete run against its reference passes every test, and across all 74 tasks two complete reference runs passed every test. Negative controls inject defects such as dead controls, disabled submission, dropped form inputs, state lost on restart and wrong ownership, to check whether the tests catch them.</p>
+    <div class="design-wrap">
+      <table class="design">
+        <caption>Illustrative test design for a record-saving workflow, from Table 2</caption>
+        <thead><tr><th scope="col">Behavior</th><th scope="col">Interaction and observation</th><th scope="col">Error it catches</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Submission</th><td>Fill the rendered form, submit, and inspect the saved record.</td><td>A success message appears but the fields are discarded.</td></tr>
+          <tr><th scope="row">Reading from another page</th><td>Open the record through a list or detail page.</td><td>Only the submitting page reflects the change.</td></tr>
+          <tr><th scope="row">Persistence</th><td>Restart with the same data, reopen the record and read it.</td><td>State survives navigation but is lost on restart.</td></tr>
+          <tr><th scope="row">User access</th><td>Sign in as another user and try to view the content.</td><td>Ownership or sharing differs from the reference.</td></tr>
+          <tr><th scope="row">Recovery</th><td>Submit invalid input, read the rejection, fix it and submit again.</td><td>A rejection corrupts state or blocks the next valid try.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="contract">
+    <div class="contract-text">
+      <h3>The runtime contract</h3>
+      <p>Reference and candidate need not share a language or a file layout. What a candidate must honor is a small public contract, so that every submission can be built, started, restarted and probed the same way.</p>
+    </div>
+    <dl class="contract-list">
+      <div><dt>compile.sh</dt><dd>Takes no arguments and builds offline in a relocated directory.</dd></div>
+      <div><dt>./executable</dt><dd>The root entrypoint. It stays in the foreground.</dd></div>
+      <div><dt>HOST:PORT</dt><dd>The address to bind, supplied at launch.</dd></div>
+      <div><dt>GET /healthz</dt><dd>Returns 200 with {"status":"ok"} once the site is ready.</dd></div>
+      <div><dt>DATA_DIR</dt><dd>Where all persistent state is written.</dd></div>
+      <div><dt>SEED, TZ</dt><dd>Fixed randomness and time zone.</dd></div>
+      <div><dt>SIGTERM</dt><dd>Handled cleanly. Threads are allowed; child processes are not.</dd></div>
+      <div><dt>Network</dt><dd>None, except explicitly permitted local services.</dd></div>
+    </dl>
+  </div>
+
+  <button class="link-btn fig-link fig-link-lg" type="button" data-zoom="assets/figures/pipeline.png" data-alt="Figure 2 from the paper. Left, task architecture: a task folder with environment, reference, solution, hidden tests, task.toml and instruction.md. Middle, agent iteration: read, explore, implement, compare, fix and submit, with compile.sh producing an executable. Right, the evaluation container compiles and launches the candidate, runs hidden Request, Browser and System test cases, and scores each case 1 only if all checks pass."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 15l5-4.5 4 3.5 3-2.5 5 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>View Figure 2 from the paper, the task bundle and evaluation pipeline</button>
+</section>
+
+<!-- ============ RELATED ============ -->
+<section class="section wrap" id="related" aria-labelledby="related-h">
+  <header class="sec-head">
+    <h2 id="related-h">Among these benchmarks, only WebsiteBench leaves the spec implicit in a running site</h2>
+    <a class="route" href="#related">/related</a>
+  </header>
+  <p class="intro">Web-agent benchmarks ask agents to operate existing sites. Website-generation benchmarks hand the agent a screenshot, sketch, video or specification to build from. WebsiteBench asks the agent to discover the specification on a running site and rebuild the site itself.</p>
+  <div class="rel-wrap" tabindex="0" role="region" aria-label="Benchmark comparison table, scrolls sideways on small screens">
+    <table class="rel">
+      <thead>
+        <tr><th scope="col">Benchmark</th><th scope="col">Source</th><th scope="col">Scale</th><th scope="col">Specification</th><th scope="col">Objective</th><th scope="col">Result</th><th scope="col">Visual</th><th scope="col">Functional</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Mind2Web</th><td>Static traces</td><td>2,350 tasks, 137 sites</td><td>Task instruction</td><td>Operate</td><td>Actions</td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td><td>Action match</td></tr>
+        <tr><th scope="row">WebArena</th><td>Self-hosted sites</td><td>812 tasks, 5 sites</td><td>Task instruction</td><td>Operate</td><td>Actions</td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td><td>State check</td></tr>
+        <tr><th scope="row">VisualWebArena</th><td>Self-hosted sites</td><td>910 tasks, 3 sites</td><td>Task instruction</td><td>Operate</td><td>Actions</td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td><td>State check</td></tr>
+        <tr><th scope="row">SaaS-Bench</th><td>Deployable SaaS</td><td>106 tasks, 23 systems</td><td>Task instruction</td><td>Operate</td><td>Actions</td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td><td>Checkpoints</td></tr>
+        <tr><th scope="row">Design2Code</th><td>Screenshot</td><td>484 pages</td><td>Provided artifact</td><td>Generate</td><td>Webpage</td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td></tr>
+        <tr><th scope="row">WebCode2M</th><td>Screenshot and design</td><td>2.56M pairs</td><td>Provided artifact</td><td>Generate</td><td>Webpage</td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td><td class="no"><span aria-hidden="true">—</span><span class="sr-only">No</span></td></tr>
+        <tr><th scope="row">Vision2Web</th><td>Prototype and requirements</td><td>193 tasks, 16 categories</td><td>Provided artifact</td><td>Generate</td><td>Website</td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td></tr>
+        <tr><th scope="row">Design Arena</th><td>Video</td><td>Dynamic</td><td>Provided artifact</td><td>Generate</td><td>Website</td><td>Human preference</td><td>Partial</td></tr>
+        <tr class="ours"><th scope="row">WebsiteBench</th><td>Self-hosted sites</td><td>74 sites, 50,356 tests</td><td>Implicit in the reference site</td><td>Explore and reconstruct</td><td>Runnable website</td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td><td class="yes"><span aria-hidden="true">✓</span><span class="sr-only">Yes</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<div class="wrap end-grid">
+<section class="section" id="faq" aria-labelledby="faq-h">
+  <header class="sec-head">
+    <h2 id="faq-h">Questions</h2>
+    <a class="route" href="#faq">/faq</a>
+  </header>
+  <div class="faq">
+    <details>
+      <summary>How is the overall score computed?</summary>
+      <p>Every hidden test counts equally, pooled across all 74 sites, so sites with more tests carry more weight. A build that fails to compile or breaks the runtime contract scores zero on every test, and so does an untouched starter project. Trials that fail because of the evaluation infrastructure are excluded instead of scored.</p>
+    </details>
+    <details>
+      <summary>How is visual similarity measured?</summary>
+      <p>A visual checkpoint replays a fixed set of actions in a fresh run, takes a screenshot at a set viewport, and compares marked regions with the reference using SSIM, with masks over parts that should not count. The score is normalized against a flat image in the region’s median color, so plain backgrounds count for little. Every checkpoint of a test must reach 0.75, and a failed checkpoint cannot be averaged away.</p>
+    </details>
+    <details>
+      <summary>Can agents reuse images from the reference?</summary>
+      <p>Yes. The browser gateway lets agents download media files such as product photos, but it filters out JavaScript and CSS and exposes no HTML or API exports. Agents have to rebuild layout and behavior themselves from what they observe, and a submission that copies the reference beyond the permitted media is disqualified.</p>
+    </details>
+    <details>
+      <summary>What does the score measure?</summary>
+      <p>Agreement with the reference behaviors that the hidden tests check, under a fixed observation interface and time budget. The tests are implementation-agnostic, so the candidate need not share the reference’s language or code structure, as long as it honors the runtime contract.</p>
+    </details>
+    <details>
+      <summary>Which agent harness and settings were used?</summary>
+      <p>Every model ran in the same Claude Code harness, version 2.1.268 on Harbor 0.22.0, at maximum reasoning effort, with default sampling settings and a 16-hour wall clock per run.</p>
+    </details>
+    <details>
+      <summary>Will the benchmark be released?</summary>
+      <p>Yes. The paper releases the benchmark, the reference websites, the hidden tests, the evaluation infrastructure and the agent trajectories. Links will appear on this page.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ CITE ============ -->
+<section class="section" id="cite" aria-labelledby="cite-h">
+  <header class="sec-head">
+    <h2 id="cite-h">Cite WebsiteBench</h2>
+    <a class="route" href="#cite">/cite</a>
+  </header>
+  <div class="cite-bar">
+    <div class="tabs" role="tablist" aria-label="Citation format" id="cite-tabs">
+      <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="bibtex" id="cf-bib" data-copy="Copy BibTeX">BibTeX</button>
+      <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="plaincite" id="cf-plain" data-copy="Copy citation" tabindex="-1">Plain text</button>
+    </div>
+    <button class="dt-btn copy" id="copy-bib" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy BibTeX</span></button>
+  </div>
+  <div class="bib">
+<pre class="code cite-panel" id="plaincite" role="tabpanel" aria-labelledby="cf-plain" hidden><code>Anonymous. WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration? 2026.</code></pre>
+<pre class="code cite-panel" id="bibtex" role="tabpanel" aria-labelledby="cf-bib"><code>@misc{websitebench2026,
+  title  = {WebsiteBench: Can AI Agents
+            Rebuild Websites through
+            Browser Exploration?},
+  author = {Anonymous},
+  year   = {2026}
+}</code></pre>
+  </div>
+</section>
+</div>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--accent)" stroke-width="2.5"/></svg>WebsiteBench</p>
+    <p class="footer-links"><a href="#cite">Cite</a><a href="#top">Back to top</a></p>
+  </div>
+</footer>
+
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged figure">
+  <button class="lb-close" type="button" id="lb-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <img id="lb-img" alt="">
+</dialog>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>
