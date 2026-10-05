@@ -292,12 +292,10 @@
       titleCand.style.transform = `translateY(${dy}px)`;
     }
 
-    const heroEl = $('.hero') || stage;
     function syncTitle() {
       if (!titleIn) return;
-      const sr = heroEl.getBoundingClientRect();
       const tr = titleIn.getBoundingClientRect();
-      const x = sr.left + sr.width * split / 100 - tr.left;
+      const x = tr.width * split / 100;
       titleIn.style.setProperty('--split-px', x + 'px');
       const inside = x > 6 && x < tr.width - 6;
       titleIn.classList.toggle('no-split', !inside);
