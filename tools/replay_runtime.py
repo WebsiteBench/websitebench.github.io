@@ -170,6 +170,8 @@ class ReplayRuntime:
         record = self.record(uid)
         if not record:
             return {'status': 'unavailable', 'message': 'This recorded context is unavailable.'}
+        reference_revision = (record['reference_artifact']['source_revision'][:8]
+                              if record.get('reference_artifact') else self.reference_version)
         if not re.fullmatch(r'[a-zA-Z0-9_-]{12,64}', client):
             return {'status': 'error', 'message': 'Invalid preview session.'}
         key = client + ':' + uid
@@ -193,12 +195,12 @@ class ReplayRuntime:
             if ref and model:
                 ref['used'] = model['used'] = time.monotonic()
                 return {'status': 'ready', 'run': record['public'],
-                        'reference_revision': self.reference_version,
+                        'reference_revision': reference_revision,
                         'services': {'reference': ref, 'candidate': model}}
             if ref and key in self.failures:
                 ref['used'] = time.monotonic()
                 return {'status': 'partial', 'run': record['public'], 'services': {'reference': ref},
-                        'reference_revision': self.reference_version,
+                        'reference_revision': reference_revision,
                         'message': self.failures[key]}
             future = self.jobs.get(key)
             if future and future.done():
@@ -220,7 +222,10 @@ class ReplayRuntime:
         return self.store.records.get(uid)
 
     def extract(self, binding, uid):
-        destination = self.cache / uid
+        fingerprint = binding['candidate'].get('archive_sha256')
+        if fingerprint and not re.fullmatch(r'[a-f0-9]{64}', fingerprint):
+            raise ValueError('Invalid website archive checksum')
+        destination = self.cache / (uid + '-' + fingerprint[:12] if fingerprint else uid)
         if (destination / '.complete').is_file():
             return destination
         with self.extract_lock:
@@ -228,7 +233,13 @@ class ReplayRuntime:
                 return destination
             files = binding['candidate'].get('sample_files', [])
             first = next((name for name in files if '/artifacts/app/repo/' in '/' + name), None)
-            if first:
+            explicit_root = binding['candidate'].get('archive_root')
+            if explicit_root:
+                path = PurePosixPath(explicit_root)
+                if path.is_absolute() or '..' in path.parts or not path.parts:
+                    raise ValueError('Invalid website archive root')
+                root = str(path).rstrip('/') + '/'
+            elif first:
                 root = first[:first.index('artifacts/app/repo/') + len('artifacts/app/repo/')]
             elif files and files[0].startswith('candidate/'):
                 root = 'candidate/'
@@ -240,6 +251,13 @@ class ReplayRuntime:
                 return destination
             if not archive.is_file():
                 raise ValueError('The website archive is unavailable locally.')
+            if fingerprint:
+                digest = hashlib.sha256()
+                with archive.open('rb') as stream:
+                    for block in iter(lambda: stream.read(4 * 1024 * 1024), b''):
+                        digest.update(block)
+                if digest.hexdigest() != fingerprint:
+                    raise ValueError('The website archive failed its SHA256 check.')
             temporary = self.cache / (uid + '.building')
             if temporary.exists():
                 shutil.rmtree(temporary)
@@ -300,7 +318,8 @@ class ReplayRuntime:
         if self.wanted.get(client) != uid:
             return
         record = self.record(uid)
-        reference = self.references / record['task'] / 'src'
+        reference = (self.extract(record['reference_artifact'], uid + '-reference')
+                     if record.get('reference_artifact') else self.references / record['task'] / 'src')
         if not reference.is_dir():
             raise ValueError('The reference website is not installed for this task.')
         key = client + ':' + uid

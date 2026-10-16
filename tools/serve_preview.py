@@ -487,6 +487,7 @@ if __name__ == '__main__':
     args.add_argument('--task-index', type=Path, help='Verified private task/material bindings')
     args.add_argument('--task-cache', type=Path, help='Private derived trace and replay cache')
     args.add_argument('--references', type=Path, help='Reference websites directory; enables demand-loaded Docker replays')
+    args.add_argument('--runtime-namespace', default='task', help='Isolate containers from another local preview gateway')
     options = args.parse_args()
     Gateway.runtime = json.loads(options.runtime.read_text()) if options.runtime else {}
     for role in Gateway.runtime:
@@ -498,7 +499,7 @@ if __name__ == '__main__':
         Gateway.store = TaskStore(options.task_index, options.task_cache or options.task_index.parent / 'cache')
         if options.references:
             from replay_runtime import ReplayRuntime
-            Gateway.replay = ReplayRuntime(Gateway.store, options.references)
+            Gateway.replay = ReplayRuntime(Gateway.store, options.references, namespace=options.runtime_namespace)
     if options.trajectories:
         manifest = options.trajectories.resolve()
         results = json.loads((ROOT / 'data/task-results.json').read_text())

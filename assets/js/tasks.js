@@ -152,6 +152,10 @@
       const scores=[...new Set(record.scores.map(s=>s.value))];
       if(scores.length===1){const score=document.createElement('span');score.className='task-score';score.textContent=`Published: ${scores[0]} tests${record.score_note?' · '+record.score_note:''}`;score.title=record.scores.map(s=>`${s.source}!${s.cell} · ${s.context}`).join('\n')+(record.score_note?'\nThe published score is for a repaired candidate; this replay uses the archived unrepaired website.':'');summary.appendChild(score);}
       const source=document.createElement('a');source.href=record.source;source.target='_blank';source.rel='noopener noreferrer';source.textContent='Source ↗';summary.appendChild(source);
+      for(const [field,label] of [['website_artifact','Website code ↓'],['reference_artifact','Reference code ↓']]){
+        const artifact=record[field];if(!artifact?.url)continue;
+        const link=document.createElement('a');link.href=artifact.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=label;link.title=`Saved project · ${artifact.files} files · run ${artifact.selected_run}`;summary.appendChild(link);
+      }
     }else summary.textContent='No recorded context available';
     $('#state-picker').replaceChildren(...(task.views||[]).map(v=>option(v.id,v.label)));
     if((!previousTask||previousTask===task.id)&&task.views?.some(v=>v.id===previousView))$('#state-picker').value=previousView;

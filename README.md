@@ -69,6 +69,17 @@ Generate the public catalog and private bindings:
 python3 tools/build_task_index.py --master /private/master.json --private-index /private/task-browser/index.json
 ```
 
+Use `--website-artifacts /private/verified-artifact-download` to attach the
+preserved projects from `TIGER-Lab/WebsiteBenchArtifacts`. Import requires a
+completed, hash-verified download. The selected-run manifest must exactly match
+the trajectory's `path-layout.json` provenance. Agent and reference downloads are
+pinned to the source revision; private filesystem paths stay outside the public
+catalog. The local replay reads the packaged `repo/` and
+`environment/reference/` directories directly and verifies the archive checksum.
+Source-specific caches prevent a previously extracted project from replacing a
+newly bound export. Unavailable upstream exports leave existing verified bindings
+intact. Exported code availability does not certify that it can launch unchanged.
+
 The public catalog contains no local artifact paths, tokens, raw trajectories or
 website archives. Keep the private index and cache outside this repository.
 

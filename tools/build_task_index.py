@@ -27,7 +27,7 @@ def context_key(value):
     return float(match[1]) * (1000 if match[2] == 'm' else 1) if match else 0
 
 
-def build(master_path, private_path):
+def build(master_path, private_path, website_artifacts=None):
     ledger = json.loads(master_path.read_text())
     old = json.loads((ROOT / 'data/task-catalog.json').read_text())
     names = {t['id']: t['name'] for t in old['tasks']}
@@ -114,6 +114,10 @@ def build(master_path, private_path):
             task_public['models'][alias] = {'runs': recorded,
                 'code': bool(code_runs), 'scores': row.get('score_values', [])}
         public['tasks'].append(task_public)
+    if website_artifacts:
+        from website_artifacts import attach
+        artifact_report = attach(public, private, website_artifacts)
+        print(json.dumps({'website_artifacts': artifact_report}))
     private_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = private_path.with_suffix('.tmp')
     temporary.touch(mode=0o600, exist_ok=True)
@@ -134,5 +138,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--master', type=Path, required=True)
     parser.add_argument('--private-index', type=Path, required=True)
+    parser.add_argument('--website-artifacts', type=Path, help='A fully downloaded and verified website artifact repository')
     args = parser.parse_args()
-    build(args.master, args.private_index)
+    build(args.master, args.private_index, args.website_artifacts)
