@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analysis · WebsiteBench</title>
+  <meta name="description" content="WebsiteBench analyses: human exploration trajectories, early stopping, and the gap between exploration and implementation.">
+  <link rel="canonical" href="https://websitebench.github.io/analysis.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://websitebench.github.io/analysis.html">
+  <meta property="og:title" content="Analysis · WebsiteBench">
+  <meta property="og:description" content="Human exploration trajectories, early stopping, and exploration versus implementation.">
+  <meta property="og:image" content="https://websitebench.github.io/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#fafaf8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23262624'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='monospace' font-size='24' fill='%23fafaf8'%3Ew%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script src="assets/js/site.js" defer></script>
+
+</head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">[w]</span> WEBSITEBENCH</a><nav aria-label="Main navigation"><a href="index.html#results">Leaderboard</a><a href="tasks.html">Tasks</a><a href="analysis.html">Analysis</a><a href="run.html">Run</a></nav><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" hidden><span aria-hidden="true">◐</span></button></div></header>
+<main id="main" class="wrap subpage"><div class="subpage-heading" id="findings"><h1>Analysis</h1></div>
+<nav class="analysis-navigation" aria-label="Analysis sections"><a href="#human-trajectory">Human trajectory</a><a href="#early-stopping">Early stopping</a><a href="#exploration-implementation">Exploration + implementation</a></nav>
+<section class="analysis-section study" id="human-trajectory" aria-labelledby="human-trajectory-heading">
+  <header class="study-heading"><h2 id="human-trajectory-heading">Human trajectory</h2><p class="study-scope">Grok 4.6 · 18 paired websites</p></header>
+  <p class="study-summary">A human exploration trace raises the mean reconstruction score from <strong>2.8% to 9.8%</strong>.</p>
+  <figure class="analysis-figure"><a href="assets/figures/human-trace.png" aria-label="Open the human trajectory comparison at full resolution"><img src="assets/figures/human-trace.webp" alt="Independent exploration versus human-trace assistance: mean reconstruction score 2.8% versus 9.8%, a gain of 7 percentage points. On 18 paired websites, 10 scores improved, 6 tied, and 2 declined." decoding="async"></a><figcaption>10 higher · 6 tied · 2 lower. Sign test p = 0.039.</figcaption></figure>
+</section>
+<section class="analysis-section study" id="early-stopping" aria-labelledby="early-stopping-heading">
+  <header class="study-heading"><h2 id="early-stopping-heading">Early stopping</h2><p class="study-scope">16-hour limit · one stop-review case</p></header>
+  <p class="study-summary">The reported median run ends after <strong>3.57 of 16 hours</strong>.</p>
+  <figure class="analysis-figure"><a href="assets/figures/early-stopping.svg" aria-label="Open the early stopping comparison at full resolution"><img src="assets/figures/early-stopping.svg" width="1120" height="340" alt="Reported median duration: 3.57 hours. Kimi K3 on Lowe’s runs for 1.0 hour with a 0% score; with Claude Code /goal stop review, it runs for 10.9 hours and scores 31.3%. This intervention is a single case." loading="lazy" decoding="async"></a><figcaption>Kimi K3 on Lowe’s: <code>/goal</code> stop review raises the score from 0% to 31.3%. This is a single-case result.</figcaption></figure>
+</section>
+<section class="analysis-section study" id="exploration-implementation" aria-labelledby="exploration-implementation-heading">
+  <header class="study-heading"><h2 id="exploration-implementation-heading">Exploration + implementation</h2><p class="study-scope">Grok 4.6 · 20 websites</p></header>
+  <p class="study-summary">Before the first code edit, agents visit <strong>124 of 127</strong> core page families but reach only <strong>4 of 122</strong> workflow outcomes.</p>
+  <figure class="analysis-figure"><a href="assets/figures/gaps.png" aria-label="Open the exploration and implementation analysis at full resolution"><img src="assets/figures/gaps.webp" alt="Exploration and implementation analysis: 124 of 127 core page families visited; 121 of 122 workflows attempted, but only 4 completed; 1 of 111 observed requirements implemented as observed. Of 13,359 tool calls, exploration accounts for 54.8%, implementation 10.0%, validation 27.0%, and other work 8.2%." loading="lazy" decoding="async"></a><figcaption>Only 1 of 111 observed requirements is implemented as observed. Code editing accounts for 10.0% of tool calls.</figcaption></figure>
+</section>
+<section class="analysis-section" id="benchmark"><h2>Evaluation</h2><table class="protocol-table"><tbody><tr><th>Request</th><td>HTTP responses and form submissions.</td></tr><tr><th>Browser</th><td>Appearance, user journeys, and persistent state.</td></tr><tr><th>System</th><td>Offline builds, health, and restarts.</td></tr></tbody></table></section>
+<section class="analysis-section" id="data-checks"><h2>Results to verify</h2><table class="protocol-table"><tbody><tr><th>Final runs</th><td>One explicit run per task and model; exclude context and ablation variants.</td></tr><tr><th>Accuracy</th><td>Use the reporting metric and aggregation rule. The current workbook does not reproduce the published accuracy.</td></tr><tr><th>Coverage</th><td>The accepted 74-task cohort; missing results stay distinct from measured zero scores.</td></tr><tr><th>Resources</th><td>Cost, tokens, and turns from the same final runs and budget.</td></tr></tbody></table></section>
+<section class="analysis-section" id="cite"><details class="detail"><summary>Citation</summary><div class="code-block"><div class="code-heading"><span>BibTeX</span><button type="button" data-copy="bibtex" hidden>Copy</button></div><pre id="bibtex"><code>@misc{websitebench2026,
+  title = {WebsiteBench: Can AI Agents Rebuild Websites
+           through Browser Exploration?},
+  author = {Anonymous},
+  year = {2026},
+  url = {https://websitebench.github.io/}
+}</code></pre></div><p class="table-note"><a href="CITATION.cff">Citation metadata</a></p></details></section></main>
+<footer class="footer wrap"><span class="footer-brand">[w] WebsiteBench</span><div><a href="analysis.html#cite">Cite</a><a href="https://github.com/WebsiteBench/websitebench.github.io">Website source ↗</a></div></footer><p class="sr-only" id="copy-status" role="status"></p>
+</body></html>

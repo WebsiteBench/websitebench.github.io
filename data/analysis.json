@@ -1,0 +1,57 @@
+{
+  "source": {
+    "kind": "previous_project_website",
+    "repository": "https://github.com/WebsiteBench/websitebench.github.io",
+    "revision": "9a6ffd2b5d2cdad0c90685a5aecb0985756bcb50",
+    "files": ["index.html", "llms.txt", "assets/figures/human-trace.png", "assets/figures/gaps.png"],
+    "paper_version_verified": false,
+    "note": "Transcribed from the existing project website and retained figures. The current paper has not been supplied; review these values against that version before publishing. These analyses are separate from the final leaderboard run selection."
+  },
+  "human_trajectory": {
+    "model": "Grok 4.6",
+    "paired_websites": 18,
+    "independent_mean_percent": 2.8,
+    "human_trace_mean_percent": 9.8,
+    "higher": 10,
+    "tied": 6,
+    "lower": 2,
+    "sign_test_p": 0.039,
+    "figure": "assets/figures/human-trace.webp"
+  },
+  "early_stopping": {
+    "budget_hours": 16,
+    "reported_median_hours": 3.57,
+    "case": {
+      "model": "Kimi K3",
+      "task": "Lowe’s",
+      "intervention": "Claude Code /goal stop review",
+      "baseline_hours": 1.0,
+      "review_hours": 10.9,
+      "baseline_score_percent": 0,
+      "review_score_percent": 31.3,
+      "first_rejected_exit_hours": 10.25,
+      "scope": "single_case"
+    },
+    "figure": "assets/figures/early-stopping.svg"
+  },
+  "exploration_implementation": {
+    "model": "Grok 4.6",
+    "websites": 20,
+    "observation_checkpoint": "before_first_source_edit",
+    "core_page_families_visited": 124,
+    "core_page_families_total": 127,
+    "workflows_attempted": 121,
+    "workflows_total": 122,
+    "terminal_outcomes_reached": 4,
+    "observed_requirements": 111,
+    "implemented_as_observed": 1,
+    "tool_calls": 13359,
+    "tool_call_percent": {
+      "exploration": 54.8,
+      "implementation": 10.0,
+      "validation": 27.0,
+      "other": 8.2
+    },
+    "figure": "assets/figures/gaps.webp"
+  }
+}

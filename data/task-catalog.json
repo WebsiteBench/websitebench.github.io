@@ -1,0 +1,488 @@
+{
+  "models": [
+    {
+      "id": "opus55",
+      "name": "Claude Opus 5.5",
+      "short": "Opus 5.5",
+      "org": "Anthropic",
+      "logo": "assets/logos/anthropic.svg"
+    },
+    {
+      "id": "opus5",
+      "name": "Claude Opus 5",
+      "short": "Opus 5",
+      "org": "Anthropic",
+      "logo": "assets/logos/anthropic.svg"
+    },
+    {
+      "id": "sol",
+      "name": "GPT 5.6 Sol",
+      "short": "GPT 5.6 Sol",
+      "org": "OpenAI",
+      "logo": "assets/logos/openai.svg"
+    },
+    {
+      "id": "luna",
+      "name": "GPT 5.6 Luna",
+      "short": "GPT 5.6 Luna",
+      "org": "OpenAI",
+      "logo": "assets/logos/openai.svg"
+    },
+    {
+      "id": "grok",
+      "name": "Grok 4.6",
+      "short": "Grok 4.6",
+      "org": "xAI",
+      "logo": "assets/logos/xai.svg"
+    },
+    {
+      "id": "glm",
+      "name": "GLM 5.3 Flash",
+      "short": "GLM 5.3 Flash",
+      "org": "Z.ai",
+      "logo": "assets/logos/zai.svg"
+    },
+    {
+      "id": "kimi",
+      "name": "Kimi K3",
+      "short": "Kimi K3",
+      "org": "Kimi",
+      "logo": "assets/logos/kimi.svg"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek V4.1 Flash",
+      "short": "DeepSeek V4.1 Flash",
+      "org": "DeepSeek",
+      "logo": "assets/logos/deepseek.svg"
+    },
+    {
+      "id": "qwen",
+      "name": "Qwen 3.8 Max",
+      "short": "Qwen 3.8 Max",
+      "org": "Qwen Team",
+      "logo": "assets/logos/qwen.svg"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1password-web",
+      "name": "1Password Web",
+      "views": []
+    },
+    {
+      "id": "33",
+      "name": "Coursera",
+      "views": []
+    },
+    {
+      "id": "ace-hardware",
+      "name": "Ace Hardware",
+      "views": []
+    },
+    {
+      "id": "airtable",
+      "name": "Airtable",
+      "views": []
+    },
+    {
+      "id": "amazon",
+      "name": "Amazon",
+      "views": []
+    },
+    {
+      "id": "amazon-home-services",
+      "name": "Amazon Home Services",
+      "views": []
+    },
+    {
+      "id": "amc-theatres",
+      "name": "AMC Theatres",
+      "views": []
+    },
+    {
+      "id": "angi",
+      "name": "Angi",
+      "views": []
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "views": []
+    },
+    {
+      "id": "article",
+      "name": "Article",
+      "views": []
+    },
+    {
+      "id": "asana",
+      "name": "Asana",
+      "views": []
+    },
+    {
+      "id": "aspca-pet-insurance",
+      "name": "ASPCA Pet Health Insurance",
+      "views": []
+    },
+    {
+      "id": "autoslash",
+      "name": "autoslash",
+      "views": []
+    },
+    {
+      "id": "autotrader",
+      "name": "Autotrader",
+      "views": []
+    },
+    {
+      "id": "backcountry",
+      "name": "Backcountry",
+      "views": []
+    },
+    {
+      "id": "bean-box",
+      "name": "Bean Box",
+      "views": []
+    },
+    {
+      "id": "beeradvocate",
+      "name": "BeerAdvocate",
+      "views": []
+    },
+    {
+      "id": "blinkist",
+      "name": "Blinkist",
+      "views": []
+    },
+    {
+      "id": "blueapron",
+      "name": "Blue Apron",
+      "views": []
+    },
+    {
+      "id": "bluemercury",
+      "name": "bluemercury",
+      "views": []
+    },
+    {
+      "id": "boardgamegeek",
+      "name": "BoardGameGeek",
+      "views": []
+    },
+    {
+      "id": "bookshop",
+      "name": "Bookshop.org",
+      "views": []
+    },
+    {
+      "id": "breakoutgames-2",
+      "name": "Breakout Games",
+      "views": []
+    },
+    {
+      "id": "brooklinen",
+      "name": "Brooklinen",
+      "views": []
+    },
+    {
+      "id": "capterra",
+      "name": "Capterra",
+      "views": []
+    },
+    {
+      "id": "change",
+      "name": "Change.org",
+      "views": []
+    },
+    {
+      "id": "columbia",
+      "name": "Columbia Sportswear",
+      "views": []
+    },
+    {
+      "id": "crumbl-cookies",
+      "name": "Crumbl Cookies",
+      "views": []
+    },
+    {
+      "id": "crunchyroll",
+      "name": "Crunchyroll",
+      "views": []
+    },
+    {
+      "id": "curology",
+      "name": "Curology",
+      "views": []
+    },
+    {
+      "id": "dooney-bourke",
+      "name": "Dooney & Bourke",
+      "views": []
+    },
+    {
+      "id": "eatthismuch",
+      "name": "Eat This Much",
+      "views": []
+    },
+    {
+      "id": "edx",
+      "name": "edX",
+      "views": []
+    },
+    {
+      "id": "etsy",
+      "name": "Etsy",
+      "views": []
+    },
+    {
+      "id": "eventbrite",
+      "name": "Eventbrite",
+      "views": []
+    },
+    {
+      "id": "everydollar",
+      "name": "EveryDollar",
+      "views": []
+    },
+    {
+      "id": "everyplate",
+      "name": "EveryPlate",
+      "views": []
+    },
+    {
+      "id": "fandango",
+      "name": "Fandango",
+      "views": []
+    },
+    {
+      "id": "freshdirect",
+      "name": "FreshDirect",
+      "views": []
+    },
+    {
+      "id": "hipcamp",
+      "name": "Hipcamp",
+      "views": []
+    },
+    {
+      "id": "hmart",
+      "name": "H Mart",
+      "views": []
+    },
+    {
+      "id": "imdb",
+      "name": "IMDb",
+      "views": []
+    },
+    {
+      "id": "insureon",
+      "name": "Insureon",
+      "views": []
+    },
+    {
+      "id": "insurify",
+      "name": "Insurify",
+      "views": []
+    },
+    {
+      "id": "ioby",
+      "name": "ioby",
+      "views": []
+    },
+    {
+      "id": "kanetix-ca",
+      "name": "Kanetix / Rates.ca",
+      "views": []
+    },
+    {
+      "id": "leetcode",
+      "name": "LeetCode",
+      "views": []
+    },
+    {
+      "id": "legalnature",
+      "name": "LegalNature",
+      "views": []
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "views": []
+    },
+    {
+      "id": "llbean",
+      "name": "L.L.Bean",
+      "views": []
+    },
+    {
+      "id": "lowes",
+      "name": "Lowe's",
+      "views": []
+    },
+    {
+      "id": "medium",
+      "name": "Medium",
+      "views": [
+        {
+          "id": "home",
+          "label": "Home",
+          "route": "/",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-home.png",
+            "version": "Local snapshot",
+            "source_revision": "d1c5375f93260cf375b9159b13ed380f062ffbfe"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-home.png",
+              "run_id": "xlsx-3fe67e9178baf494",
+              "context": "200K",
+              "http_status": 200,
+              "capture_kind": "frozen-candidate replay",
+              "is_final": false
+            }
+          }
+        },
+        {
+          "id": "about",
+          "label": "About",
+          "route": "/about",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-about.png",
+            "version": "Local snapshot",
+            "source_revision": "d1c5375f93260cf375b9159b13ed380f062ffbfe"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-about.png",
+              "run_id": "xlsx-3fe67e9178baf494",
+              "context": "200K",
+              "http_status": 200,
+              "capture_kind": "frozen-candidate replay",
+              "is_final": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "meetup",
+      "name": "Meetup",
+      "views": []
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "views": []
+    },
+    {
+      "id": "ollie",
+      "name": "Ollie",
+      "views": []
+    },
+    {
+      "id": "ontario-parks",
+      "name": "Ontario Parks Reservations",
+      "views": []
+    },
+    {
+      "id": "opentable",
+      "name": "OpenTable",
+      "views": []
+    },
+    {
+      "id": "petco",
+      "name": "Petco",
+      "views": []
+    },
+    {
+      "id": "petfinder",
+      "name": "Petfinder",
+      "views": []
+    },
+    {
+      "id": "petsmart",
+      "name": "PetSmart",
+      "views": []
+    },
+    {
+      "id": "ratemyprofessors",
+      "name": "Rate My Professors",
+      "views": []
+    },
+    {
+      "id": "resy",
+      "name": "Resy",
+      "views": []
+    },
+    {
+      "id": "roomsketcher",
+      "name": "RoomSketcher",
+      "views": []
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung US",
+      "views": []
+    },
+    {
+      "id": "simplify-jobs",
+      "name": "Simplify Jobs",
+      "views": []
+    },
+    {
+      "id": "target",
+      "name": "Target",
+      "views": []
+    },
+    {
+      "id": "taskrabbit",
+      "name": "TaskRabbit",
+      "views": []
+    },
+    {
+      "id": "tripadvisor",
+      "name": "Tripadvisor",
+      "views": []
+    },
+    {
+      "id": "tripit",
+      "name": "TripIt",
+      "views": []
+    },
+    {
+      "id": "ubereats",
+      "name": "Uber Eats",
+      "views": []
+    },
+    {
+      "id": "warbyparker",
+      "name": "Warby Parker",
+      "views": []
+    },
+    {
+      "id": "wayfair",
+      "name": "Wayfair",
+      "views": []
+    },
+    {
+      "id": "workable",
+      "name": "Workable",
+      "views": []
+    },
+    {
+      "id": "zennioptical",
+      "name": "Zenni Optical",
+      "views": []
+    }
+  ]
+}

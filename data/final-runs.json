@@ -1,0 +1,7 @@
+{
+  "status": "awaiting_final_manifest",
+  "metric": null,
+  "aggregation": null,
+  "selections": {},
+  "description": "Explicit final run IDs are required. Multiple workbook candidates are not averaged, maximized, or automatically selected. The current workbook does not reproduce the published leaderboard."
+}

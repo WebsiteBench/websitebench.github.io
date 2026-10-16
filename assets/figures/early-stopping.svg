@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="806.4pt" height="244.8pt" viewBox="0 0 806.4 244.8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>Reported early stopping and a single stop-review case</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Reported early stopping and a single stop-review case</dc:title>
+    <dc:description>Previous project website: median duration 3.57 of 16 hours. Kimi K3 on Lowe’s: 1.0 hours and 0% score; with /goal, 10.9 hours and 31.3% score. The intervention is a single case.</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 244.8
+L 806.4 244.8
+L 806.4 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 189.504 193.392
+L 782.208 193.392
+L 782.208 14.688
+L 189.504 14.688
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 189.504 50.184
+L 782.208 50.184
+L 782.208 28.152
+L 189.504 28.152
+z
+" clip-path="url(#p18a1f58129)" style="fill: #f0f0ec"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 189.504 128.52
+L 782.208 128.52
+L 782.208 106.488
+L 189.504 106.488
+z
+" clip-path="url(#p18a1f58129)" style="fill: #f0f0ec"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 189.504 177.48
+L 782.208 177.48
+L 782.208 155.448
+L 189.504 155.448
+z
+" clip-path="url(#p18a1f58129)" style="fill: #f0f0ec"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 189.504 193.392
+L 189.504 14.688
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2"/>
+     <g id="text_1">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #62625b" x="189.504" y="212.510125" transform="rotate(-0 189.504 212.510125)">0 h</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 337.68 193.392
+L 337.68 14.688
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4"/>
+     <g id="text_2">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #62625b" x="337.68" y="212.510125" transform="rotate(-0 337.68 212.510125)">4 h</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 485.856 193.392
+L 485.856 14.688
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6"/>
+     <g id="text_3">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #62625b" x="485.856" y="212.510125" transform="rotate(-0 485.856 212.510125)">8 h</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 634.032 193.392
+L 634.032 14.688
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8"/>
+     <g id="text_4">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #62625b" x="634.032" y="212.510125" transform="rotate(-0 634.032 212.510125)">12 h</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 782.208 193.392
+L 782.208 14.688
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10"/>
+     <g id="text_5">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #62625b" x="782.208" y="212.510125" transform="rotate(-0 782.208 212.510125)">16 h</text>
+     </g>
+    </g>
+    <g id="text_6">
+     <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle" x="485.856" y="236.123875" transform="rotate(-0 485.856 236.123875)">Run duration · 16-hour limit</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_11"/>
+     <g id="text_7">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #62625b" x="179.504" y="43.727063" transform="rotate(-0 179.504 43.727063)">Reported median run</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_12"/>
+     <g id="text_8">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #62625b" x="179.504" y="122.063063" transform="rotate(-0 179.504 122.063063)">Kimi K3 · Lowe’s</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_13"/>
+     <g id="text_9">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #62625b" x="179.504" y="171.023062" transform="rotate(-0 179.504 171.023062)">Same task + /goal</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_14">
+    <path d="M 189.504 73.44
+L 782.208 73.44
+" clip-path="url(#p18a1f58129)" style="fill: none; stroke: #dcdcd5; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 189.504 50.184
+L 321.75108 50.184
+L 321.75108 28.152
+L 189.504 28.152
+z
+" clip-path="url(#p18a1f58129)" style="fill: #7d7d76"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 189.504 128.52
+L 226.548 128.52
+L 226.548 106.488
+L 189.504 106.488
+z
+" clip-path="url(#p18a1f58129)" style="fill: #262624"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 189.504 177.48
+L 593.2836 177.48
+L 593.2836 155.448
+L 189.504 155.448
+z
+" clip-path="url(#p18a1f58129)" style="fill: #47663b"/>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #262624" x="328.419" y="42.47925" transform="rotate(-0 328.419 42.47925)">3.57 h</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #262624" x="233.21592" y="120.81525" transform="rotate(-0 233.21592 120.81525)">1.0 h · 0% score</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #262624" x="599.95152" y="169.77525" transform="rotate(-0 599.95152 169.77525)">10.9 h · 31.3% score</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p18a1f58129">
+   <rect x="189.504" y="14.688" width="592.704" height="178.704"/>
+  </clipPath>
+ </defs>
+</svg>

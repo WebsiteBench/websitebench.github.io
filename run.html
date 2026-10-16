@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Run · WebsiteBench</title>
+  <meta name="description" content="A benchmark for rebuilding full-stack websites through browser exploration. 74 expert-built websites, 50,356 hidden tests, and nine evaluated models.">
+  <link rel="canonical" href="https://websitebench.github.io/run.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://websitebench.github.io/run.html">
+  <meta property="og:title" content="Run · WebsiteBench">
+  <meta property="og:description" content="Prepare and verify WebsiteBench tasks with Harbor.">
+  <meta property="og:image" content="https://websitebench.github.io/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#fafaf8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23262624'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='monospace' font-size='24' fill='%23fafaf8'%3Ew%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script src="assets/js/site.js" defer></script>
+
+</head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">[w]</span> WEBSITEBENCH</a><nav aria-label="Main navigation"><a href="index.html#results">Leaderboard</a><a href="tasks.html">Tasks</a><a href="analysis.html">Analysis</a><a href="run.html">Run</a></nav><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" hidden><span aria-hidden="true">◐</span></button></div></header>
+<main id="main" class="wrap subpage"><div class="subpage-heading"><h1>Run the benchmark</h1></div>
+<p class="subpage-intro">Requires uv, Docker, and access to the benchmark and website release repositories.</p>
+<div class="code-block"><div class="code-heading"><span>Verify one task (oracle)</span><button type="button" data-copy="quickstart" hidden>Copy</button></div><pre id="quickstart"><code>git clone https://github.com/reacher-z/WebsiteBenchHarbor.git
+cd WebsiteBenchHarbor
+uv run scripts/prepare.py --task medium
+uv run harbor run --path harbor_prepared/medium --agent oracle</code></pre></div>
+<p class="table-note">For model runs, set Harbor’s <code>--agent</code> and <code>--model</code> options.</p>
+<div class="subpage-links"><a href="https://github.com/reacher-z/WebsiteBenchHarbor#prepare-and-run">Run instructions ↗</a><a href="tasks.html">Explore the 74 tasks →</a></div></main>
+<footer class="footer wrap"><span class="footer-brand">[w] WebsiteBench</span><div><a href="analysis.html#cite">Cite</a><a href="https://github.com/WebsiteBench/websitebench.github.io">Website source ↗</a></div></footer><p class="sr-only" id="copy-status" role="status"></p>
+</body></html>

@@ -2,7 +2,7 @@
 const path = require('path');
 const { chromium } = require(process.env.PLAYWRIGHT || 'playwright');
 (async () => {
-  const b = await chromium.launch();
+  const b = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
   const p = await b.newPage({ viewport: { width: 1200, height: 630 } });
   await p.goto('file://' + path.join(__dirname, 'og.html'), { waitUntil: 'networkidle' });
   await p.waitForFunction(() => document.body.dataset.ready === '1');

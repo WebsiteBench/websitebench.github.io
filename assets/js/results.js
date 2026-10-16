@@ -1,0 +1,274 @@
+/* Historical aggregate views and current, explicitly separated per-context scores. */
+(() => {
+  'use strict';
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => Array.from(document.querySelectorAll(selector));
+  const escape = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+  const scoreNames = {overall: 'Overall', request: 'Request', browser: 'Browser', system: 'System'};
+  const scoreColumns = {overall: 2, request: 3, browser: 4, system: 5};
+  const models = $$('#board-body tr').map(row => ({
+    id: row.dataset.model, name: row.querySelector('.model-name').textContent.trim(),
+    short: row.dataset.short, org: row.dataset.org, logo: `assets/logos/${row.dataset.logo}.svg`, row,
+    ...Object.fromEntries(Object.entries(scoreColumns).map(([key, column]) => [key, Number(row.cells[column].dataset.value)])),
+    cost: Number(row.cells[6].dataset.value), tokens: Number(row.cells[7].dataset.value), turns: Number(row.cells[8].dataset.value),
+  }));
+  const tabs = $$('[data-view]');
+  const panels = $$('.result-panel');
+  let activeView = 'table';
+  const company = $('#results-company');
+  Array.from(new Set(models.map(m => m.org))).forEach(org => {
+    const option = document.createElement('option'); option.value = org; option.textContent = org; company.appendChild(option);
+  });
+  const visibleModels = () => models.filter(m => company.value === 'all' || m.org === company.value);
+  const format = (value, resource) => resource === 'cost' ? '$' + value.toLocaleString('en-US', {maximumFractionDigits: 2})
+    : resource === 'tokens' ? value.toLocaleString('en-US', {maximumFractionDigits: 1}) + 'M'
+    : value.toLocaleString('en-US', {maximumFractionDigits: 1});
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'result-tooltip'; tooltip.id = 'result-tooltip'; tooltip.role = 'tooltip'; tooltip.hidden = true; document.body.appendChild(tooltip);
+  const hideTooltip = () => { tooltip.hidden = true; };
+  const bindTooltip = (element, html) => {
+    element.setAttribute('aria-describedby', tooltip.id);
+    const show = event => {
+      tooltip.innerHTML = html; tooltip.hidden = false;
+      const rect = element.getBoundingClientRect();
+      const width = tooltip.offsetWidth, height = tooltip.offsetHeight;
+      const x = Number.isFinite(event.clientX) && event.clientX > 0 ? event.clientX : rect.left + rect.width / 2;
+      const y = Number.isFinite(event.clientY) && event.clientY > 0 ? event.clientY : rect.top;
+      tooltip.style.left = Math.max(8, Math.min(innerWidth - width - 8, x + 15)) + 'px';
+      tooltip.style.top = Math.max(8, Math.min(innerHeight - height - 8, y + 15)) + 'px';
+    };
+    element.addEventListener('pointerenter', show); element.addEventListener('focus', show); element.addEventListener('click', show);
+    element.addEventListener('pointerleave', () => { if (document.activeElement !== element) hideTooltip(); });
+    element.addEventListener('blur', hideTooltip);
+  };
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') hideTooltip(); });
+  window.addEventListener('scroll', hideTooltip, true);
+  const modelTooltip = model => `<strong>${escape(model.name)}</strong><span>${escape(model.org)}</span>`;
+
+  function showView(view, updateURL = true) {
+    if (!['table', 'pareto', 'waffle'].includes(view)) view = 'table';
+    company.closest('label').hidden = view === 'waffle';
+    $('#results-description').textContent = view === 'waffle'
+      ? '74 tasks × 9 models · latest published per-task scores.'
+      : 'Published aggregate snapshot. Higher pass rates are better.';
+    activeView = view; hideTooltip();
+    tabs.forEach(tab => { const selected = tab.dataset.view === view; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
+    panels.forEach(panel => { panel.hidden = panel.id !== `result-${view}`; });
+    if (view === 'pareto') renderPareto();
+    if (view === 'waffle') renderWaffle();
+    const download = $('.section-heading .download');
+    download.href = view === 'waffle' ? `data/waffle-${$('#waffle-context').value}.csv` : 'data/leaderboard.csv';
+    download.innerHTML = view === 'waffle' ? 'Per-task CSV <span aria-hidden="true">↓</span>' : 'Leaderboard CSV <span aria-hidden="true">↓</span>';
+    if (view === 'waffle' && updateURL) $('#result-waffle').scrollIntoView({block: 'start'});
+    if (updateURL) {
+      try { const url = new URL(location.href); if (view === 'table') url.searchParams.delete('view'); else url.searchParams.set('view', view); history.replaceState(null, '', url); } catch (_) { /* File previews may not support history. */ }
+    }
+  }
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+    tab.addEventListener('keydown', event => {
+      let target;
+      if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') target = (index + tabs.length - 1) % tabs.length;
+      if (event.key === 'Home') target = 0;
+      if (event.key === 'End') target = tabs.length - 1;
+      if (target === undefined) return;
+      event.preventDefault(); tabs[target].focus(); showView(tabs[target].dataset.view);
+    });
+  });
+  function rankVisibleRows() {
+    let rank = 0;
+    $$('#board-body tr').forEach(row => { if (!row.hidden) row.cells[0].textContent = ++rank; });
+  }
+  company.addEventListener('change', () => {
+    models.forEach(m => { m.row.hidden = company.value !== 'all' && m.org !== company.value; });
+    rankVisibleRows(); showView(activeView, false);
+  });
+  $('#board').addEventListener('click', event => { if (event.target.closest('[data-sort]')) rankVisibleRows(); });
+
+  function renderPareto() {
+    hideTooltip();
+    const visible = visibleModels();
+    const resource = $('#pareto-resource').value, score = $('#pareto-score').value;
+    const log = $('#pareto-scale').value === 'log';
+    const full = $('#pareto-range').value === 'full';
+    const frontier = visible.filter(a => !visible.some(b => b[resource] <= a[resource] && b[score] >= a[score] && (b[resource] < a[resource] || b[score] > a[score]))).sort((a, b) => a[resource] - b[resource]);
+    const frontierIDs = new Set(frontier.map(m => m.id));
+    const width = 1080, height = 490, left = 76, right = 44, top = 32, bottom = 66;
+    const plotW = width - left - right, plotH = height - top - bottom;
+    const maxValue = Math.max(...visible.map(m => m[resource]));
+    const minValue = Math.min(...visible.map(m => m[resource]));
+    const niceStep = value => { const power = 10 ** Math.floor(Math.log10(value)); const fraction = value / power; return (fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10) * power; };
+    const linearStep = niceStep(maxValue * 1.15 / 5);
+    const xMin = log ? minValue * .6 : 0, xMax = log ? maxValue * 1.5 : Math.ceil(maxValue * 1.15 / linearStep) * linearStep;
+    const yMax = full ? 100 : Math.min(100, Math.max(10, Math.ceil(Math.max(...visible.map(m => m[score])) * 1.23 / 5) * 5));
+    const yStep = yMax <= 35 ? 5 : yMax <= 70 ? 10 : 20;
+    const X = value => left + (log ? (Math.log(value) - Math.log(xMin)) / (Math.log(xMax) - Math.log(xMin)) : value / xMax) * plotW;
+    const Y = value => top + (1 - value / yMax) * plotH;
+    const xTicks = [];
+    if (log) {
+      for (let p = Math.floor(Math.log10(xMin)); p <= Math.ceil(Math.log10(xMax)); p++) for (const base of [1, 2, 5]) {
+        const tick = base * 10 ** p; if (tick >= xMin && tick <= xMax) xTicks.push(tick);
+      }
+    } else for (let tick = 0; tick <= xMax; tick += linearStep) xTicks.push(tick);
+    let svg = `<svg viewBox="0 0 ${width} ${height}" aria-labelledby="pareto-title" aria-describedby="pareto-description" role="group"><title id="pareto-title">${scoreNames[score]} hidden-test pass rate versus mean ${resource} per task</title><desc id="pareto-description">${visible.length} models. ${frontier.length} on the Pareto frontier. Lower resource use and higher pass rate are better. ${log ? 'Logarithmic' : 'Linear'} horizontal axis. No confidence intervals are available.</desc>`;
+    for (let tick = 0; tick <= yMax; tick += yStep) svg += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${width - right}" y2="${Y(tick)}"/><text class="plot-tick" x="${left - 14}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
+    if (yMax % yStep) svg += `<text class="plot-tick" x="${left - 14}" y="${top + 4}" text-anchor="end">${yMax}%</text>`;
+    xTicks.forEach(tick => { svg += `<line class="plot-grid" x1="${X(tick)}" y1="${top}" x2="${X(tick)}" y2="${height - bottom}"/><text class="plot-tick" x="${X(tick)}" y="${height - bottom + 25}" text-anchor="middle">${format(tick, resource)}</text>`; });
+    svg += `<line class="plot-axis" x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}"/><line class="plot-axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}"/>`;
+    if (frontier.length > 1) svg += `<polyline class="frontier-line" points="${frontier.map(m => `${X(m[resource])},${Y(m[score])}`).join(' ')}"/>`;
+    svg += `<text class="axis-title" x="${left + plotW / 2}" y="${height - 12}" text-anchor="middle">Mean ${resource === 'cost' ? 'cost (USD)' : resource === 'tokens' ? 'tokens (millions)' : 'turns'} per task · ${log ? 'log' : 'linear'} scale</text><text class="axis-title" transform="translate(18 ${top + plotH / 2}) rotate(-90)" text-anchor="middle">${scoreNames[score]} hidden-test pass rate</text>`;
+    // Choose label positions that avoid other labels and point markers.
+    const points = visible.map(m => ({model: m, x: X(m[resource]), y: Y(m[score])}));
+    const boxes = [];
+    const intersects = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    const labels = [];
+    [...points].sort((a, b) => b.y - a.y).forEach(point => {
+      const m = point.model, w = m.short.length * 6.6 + 8, h = 34;
+      const candidates = [[24,-40],[24,10],[-w-24,-40],[-w-24,10],[24,-80],[-w-24,-80],[24,48],[-w-24,48],[24,-120],[-w-24,-120]];
+      const position = candidates.map(([dx,dy]) => ({x: Math.max(left + 4, Math.min(width - right - w, point.x + dx)), y: Math.max(top + 4, Math.min(height - bottom - h - 4, point.y + dy)), w, h})).find(box => !boxes.some(other => intersects(box, other)) && !points.some(other => intersects(box, {x:other.x-16,y:other.y-16,w:32,h:32}))) || {x: Math.max(left + 4, Math.min(width - right - w, point.x + 24)), y: Math.max(top + 4, point.y - 40), w, h};
+      boxes.push(position);
+      const endX = point.x < position.x ? position.x - 4 : position.x > position.x + w ? position.x + w + 4 : position.x + w / 2;
+      const endY = point.y < position.y ? position.y : point.y > position.y + h ? position.y + h : position.y + h / 2;
+      labels.push(`<g class="plot-label ${frontierIDs.has(m.id) ? 'on-frontier' : 'dominated'}"><line x1="${point.x}" y1="${point.y}" x2="${endX}" y2="${endY}"/><text x="${position.x}" y="${position.y + 12}">${escape(m.short)}</text><text class="plot-value" x="${position.x}" y="${position.y + 28}">${m[score].toFixed(1)}% · ${format(m[resource], resource)}</text></g>`);
+    });
+    svg += labels.join('');
+    points.forEach(({model:m,x,y}) => {
+      const onFrontier = frontierIDs.has(m.id);
+      svg += `<g class="plot-point ${onFrontier ? 'on-frontier' : 'dominated'}" tabindex="0" role="button" data-model="${escape(m.id)}" aria-label="${escape(m.name)}: ${m[score].toFixed(1)}% ${scoreNames[score]} pass rate, ${format(m[resource], resource)} mean ${resource} per task${onFrontier ? ', on Pareto frontier' : ''}"><circle cx="${x}" cy="${y}" r="15"/><image class="plot-logo" href="${m.logo}" x="${x - 9}" y="${y - 9}" width="18" height="18"/><title>${escape(m.name)}: ${m[score].toFixed(1)}%, ${format(m[resource], resource)}</title></g>`;
+    });
+    svg += '</svg>';
+    $('#pareto-chart').innerHTML = svg;
+    $('#pareto-chart').querySelectorAll('.plot-point').forEach(point => {
+      const m = visible.find(model => model.id === point.dataset.model);
+      const onFrontier = frontierIDs.has(m.id);
+      bindTooltip(point, modelTooltip(m) + `<dl><div><dt>${scoreNames[score]} pass rate</dt><dd>${m[score].toFixed(1)}%</dd></div><div><dt>Mean ${resource} / task</dt><dd>${format(m[resource], resource)}</dd></div></dl><span class="tooltip-status">${onFrontier ? 'On the Pareto frontier' : 'Dominated by a visible model'}</span>`);
+      point.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); point.dispatchEvent(new Event('click')); } });
+    });
+    $('#pareto-summary').textContent = `${visible.length} models · ${frontier.length} on the frontier`;
+  }
+  const taskData = JSON.parse($('#waffle-data').textContent);
+  const tasks = taskData.tasks;
+  const waffleModels = taskData.models;
+  const contextPicker = $('#waffle-context');
+  const initialContext = new URLSearchParams(location.search).get('context');
+  if (['1m', '200k'].includes(initialContext)) contextPicker.value = initialContext;
+  const entryFor = (task, model) => task.results[model.id].contexts[model.variable_context ? contextPicker.value : 'recorded'];
+  const trialScore = entry => entry.status === 'scored' ? 100 * entry.passed / entry.total : null;
+  // Calibrated continuous shades: separate low scores from the middle range
+  // without changing fractions, clipping high scores, or normalizing to a max.
+  const shadeStops = [[0,244], [5,218], [10,182], [25,96], [50,32], [100,0]];
+  const scoreColor = score => {
+    const index = Math.max(1, shadeStops.findIndex(([value]) => value >= score));
+    const [low, light] = shadeStops[index - 1], [high, dark] = shadeStops[index];
+    const channel = Math.round(light + (dark - light) * (score - low) / (high - low));
+    return `rgb(${channel}, ${channel}, ${channel})`;
+  };
+  const contextLabel = value => value === '1m' ? '1M' : value === '200k' ? '200K' : 'recorded';
+  const summarize = entries => {
+    const scores = entries.map(trialScore).filter(score => score !== null);
+    return {mean: scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null, count: scores.length};
+  };
+  const byMeanDescending = (a, b) => a.mean === null || b.mean === null
+    ? Number(a.mean === null) - Number(b.mean === null) || a.name.localeCompare(b.name)
+    : b.mean - a.mean || a.name.localeCompare(b.name);
+  let waffleEnlarged = false;
+
+  function renderWaffle() {
+    hideTooltip();
+    // Rank both axes using only scored cells in the selected context. Every
+    // task has equal weight in a model mean; unscored cells are never zeros.
+    const visible = waffleModels.map(model => ({...model,
+      ...summarize(tasks.map(task => entryFor(task, model))),
+    })).sort(byMeanDescending);
+    const rows = tasks.map(task => ({task, name: task.name,
+      ...summarize(visible.map(model => entryFor(task, model))),
+    })).sort(byMeanDescending);
+    const chart = $('#waffle-chart');
+    const columns = innerWidth >= 900 ? 2 : 1;
+    const pitch = waffleEnlarged ? 23 : columns === 2 ? Math.max(14, Math.min(16, Math.floor((innerHeight - 280) / 37))) : 12;
+    const labelWidth = innerWidth < 500 ? 146 : 190;
+    chart.style.setProperty('--cell-pitch', `${pitch}px`);
+    chart.style.setProperty('--trial-size', `${pitch - 1}px`);
+    chart.style.setProperty('--row-height', `${pitch}px`);
+    chart.style.setProperty('--task-label-width', `${labelWidth}px`);
+    chart.style.setProperty('--task-font-size', `${Math.min(10, pitch)}px`);
+    chart.dataset.blocks = columns;
+    let html = '', scored = 0;
+    const unscored = {};
+    const chunks = columns === 2 ? [rows.slice(0,37), rows.slice(37)] : [rows];
+    chunks.forEach((chunk, block) => {
+    html += `<table class="task-waffle-table" style="width:${labelWidth + visible.length * pitch}px"><caption class="sr-only">${columns === 2 ? `Tasks ${block * 37 + 1}–${block * 37 + chunk.length} of 74` : 'All 74 website tasks'} and 9 models. Read tasks down the left block, then down the right block: easiest first, hardest last. Models are ordered strongest to weakest from left to right in both blocks. Both axes use mean reported pass rate in the selected context, excluding unscored cells. Switch context for GLM, DeepSeek and Qwen. Other models keep their recorded context. A faint diagonal mark means no usable score in this view, not zero.</caption><colgroup><col style="width:${labelWidth}px">${visible.map(() => `<col style="width:${pitch}px">`).join('')}</colgroup><thead><tr><th scope="col" class="task-name-heading" title="Tasks ranked by mean pass rate, easier first. Read down the left block, then the right block.">${columns === 2 ? `${block * 37 + 1}–${block * 37 + chunk.length} · ${block === 0 ? 'Easier' : 'Harder'}` : 'Easy → hard'}</th>`;
+    visible.forEach(model => {
+      const records = tasks.flatMap(t => t.results[model.id].records);
+      const labels = [...new Set(records.map(r => r.label))];
+      const context = model.variable_context ? contextLabel(contextPicker.value) : labels.length === 1 && labels[0] !== 'Recorded context' ? labels[0].replace(/k/ig,'K') : '';
+      const meanLabel = model.mean === null ? 'No scored tasks' : `Mean pass rate: ${model.mean.toFixed(2)}% · ${model.count}/74 scored tasks`;
+      html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" title="${escape(model.name)} · ${escape(context || 'recorded context')}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span></span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
+    });
+    html += '</tr></thead><tbody>';
+    chunk.forEach(({task, mean, count}) => {
+      const difficulty = mean === null ? 'No scored models' : `Mean pass rate: ${mean.toFixed(2)}% · ${count}/${visible.length} scored models`;
+      html += `<tr data-task="${escape(task.id)}"><th scope="row" class="task-name"><a href="tasks.html?task=${encodeURIComponent(task.id)}" title="${escape(task.name)}\n${escape(difficulty)}">${escape(task.name)}</a></th>`;
+      visible.forEach(model => {
+        const entry = entryFor(task, model), score = trialScore(entry);
+        if (score !== null) scored++; else unscored[entry.status] = (unscored[entry.status] || 0) + 1;
+        const description = score !== null ? `${entry.passed}/${entry.total} tests (${score.toFixed(1)}%)` : entry.status === 'conflict' ? 'Conflicting source scores' : entry.status === 'withdrawn' ? 'Source score withdrawn' : entry.status === 'invalid' ? 'Invalid source fraction' : 'Score not reported';
+        const classes = `waffle-point ${score !== null ? 'scored' : 'missing'}${entry.status === 'conflict' ? ' conflict' : ''}`;
+        const attributes = `class="${classes}"${score !== null ? ` style="--score-color:${scoreColor(score)}"` : ''} data-task="${escape(task.id)}" data-model="${escape(model.id)}" data-score="${score === null ? '' : score}" aria-label="${escape(task.name)}, ${escape(model.name)}: ${escape(description)}"`;
+        const href = entry.run ? `tasks.html?task=${encodeURIComponent(task.id)}&model=${encodeURIComponent(model.id)}&context=${encodeURIComponent(entry.run)}` : '';
+        html += `<td class="task-result" data-model="${escape(model.id)}">${href ? `<a href="${href}" ${attributes}></a>` : `<button type="button" ${attributes}></button>`}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    });
+    chart.innerHTML = html;
+    chart.querySelectorAll('.waffle-point').forEach(point => {
+      const task = tasks.find(t => t.id === point.dataset.task), model = visible.find(m => m.id === point.dataset.model), entry = entryFor(task, model), score = trialScore(entry);
+      const context = model.variable_context ? contextLabel(contextPicker.value) : entry.label || 'Recorded context';
+      let details = `<strong>${escape(task.name)}</strong><span>${escape(model.name)} · ${escape(context)}</span>`;
+      if (score !== null) details += `<span class="tooltip-score">${entry.passed}/${entry.total} tests · ${score.toFixed(2)}%</span>`;
+      else if (entry.status === 'conflict') {
+        const records = task.results[model.id].records.filter(r => r.context === entryFor(task, model).context || entry.cells.includes(r.cell));
+        details += `<span>Different fractions in the source: ${records.map(r => escape(r.value || 'blank')).join(', ')}.</span>`;
+      } else details += `<span>${entry.status === 'withdrawn' ? 'Score withdrawn in source comments.' : entry.status === 'invalid' ? 'Source fraction is malformed.' : 'The source has no score for this task and context.'} This is not a zero.</span>`;
+      if (entry.note) details += `<span>${escape(entry.note)}</span>`;
+      if (entry.repaired) details += '<span>Published score is for a repaired candidate; replay shows the archived original.</span>';
+      details += `<span>Source: ${escape(taskData.source.sheet)}${entry.cells.length ? '!' + entry.cells.map(escape).join(', ') : ''}</span>`;
+      if (entry.run) details += '<span class="tooltip-status">Click to compare the website and browse its trajectory →</span>';
+      else details += '<span class="tooltip-status">No unique recorded trace is bound to this context.</span>';
+      bindTooltip(point, details);
+      point.addEventListener('pointerenter', () => point.closest('tr').classList.add('is-highlighted'));
+      point.addEventListener('pointerleave', () => point.closest('tr').classList.remove('is-highlighted'));
+    });
+    const missingLabels = {missing:'blank', withdrawn:'withdrawn', conflict:'conflict', invalid:'invalid'};
+    $('#waffle-coverage').textContent = `${scored}/666 scores` + Object.entries(unscored).map(([state,count]) => ` · ${count} ${missingLabels[state]}`).join('');
+    $('#waffle-legend').innerHTML = `<span class="waffle-simple-legend"><span>Test pass rate</span>${[0,10,25,50,100].map(value => `<span class="legend-item"><i style="background:${scoreColor(value)}" aria-hidden="true"></i>${value}%</span>`).join('')}<span class="legend-item"><i class="legend-unscored" aria-hidden="true"></i>Unscored</span>${unscored.conflict ? '<span class="legend-item"><i class="legend-conflict" aria-hidden="true"></i>Conflict</span>' : ''}</span>`;
+    $('#waffle-note').textContent = 'Sorted by mean test pass rate. Unscored cells excluded.';
+  }
+  contextPicker.addEventListener('change', () => {
+    renderWaffle();
+    $('.section-heading .download').href = `data/waffle-${contextPicker.value}.csv`;
+    const url = new URL(location.href); url.searchParams.set('context', contextPicker.value); history.replaceState(null, '', url);
+  });
+  $('#waffle-expand').addEventListener('click', () => {
+    waffleEnlarged = !waffleEnlarged;
+    $('#waffle-expand').setAttribute('aria-pressed', String(waffleEnlarged));
+    $('#waffle-expand').setAttribute('aria-label', waffleEnlarged ? 'Use compact Waffle chart' : 'Enlarge Waffle chart');
+    $('#waffle-expand').title = waffleEnlarged ? 'Compact' : 'Enlarge';
+    renderWaffle();
+  });
+  let waffleResizeFrame;
+  window.addEventListener('resize',()=>{
+    cancelAnimationFrame(waffleResizeFrame);
+    waffleResizeFrame=requestAnimationFrame(()=>{if(activeView==='waffle')renderWaffle();});
+  });
+  ['pareto-score','pareto-resource','pareto-scale','pareto-range'].forEach(id=>$('#'+id).addEventListener('change',renderPareto));
+  $('#results-toolbar').hidden=false;
+  showView(new URLSearchParams(location.search).get('view')||'table',false);
+  window.addEventListener('load', () => {
+    if (activeView === 'waffle' && location.hash === '#results') requestAnimationFrame(() => $('#result-waffle').scrollIntoView({block:'start'}));
+  }, {once:true});
+})();

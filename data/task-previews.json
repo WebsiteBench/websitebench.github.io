@@ -1,0 +1,55 @@
+{
+  "tasks": {
+    "medium": {
+      "views": [
+        {
+          "id": "home",
+          "label": "Home",
+          "route": "/",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-home.png",
+            "version": "Local snapshot",
+            "source_revision": "d1c5375f93260cf375b9159b13ed380f062ffbfe"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-home.png",
+              "run_id": "xlsx-3fe67e9178baf494",
+              "context": "200K",
+              "http_status": 200,
+              "capture_kind": "frozen-candidate replay"
+            }
+          }
+        },
+        {
+          "id": "about",
+          "label": "About",
+          "route": "/about",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-about.png",
+            "version": "Local snapshot",
+            "source_revision": "d1c5375f93260cf375b9159b13ed380f062ffbfe"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-about.png",
+              "run_id": "xlsx-3fe67e9178baf494",
+              "context": "200K",
+              "http_status": 200,
+              "capture_kind": "frozen-candidate replay"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "description": "Real paired screenshots. Medium contains an anonymous replay of a local reference snapshot and the archived Qwen run1, at identical routes and 1440x900 viewports. This is a visual debugging example, not a certified final leaderboard run."
+}

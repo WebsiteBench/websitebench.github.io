@@ -28,5 +28,9 @@
 - Deeper workflows go with lower scores (Spearman rho = -0.81 among sites with nonzero scores); breadth does not (rho = -0.14).
 
 ## Links
-- [Project page](index.html): the full page, with the live demo, leaderboard and findings
+- [Project page](https://websitebench.github.io/): benchmark overview, leaderboard, protocol, findings, and run instructions
+- [Benchmark code](https://github.com/reacher-z/WebsiteBenchHarbor)
+- [Reference website data](https://github.com/reacher-z/WebsiteBenchWebsites)
+- [Website releases](https://github.com/reacher-z/WebsiteBenchWebsites/releases)
+- [Leaderboard CSV](data/leaderboard.csv)
 - [Citation metadata](CITATION.cff)
