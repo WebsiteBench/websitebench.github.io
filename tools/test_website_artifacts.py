@@ -5,10 +5,12 @@ from pathlib import Path
 import tarfile
 import tempfile
 import threading
+import subprocess
+import sys
 from types import SimpleNamespace
 import unittest
 
-from replay_runtime import ReplayRuntime
+from replay_runtime import ReplayRuntime, SPARSE_COPY, source_bytes, saved_build
 from website_artifacts import attach
 
 
@@ -86,6 +88,44 @@ class ArtifactTests(unittest.TestCase):
         self.record['candidate']['candidate']['archive_sha256'] = 'f' * 64
         with self.assertRaisesRegex(ValueError, 'SHA256'):
             runtime.extract(self.record['candidate'], self.info['id'])
+
+    def test_large_project_assets_are_shared_while_entry_scripts_remain_writable(self):
+        source, output = self.root / 'large-project', self.root / 'working-copy'
+        (source / 'assets').mkdir(parents=True)
+        (source / 'assets/site.css').write_text('body{}')
+        (source / 'server.py').write_text('original entry point')
+        with (source / 'large.db').open('wb') as f:
+            f.truncate(9 * 1024 * 1024)
+        subprocess.run([sys.executable, '-c', SPARSE_COPY, str(source), str(output)], check=True)
+        self.assertTrue((output / 'assets').is_symlink())
+        self.assertTrue((output / 'large.db').is_symlink())
+        self.assertFalse((output / 'server.py').is_symlink())
+        (output / 'server.py').write_text('runtime wrapper')
+        self.assertEqual((source / 'server.py').read_text(), 'original entry point')
+        self.assertEqual((output / 'assets/site.css').read_text(), 'body{}')
+
+    def test_node_reference_plain_completion_marker_still_allows_size_detection(self):
+        source = self.root / 'node-reference'
+        source.mkdir()
+        (source / '.complete').write_text('reference-build-key')
+        (source / 'server.js').write_text('node server')
+        self.assertEqual(source_bytes(source), len('reference-build-keynode server'))
+
+    def test_retained_reference_build_preserves_compiled_paths_and_rejects_traversal(self):
+        bundle = self.root / 'standalone.tar.gz'
+        with tarfile.open(bundle, 'w:gz') as tar:
+            raw = b'compiled reference'
+            entry = tarfile.TarInfo('dist/standalone/server.js'); entry.size = len(raw)
+            tar.addfile(entry, io.BytesIO(raw))
+        destination = self.root / 'saved/notion'
+        self.assertEqual(saved_build(bundle, destination), (1, len(raw)))
+        self.assertEqual((destination / 'dist/standalone/server.js').read_bytes(), raw)
+        with tarfile.open(bundle, 'w:gz') as tar:
+            entry = tarfile.TarInfo('../escape'); entry.size = len(raw)
+            tar.addfile(entry, io.BytesIO(raw))
+        with self.assertRaises(ValueError):
+            saved_build(bundle, destination)
+        self.assertFalse((destination.parent / 'escape').exists())
 
 
 if __name__ == '__main__':

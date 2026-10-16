@@ -79,6 +79,11 @@ catalog. The local replay reads the packaged `repo/` and
 Source-specific caches prevent a previously extracted project from replacing a
 newly bound export. Unavailable upstream exports leave existing verified bindings
 intact. Exported code availability does not certify that it can launch unchanged.
+Reference exports with a saved `standalone.tar.gz` use those recorded build
+outputs directly; the replay does not rebuild or regenerate the website.
+Verified exports up to 8 GB are cached on disk by archive checksum and project
+root. Large projects share read-only assets and keep a small writable entry point
+and temporary state, rather than copying gigabytes into each container’s memory.
 
 The public catalog contains no local artifact paths, tokens, raw trajectories or
 website archives. Keep the private index and cache outside this repository.

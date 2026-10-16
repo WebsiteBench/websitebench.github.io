@@ -21,6 +21,51 @@ import urllib.request
 
 from task_store import material_archive, open_tar, read_json, write_json
 
+SPARSE_COPY = '''from pathlib import Path
+import os, shutil, sys
+source, destination = map(Path, sys.argv[1:])
+destination.mkdir(parents=True, exist_ok=True)
+for item in source.iterdir():
+    if item.name == '.complete':
+        continue
+    target = destination / item.name
+    if item.is_dir() or item.stat().st_size > 8 * 1024 * 1024 and item.name != 'executable':
+        os.symlink(str(item), target, target_is_directory=item.is_dir())
+    else:
+        shutil.copy2(item, target)
+'''
+
+def source_bytes(source):
+    complete = source / '.complete'
+    if complete.is_file():
+        try:
+            metadata = read_json(complete)
+            if isinstance(metadata, dict) and isinstance(metadata.get('bytes'), int):
+                return metadata['bytes']
+        except (ValueError, OSError):
+            pass
+    return sum(path.stat().st_size for path in source.rglob('*') if path.is_file())
+
+def saved_build(archive, destination):
+    """Unpack a retained reference build without running a build command."""
+    count = size = 0
+    with open_tar(archive) as source:
+        for entry in source:
+            relative = PurePosixPath(entry.name.removeprefix('./'))
+            if relative.is_absolute() or '..' in relative.parts or entry.issym() or entry.islnk():
+                raise ValueError('Invalid retained reference build member')
+            if not entry.isfile():
+                continue
+            size += entry.size; count += 1
+            if size > 2 * 1024 * 1024 * 1024 or count > 100000:
+                raise ValueError('The retained reference build exceeds its size limit')
+            target = destination.joinpath(*relative.parts)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with source.extractfile(entry) as data, target.open('wb') as output:
+                shutil.copyfileobj(data, output)
+            target.chmod(0o755 if entry.mode & 0o111 else 0o644)
+    return count, size
+
 
 def docker(*args, timeout=30):
     result = subprocess.run(['docker', *args], capture_output=True, text=True, timeout=timeout)
@@ -225,7 +270,13 @@ class ReplayRuntime:
         fingerprint = binding['candidate'].get('archive_sha256')
         if fingerprint and not re.fullmatch(r'[a-f0-9]{64}', fingerprint):
             raise ValueError('Invalid website archive checksum')
-        destination = self.cache / (uid + '-' + fingerprint[:12] if fingerprint else uid)
+        root_key = hashlib.sha256(binding['candidate'].get('archive_root', '').encode()).hexdigest()[:8]
+        prebuilt = binding['candidate'].get('prebuilt_member')
+        if prebuilt:
+            if prebuilt != 'solution/site/implementation/standalone.tar.gz' or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,100}', binding['candidate'].get('prebuilt_task', '')):
+                raise ValueError('Invalid retained reference build binding')
+            root_key = hashlib.sha256((root_key + prebuilt + binding['candidate']['prebuilt_task'] + ':layout-v2').encode()).hexdigest()[:8]
+        destination = self.cache / ('export-' + fingerprint[:24] + '-' + root_key if fingerprint else uid)
         if (destination / '.complete').is_file():
             return destination
         with self.extract_lock:
@@ -267,6 +318,12 @@ class ReplayRuntime:
                 with open_tar(archive) as source:
                     for entry in source:
                         name = entry.name.removeprefix('./')
+                        if prebuilt and name == prebuilt:
+                            if not entry.isfile():
+                                raise ValueError('The retained reference build is not a file')
+                            with source.extractfile(entry) as data, (temporary / '.saved-build.tar.gz').open('wb') as output:
+                                shutil.copyfileobj(data, output)
+                            continue
                         if not name.startswith(root):
                             continue
                         relative = PurePosixPath(name[len(root):])
@@ -282,7 +339,7 @@ class ReplayRuntime:
                             continue
                         size += entry.size
                         count += 1
-                        if size > 768 * 1024 * 1024 or count > 30000:
+                        if size > (8 * 1024 * 1024 * 1024 if fingerprint else 768 * 1024 * 1024) or count > (100000 if fingerprint else 30000):
                             raise ValueError('This website exceeds the local replay size limit.')
                         target.parent.mkdir(parents=True, exist_ok=True)
                         with source.extractfile(entry) as stream, target.open('wb') as output:
@@ -304,6 +361,15 @@ class ReplayRuntime:
                             raise ValueError('An archived code file could not be resolved.')
                 if not count:
                     raise ValueError('The archive has no files at the recorded website path.')
+                if prebuilt:
+                    retained = temporary / '.saved-build.tar.gz'
+                    if not retained.is_file():
+                        raise ValueError('The reference package has no retained build at its recorded path')
+                    built_files, built_bytes = saved_build(retained, temporary / '_saved_build' / binding['candidate']['prebuilt_task'])
+                    build_root = temporary / '_saved_build' / binding['candidate']['prebuilt_task']
+                    if (build_root / 'server.js').is_file() and not (temporary / 'standalone').exists():
+                        (temporary / 'standalone').symlink_to(Path('_saved_build') / binding['candidate']['prebuilt_task'], target_is_directory=True)
+                    count += built_files; size += built_bytes; retained.unlink()
                 (temporary / '.complete').write_text(json.dumps({'files': count, 'bytes': size, 'source': binding.get('source')}))
                 for directory in temporary.rglob('*'):
                     if directory.is_dir():
@@ -379,10 +445,14 @@ if [ -f run.sh ]; then exec sh run.sh; fi
 if [ -f index.html ]; then exec python -m http.server 8080 --bind 0.0.0.0; fi
 echo 'No supported entry point' >&2
 exit 42'''
+            cache_key = str(source.resolve())
+            if cache_key not in self.source_sizes:
+                self.source_sizes[cache_key] = source_bytes(source)
+            if not reference and self.source_sizes[cache_key] > 384 * 1024 * 1024:
+                setup = "python - /source /app/repo <<'WB_COPY'\n" + SPARSE_COPY + 'WB_COPY\n'
+                launch = launch.replace('cp -R /source/. /app/repo/\n', setup)
+                launch = launch.replace('if [ -f compile.sh ]; then', 'if [ ! -f executable ] && [ -f compile.sh ]; then')
             if reference and (source / 'harbor_entry.py').is_file():
-                cache_key = str(source.resolve())
-                if cache_key not in self.source_sizes:
-                    self.source_sizes[cache_key] = sum(p.stat().st_size for p in source.rglob('*') if p.is_file())
                 if self.source_sizes[cache_key] > 384 * 1024 * 1024:
                     # Frozen reference assets are immutable. Serve large trees
                     # directly from disk instead of copying them into RAM.
@@ -396,6 +466,7 @@ exit 42'''
                    '--mount', f'type=bind,source={source.resolve()},target=/source,readonly',
                    '-e', 'HOST=0.0.0.0', '-e', 'PORT=8080', '-e', 'DATA_DIR=/tmp/data',
                    '-e', 'SEED=0', '-e', 'TZ=UTC', '-e', 'PYTHONDONTWRITEBYTECODE=1',
+                   *(['-e', 'WEBSITEBENCH_NODE_REFERENCE_BUILD_ROOT=/source/_saved_build'] if reference else []),
                    self.IMAGE, 'bash', '-c', launch)
         try:
             info = json.loads(docker('inspect', name))[0]

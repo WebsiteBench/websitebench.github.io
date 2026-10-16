@@ -62,6 +62,10 @@ def attach(public, private, source):
                        'candidate': {'archive_root': root, 'archive_sha256': sha,
                                      'code_file_count': len(members),
                                      'sample_files': [f['path'] for f in members[:15]]}}
+            prebuilt = next((p for p in artifact.get('built_artifact_paths', [])
+                             if p == 'solution/site/implementation/standalone.tar.gz'), None)
+            if role == 'reference' and prebuilt:
+                binding['candidate'].update(prebuilt_member=prebuilt, prebuilt_task=item['task'])
             record['candidate' if role == 'agent' else 'reference_artifact'] = binding
             info[field] = {'url': base + '/resolve/' + metadata['revision'] + '/' + quote(relative, safe='/') + '?download=true',
                            'manifest': base + '/blob/' + metadata['revision'] + '/' + destination + '/website-artifacts.json',
