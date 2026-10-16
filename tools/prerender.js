@@ -81,6 +81,14 @@ for (const task of waffle.tasks) {
 const waffleMarker = /(<script type="application\/json" id="waffle-data">)[\s\S]*?(<\/script><!--\/waffle-data-->)/;
 if (!waffleMarker.test(html)) throw new Error('Waffle data marker missing');
 html = html.replace(waffleMarker, (_, start, end) => start + JSON.stringify(waffle).replace(/</g, '\\u003c') + end);
+const citation = fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim();
+const citationMarker = /(<pre id="bibtex"><code>)[\s\S]*?(<\/code><\/pre>)/;
+if (!citationMarker.test(html)) throw new Error('Homepage citation marker missing');
+html = html.replace(citationMarker, (_, start, end) => start + escape(citation) + end);
+const analysisFile = path.join(root, 'analysis.html');
+const analysisHTML = fs.readFileSync(analysisFile, 'utf8');
+if (!citationMarker.test(analysisHTML)) throw new Error('Analysis citation marker missing');
+fs.writeFileSync(analysisFile, analysisHTML.replace(citationMarker, (_, start, end) => start + escape(citation) + end));
 fs.writeFileSync(file, html);
 const columns = ['model', 'organization', 'group', 'overall_pct', 'request_pct', 'browser_pct', 'system_pct', 'cost_usd_per_task', 'tokens_m_per_task', 'turns_per_task'];
 const csvRows = models.map(m => [m.name, m.org, m.group === 'open' ? 'open-source' : 'frontier', m.overall, m.request, m.browser, m.system, m.cost, m.tokens, m.turns]);

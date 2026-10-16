@@ -3,9 +3,16 @@
   'use strict';
   const root = document.documentElement;
   if (location.pathname.endsWith('/') || location.pathname.endsWith('index.html')) {
-    const legacy = {'#task':'tasks.html','#benchmark':'analysis.html#benchmark','#findings':'analysis.html#findings','#why':'analysis.html#findings','#run':'run.html','#cite':'analysis.html#cite'};
+    const legacy = {'#task':'tasks.html','#benchmark':'analysis.html#benchmark','#findings':'analysis.html#findings','#why':'analysis.html#findings','#run':'run.html'};
     if (legacy[location.hash]) { location.replace(legacy[location.hash]); return; }
   }
+  const openCitation = () => {
+    if (location.hash !== '#cite') return;
+    const details = document.querySelector('#cite details');
+    if (details) details.open = true;
+  };
+  openCitation();
+  window.addEventListener('hashchange', openCitation);
   const themeButton = document.getElementById('theme-toggle');
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   const updateTheme = () => {

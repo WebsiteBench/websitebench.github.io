@@ -185,7 +185,7 @@ Push the reviewed changes to GitHub. In **Settings → Pages**, choose **Deploy 
 - Benchmark code: https://github.com/reacher-z/WebsiteBenchHarbor
 - Reference website data: https://github.com/reacher-z/WebsiteBenchWebsites
 - Released website archives: https://github.com/reacher-z/WebsiteBenchWebsites/releases
-- Keep author information anonymous until it can be released. Update the citation in `index.html` and `CITATION.cff` together when authors are public.
+- Keep author information anonymous until it can be released. Update `CITATION.bib` and `CITATION.cff` together when authors are public, then run `node tools/prerender.js` to update the homepage and Analysis citation blocks.
 - Add a paper link when a public paper URL is available.
 - Never mention the conference, its year, or review status.
 - The internal trajectory spreadsheet is not linked publicly. Review its contents and sharing permissions before publishing any trajectories.
@@ -220,3 +220,5 @@ Push the reviewed changes to GitHub. In **Settings → Pages**, choose **Deploy 
 | `CITATION.cff`, `llms.txt` | Citation and machine-readable project information |
 
 To regenerate `assets/og.png`, use `node tools/render-og.js`. This optional maintenance tool needs Playwright; use an existing installation via `PLAYWRIGHT=/path/to/playwright`. To use an existing browser executable, set `CHROMIUM_PATH=/path/to/chromium`. These tools are not needed to serve or deploy the website.
+
+The homepage includes a compact Citation disclosure, an entry beside the hero actions, a BibTeX download and a copy button. `CITATION.bib` is the shared source for both HTML citation blocks; direct `#cite` links open the disclosure. Current author metadata remains Anonymous until supplied.

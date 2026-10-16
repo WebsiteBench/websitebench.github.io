@@ -351,6 +351,8 @@ code { font-family: var(--mono); }
 .benchmark-keyline { margin-top: 28px; padding-block: 14px; border-block: 1px solid var(--rule); color: var(--muted); font: 11px/1.6 var(--mono); }
 .benchmark-keyline span { margin-inline: 12px; color: var(--rule); }
 .leaderboard { padding-top: 32px; padding-bottom: 24px; }
+.home-citation { padding-block: 12px 24px; border-top: 1px solid var(--rule); }
+.home-citation > .detail > summary { font: 14px/1.5 var(--mono); }
 .subpage { padding-top: 40px; min-height: calc(100vh - 160px); }
 .subpage-heading h1 { font: 400 32px/1.2 var(--mono); letter-spacing: -1px; }
 .subpage-intro { margin-top: 16px; font-size: 14px; color: var(--muted); }
