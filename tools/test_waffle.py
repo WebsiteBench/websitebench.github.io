@@ -8,6 +8,26 @@ from annotation_scores import supplement
 
 
 class WaffleTests(unittest.TestCase):
+    def test_qwen_overview_matches_all_74_rows_of_the_supplied_200k_table(self):
+        root = Path(__file__).resolve().parents[1]
+        expected = json.loads((root / 'tools/fixtures/qwen-200k-book1.json').read_text())
+        data = json.loads((root / 'data/waffle.json').read_text())
+        self.assertEqual(len(expected['results']), 74)
+        self.assertEqual(sum(value is not None for value in expected['results'].values()), 71)
+        for task in data['tasks']:
+            entry = task['results']['qwen']['contexts']['overview']
+            self.assertEqual(entry['value'], expected['results'][task['id']], task['id'])
+            self.assertEqual(entry['label'], '200K')
+        amazon = next(t for t in data['tasks'] if t['id'] == 'amazon')['results']['qwen']['contexts']
+        self.assertEqual((amazon['overview']['passed'], amazon['overview']['total']), (402, 1025))
+        self.assertEqual(amazon['1m']['status'], 'missing')
+
+    def test_overview_selects_the_declared_context_instead_of_the_higher_score(self):
+        data = json.loads((Path(__file__).resolve().parents[1] / 'data/waffle.json').read_text())
+        medium = next(t for t in data['tasks'] if t['id'] == 'medium')['results']['qwen']['contexts']
+        self.assertEqual(medium['overview']['value'], medium['200k']['value'])
+        self.assertLess(medium['overview']['passed'], medium['1m']['passed'])
+
     def test_latest_note_fills_a_blank_only_for_the_bound_recording(self):
         note=dict(recording_id='current-run',score='192/393',passed=192,total=393,
                   context='1m',source_cell='B61',source_url='https://example.test/note',id='note-B61')

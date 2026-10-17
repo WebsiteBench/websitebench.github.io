@@ -165,7 +165,7 @@
   const waffleModels = taskData.models;
   const contextPicker = $('#waffle-context');
   const initialContext = new URLSearchParams(location.search).get('context');
-  if (['1m', '200k'].includes(initialContext)) contextPicker.value = initialContext;
+  contextPicker.value = ['overview', '1m', '200k'].includes(initialContext) ? initialContext : taskData.default_view || 'overview';
   const entryFor = (task, model) => task.results[model.id].contexts[model.variable_context ? contextPicker.value : 'recorded'];
   const trialScore = entry => entry.status === 'scored' ? 100 * entry.passed / entry.total : null;
   // Calibrated continuous shades: separate low scores from the middle range
@@ -214,9 +214,9 @@
     html += `<table class="task-waffle-table" style="width:${labelWidth + visible.length * pitch}px"><caption class="sr-only">${columns === 2 ? `Tasks ${block * 37 + 1}–${block * 37 + chunk.length} of 74` : 'All 74 website tasks'} and 9 models. Read tasks down the left block, then down the right block: easiest first, hardest last. Models are ordered strongest to weakest from left to right in both blocks. Both axes use mean reported pass rate in the selected context, excluding unscored cells. Switch context for GLM, DeepSeek and Qwen. Other models keep their recorded context. A faint diagonal mark means no usable score in this view, not zero.</caption><colgroup><col style="width:${labelWidth}px">${visible.map(() => `<col style="width:${pitch}px">`).join('')}</colgroup><thead><tr><th scope="col" class="task-name-heading" title="Tasks ranked by mean pass rate, easier first. Read down the left block, then the right block.">${columns === 2 ? `${block * 37 + 1}–${block * 37 + chunk.length} · ${block === 0 ? 'Easier' : 'Harder'}` : 'Easy → hard'}</th>`;
     visible.forEach(model => {
       const labels = [...new Set(tasks.map(task => entryFor(task, model).label).filter(Boolean))];
-      const context = model.variable_context ? contextLabel(contextPicker.value) : labels.length === 1 && labels[0] !== 'Recorded context' ? labels[0].replace(/k/ig,'K') : '';
+      const context = labels.length === 1 && !/recorded/i.test(labels[0]) ? labels[0].replace(/k/ig,'K') : '';
       const meanLabel = model.mean === null ? 'No scored tasks' : `Mean pass rate: ${model.mean.toFixed(2)}% · ${model.count}/74 scored tasks`;
-      html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" title="${escape(model.name)} · ${escape(context || 'recorded context')}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span></span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
+      html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" data-context="${escape(context)}" title="${escape(model.name)} · ${escape(context || 'recorded context')}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span>${context ? `<small class="task-model-context">${escape(context)}</small>` : ''}</span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
     });
     html += '</tr></thead><tbody>';
     chunk.forEach(({task, mean, count}) => {
@@ -238,7 +238,7 @@
     chart.innerHTML = html;
     chart.querySelectorAll('.waffle-point').forEach(point => {
       const task = tasks.find(t => t.id === point.dataset.task), model = visible.find(m => m.id === point.dataset.model), entry = entryFor(task, model), score = trialScore(entry);
-      const context = model.variable_context ? contextLabel(contextPicker.value) : entry.label || 'Recorded context';
+      const context = entry.label || 'Recorded context';
       let details = `<strong>${escape(task.name)}</strong><span>${escape(model.name)} · ${escape(context)}</span>`;
       if (score !== null) details += `<span class="tooltip-score">${entry.passed}/${entry.total} tests · ${score.toFixed(2)}%</span>`;
       else if (entry.status === 'conflict') {
@@ -248,6 +248,10 @@
       if (entry.note) {
         const note = entry.note.split('\n').find(line => line.trim()) || '';
         details += `<span>${escape(note.slice(0, 240))}${note.length > 240 ? '…' : ''}</span>`;
+      }
+      if (score === null && model.variable_context) {
+        const available = ['1m', '200k'].filter(key => task.results[model.id].contexts[key]?.status === 'scored');
+        if (available.length) details += `<span>A published ${available.map(contextLabel).join(' / ')} result is available in another view.</span>`;
       }
       if (entry.repaired) details += '<span>Published score is for a repaired candidate; replay shows the archived original.</span>';
       details += entry.source_url ? `<span>Source: <a href="${escape(entry.source_url)}" target="_blank" rel="noopener">HF score file ↗</a></span>` : `<span>Source: ${escape(entry.source_sheet || taskData.source.sheet)}${entry.cells.length ? '!' + entry.cells.map(escape).join(', ') : ''}</span>`;

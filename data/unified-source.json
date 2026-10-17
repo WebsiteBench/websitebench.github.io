@@ -1,11 +1,12 @@
 {
   "repository": "TIGER-Lab/WebsiteBenchArtifacts",
-  "revision": "4e9e2fad76f0cb184ba36691fd1cc896e84cddf6",
-  "manifest_sha256": "cec6914dec3e3f962ba2fbaa840ea32baecf7e9a557d308f764884a1eb05cfc2",
+  "revision": "85e3d7415af9acc04caaf293bd2dc55a34095030",
+  "manifest_sha256": "b097ccb9c9c0c0535e25cd9071071680b7c28b99fa57899c832316f8636c1f2b",
   "files": {
     "waffle-1m.csv": "b97152559abe607cfc04defc985ae0c3226332f65e2809ed3e85977e426a7b7f",
-    "waffle-200k.csv": "ac93d575e4c0898a77a83f62e4433d02c5ae65b15b6db32d746a4936d8f89cfa",
-    "task-materials.json": "e9a8aba8ec1bb45ec32faee67db6312d7aaf7e63443eb6aaac565eacea573ccd",
-    "waffle.json": "e6537ed8f9aa6cc666c06a446bf7d336b1d3cf1cb2635cf166219ca7512d9aa3"
+    "waffle-overview.csv": "7c9ec0ac233d0cae7711b313c67115a29d32ac1a3c153bc4f4730971eaf819ce",
+    "waffle.json": "1b316a5ad0eb90dc02a4128203403eb64a187c2ed573d1f2b8ed9c342c31d6d2",
+    "task-materials.json": "caaa002071d74e6c22869255cd6532d2bf276b7a73fbd0d618812b1ea4f7e282",
+    "waffle-200k.csv": "42e3556887ee364de42943c28c2bcd23b6882e31402bdee1dd1016dae2c3580d"
   }
 }

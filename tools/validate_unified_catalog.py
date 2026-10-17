@@ -68,7 +68,7 @@ def validate(root):
     waffle = read(root / 'site/waffle.json')
     matrix_counts = {}
     lookup = {(p['task_id'], p['model_id']): p for p in pairs}
-    for ctx in ('1m', '200k'):
+    for ctx in ('overview', '1m', '200k'):
         states = []
         for task in waffle['tasks']:
             assert len(task['results']) == 9
@@ -76,7 +76,8 @@ def validate(root):
                 value = task['results'][model['id']]['contexts'][ctx if model['variable_context'] else 'recorded']
                 states.append(value['status'])
                 if value['status'] == 'scored':
-                    matching = [e for e in lookup[task['id'], model['source_id']]['contexts'] if e['fraction'] == value['value'] and (not model['variable_context'] or e['context'] == ctx)]
+                    selected_context = model.get('default_context') if ctx == 'overview' else ctx
+                    matching = [e for e in lookup[task['id'], model['source_id']]['contexts'] if e['fraction'] == value['value'] and (not model['variable_context'] or e['context'] == selected_context)]
                     assert len(matching) == 1 and matching[0]['score']['comparable']
                     assert value['run'] == matching[0]['recording_id']
         assert len(states) == 666

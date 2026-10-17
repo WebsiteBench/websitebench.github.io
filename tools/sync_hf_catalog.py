@@ -22,7 +22,7 @@ def sync(revision, local=None):
     manifest = json.loads(manifest_bytes)
     assert manifest['schema_version'] == 2
     expected = {'waffle.json', 'task-materials.json', 'waffle-1m.csv', 'waffle-200k.csv'}
-    assert set(manifest['site_sha256']) == expected
+    assert expected <= set(manifest['site_sha256']) <= expected | {'waffle-overview.csv'}
     contents = {}
     for name, digest in manifest['site_sha256'].items():
         payload = fetch('site/' + name)
@@ -30,6 +30,8 @@ def sync(revision, local=None):
         contents[name] = payload
     waffle = json.loads(contents['waffle.json'])
     assert len(waffle['tasks']) == 74 and len(waffle['models']) == 9
+    if waffle.get('default_view') == 'overview':
+        assert 'waffle-overview.csv' in contents
     # Verify every file before changing any checked-in website data.
     for name, payload in contents.items():
         temporary = ROOT / 'data' / (name + '.tmp')

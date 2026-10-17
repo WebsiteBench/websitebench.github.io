@@ -355,10 +355,13 @@ def export_waffle(output, cohort, pairs):
     prior_path = output / 'site/waffle.json'
     prior = read(prior_path if prior_path.is_file() else ROOT / 'data/waffle.json')
     lookup = {(p['task_id'], p['model_id']): p for p in pairs}
-    result = dict(version=2, updated='2026-10-16', source=dict(repository=REPO, sheet='HF canonical catalog', path='catalog.json'), models=prior['models'], tasks=[])
+    policy_path = output / 'sources/display-contexts.json'
+    policy = read(policy_path) if policy_path.is_file() else {'contexts': {'glm-5.3-flash': '1m', 'deepseek-v4.1-flash': '1m', 'qwen3.8-max': '200k'}}
+    models = [dict(m, default_context=policy['contexts'].get(m['source_id'], 'recorded')) for m in prior['models']]
+    result = dict(version=2, updated='2026-10-16', default_view='overview', source=dict(repository=REPO, sheet='HF canonical catalog', path='catalog.json'), models=models, tasks=[])
     for task in cohort['tasks']:
         t = dict(id=task['id'], name=task['name'], results={})
-        for model in prior['models']:
+        for model in models:
             entries = lookup[task['id'], model['source_id']]['contexts']
             contexts = {}
             for target in (['1m', '200k'] if model['variable_context'] else ['recorded']):
@@ -381,10 +384,12 @@ def export_waffle(output, cohort, pairs):
                                         repaired=score.get('candidate_variant') == 'repaired',
                                         note=('Legacy scoring protocol; retained separately from the current test pass metric.' if state == 'incomparable' else
                                               '\n'.join(score.get('qualifications', [])))[:2200])
+            if model['variable_context']:
+                contexts['overview'] = dict(contexts[model['default_context']])
             t['results'][model['id']] = dict(contexts=contexts, records=[])
         result['tasks'].append(t)
     write_site(output / 'site/waffle.json', result)
-    for ctx in ('1m', '200k'):
+    for ctx in ('overview', '1m', '200k'):
         with (output / f'site/waffle-{ctx}.csv').open('w') as stream:
             writer = csv.writer(stream, lineterminator='\n')
             writer.writerow(['task_id', 'task', 'model', 'context', 'passed', 'total', 'test_pass_rate', 'status', 'source', 'note'])

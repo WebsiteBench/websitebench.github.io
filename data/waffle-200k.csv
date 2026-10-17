@@ -116,7 +116,11 @@ apple,Apple,GLM 5.3 Flash,200K,122,700,17.428571428571427,scored,https://hugging
 apple,Apple,Kimi K3,200K,,,,invalid,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/apple/kimi-k3/200k/score.UNSCORED.json,"生成达到 57600 秒预算并异常终止；生成终态不满足准入规则，成绩留空，非零分。
 加密包内路径：1c1303c649b8259a1862f1ad676fb77271776839213ae01d1497160501c271c4"
 apple,Apple,DeepSeek V4.1 Flash,200K,,,,missing,,
-apple,Apple,Qwen 3.8 Max,200K,,,,missing,,
+apple,Apple,Qwen 3.8 Max,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/apple/qwen3.8-max/200k/score.UNSCORED.json,"【2026-10-17状态同步】Qwen上游错误/内容拒绝，生成结果不准入；对应历史版本均保留无分，不以其他模型结果代填。
+【2026-10-17状态同步】Qwen上游错误/内容拒绝，生成结果不准入；对应历史版本均保留无分，不以其他模型结果代填。
+历史记录保留：
+重复三次均出现qwen服务商内容拒绝
+HF：当前无已核验的本版本模型轨迹入口；不以其他上下文或其他模型轨迹替代。"
 apple,Apple,GPT 6.1 Sol,258K,163,700,23.285714285714285,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/apple/gpt-6.1-sol/258k/score.json,所选原始归档SHA256：2f682e28636ce324eff7c7e8aa53d4a1f6e0db039f30a2b65c72191db6a77151 【2026-10-15 AgPerry迁移】标准ATIF、引用图片、原始逐用例/视觉证据、严格选取记录、逐请求原始账本、用量汇总和完整原生会话gzip归档已发布（未加密，附原始路径清单）。原有缺失final用量和费用估算限定保持；文件齐全不代表会计信息完整。旧完整加密入口保留：https://huggingface.co/datasets/xyz-harbor/websitebench-harbor-trajectories/blob/25f8edd3a89a18d4e91c7266d2122f67c21e9506/encrypted/gpt61-sol-xhigh-258k-20261015/apple-run4.tar.zst.age【迁移说明结束】
 article,Article,Claude Opus 5.5,1M,46,794,5.793450881612091,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/article/claude-opus-5-5/1m/score.json,HF原轨迹与原结果已上传并逐文件核验；分数保留原b4bc00d2 verifier口径
 article,Article,Claude Opus 5,1M,273,1759,15.520181921546333,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/article/claude-opus-5/1m/score.json,5dcebb73有效
@@ -817,7 +821,13 @@ roomsketcher,RoomSketcher,Kimi K3,200K,,,,missing,https://huggingface.co/dataset
 roomsketcher,RoomSketcher,DeepSeek V4.1 Flash,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/roomsketcher/deepseek-v4.1-flash/200k/score.UNSCORED.json,"2026-10-12 状态复核：【历史题目准备阻塞；本模型未运行】原 tasks/roomsketcher 测试包仅 998 个 case，不满足 1000-case 契约，故这条 DeepSeek 200k 没有启动、没有该 run 的 trace 或有效成绩。后来已从同一固定 commit 5dcebb73 的 agent-tasks/roomsketcher 恢复完整 1000-case 源码并用于 GPT；不能继续笼统称为源码无法修复，也不能用 GPT/1M 成绩代填本行。GPT 独立运行另遇参考端授权错误。证据：source-proofs.json。
 
 此前运行证据：verifier bundle case总数不满足1000，准备受阻；未启动agent"
-roomsketcher,RoomSketcher,Qwen 3.8 Max,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/roomsketcher/qwen3.8-max/200k/score.UNSCORED.json,准备阶段case契约校验阻塞，未评；HF同一trial用量已核验，Input含缓存
+roomsketcher,RoomSketcher,Qwen 3.8 Max,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/roomsketcher/qwen3.8-max/200k/score.UNSCORED.json,"【2026-10-17状态同步】200K模型trace已保存，但该轮准备/评测契约阻塞，未形成有效成绩；1M模型未启动，不存在1M独立trace，不能用200K轨迹代填。
+【2026-10-17状态同步】已同步已发布的HF入口；历史入口保留：https://huggingface.co/datasets/xyz-harbor/websitebench-harbor-trajectories/tree/main/roomsketcher-job/qwen3.8-max/run1
+历史记录保留：
+【2026-10-17状态同步】200K模型trace已保存，但该轮准备/评测契约阻塞，未形成有效成绩；1M模型未启动，不存在1M独立trace，不能用200K轨迹代填。
+历史记录保留：
+准备阶段case契约校验阻塞，未评；HF同一trial用量已核验，Input含缓存
+准备阶段case契约校验阻塞，未评；HF同一trial用量已核验，Input含缓存"
 roomsketcher,RoomSketcher,GPT 6.1 Sol,258K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/roomsketcher/gpt-6.1-sol/258k/score.UNSCORED.json,
 simplify-jobs,Simplify Jobs,Claude Opus 5.5,1M,80,752,10.638297872340425,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/simplify-jobs/claude-opus-5-5/1m/score.json,"2026-10-13 最终独立verifier-only评分已上传核验。source id=5e594d85-83bf-4d83-863a-43b4de4e5f8e；trial=simplify-jobs__Bvrvrqa；evaluation id=884b0f89-d304-4539-a1eb-c313d76321a2。1M，固定5dcebb73e379f9df030b0dfa9d145fce4c937a68、equal-case-v1、完整范围，VALID_RUN/scorable=true，80/752。原产物/agent指标不变，无新模型请求；原native is_error=False。VALID不代表原agent成功。HF原轨迹11文件+本次评分13文件逐项hash通过，revision=1560b894508e8dd27294f0dff735b1f91667aa48。未知成本/用量不补0。
 
@@ -904,7 +914,13 @@ untappd,Untappd,Kimi K3,200K,,,,missing,https://huggingface.co/datasets/TIGER-La
 untappd,Untappd,DeepSeek V4.1 Flash,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/untappd/deepseek-v4.1-flash/200k/score.UNSCORED.json,"2026-10-12 状态复核：【历史题目源码路径阻塞；本模型未运行】原固定 commit 的 tasks/untappd 路径缺失，并非整个 commit 没有源码。后来已从同 commit 5dcebb73 的 agent-tasks/untappd 恢复并逐文件核验，GPT 已获得 47/1000。DeepSeek 200k 这条没有启动，不在新跑 29 题内，仍无本模型成绩或 trace；不能用 GPT/1M 结果代填。证据：source-proofs.json。
 
 此前运行证据：verifier bundle case总数不满足1000，准备受阻；未启动agent"
-untappd,Untappd,Qwen 3.8 Max,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/untappd/qwen3.8-max/200k/score.UNSCORED.json,固定commit缺源码，未评
+untappd,Untappd,Qwen 3.8 Max,200K,,,,missing,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/untappd/qwen3.8-max/200k/score.UNSCORED.json,"【2026-10-17状态同步】200K模型trace已保存，但该轮准备/评测契约阻塞，未形成有效成绩；1M模型未启动，不存在1M独立trace，不能用200K轨迹代填。
+【2026-10-17状态同步】已同步已发布的HF入口；历史入口保留：https://huggingface.co/datasets/xyz-harbor/websitebench-harbor-trajectories/tree/main/untappd-job/qwen3.8-max/run1
+历史记录保留：
+【2026-10-17状态同步】200K模型trace已保存，但该轮准备/评测契约阻塞，未形成有效成绩；1M模型未启动，不存在1M独立trace，不能用200K轨迹代填。
+历史记录保留：
+固定commit缺源码，未评
+固定commit缺源码，未评"
 untappd,Untappd,GPT 6.1 Sol,258K,47,1000,4.7,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/untappd/gpt-6.1-sol/258k/score.json,
 warbyparker,Warby Parker,Claude Opus 5.5,1M,292,992,29.43548387096774,scored,https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/benchmark/warbyparker/claude-opus-5-5/1m/score.json,"2026-10-15：新独立o55r12-run1已终审，Opus5.5/max/真实1M（contextWindow=1000000），严格292/992，T1 31/50、T2 250/862、T3 11/80；正式VALID_RUN、0基础设施分类失败，原生success/is_error=false，非cutoff。ATIF、引用图片、评分/用量材料和完整原生日志gzip已发布。
 实际速度记录为3458个fast主循环/子agent请求及21个未请求fast的standard WebSearch工具请求（不是全部fast）。已知普通输入454936、缓存创建28355587、缓存读取1257520903、输出2557739。2个原请求final用量未知非0（1个HTTP400、1个流未到message_stop的partial HTTP200）；后续成功不填补原请求。表内token仅已知合计；官方Fast价格未明确，费用留空，不采用客户端估算作实际账单。

@@ -132,7 +132,11 @@
     contextPicker.replaceChildren(...runs.map(r=>option(r.id,contextLabel(r.context))));
     if(runs.some(r=>r.id===preferred))contextPicker.value=preferred;
     else if(runs.some(r=>r.id===chosenContexts.get(`${task.id}/${model.id}`)))contextPicker.value=chosenContexts.get(`${task.id}/${model.id}`);
-    else if(selection?.record){const same=runs.find(r=>r.context===selection.record.context);if(same)contextPicker.value=same.id;}
+    else {
+      const same=selection?.model===model.id&&selection?.record?runs.find(r=>r.context===selection.record.context):null;
+      const configured=runs.find(r=>r.context.toLowerCase().match(/\d+(?:\.\d+)?[mk]/)?.[0]===model.default_context);
+      if(same||configured)contextPicker.value=(same||configured).id;
+    }
     $('#context-control').hidden=runs.length<=1;
   }
   function render(changed=true){
@@ -171,10 +175,6 @@
       taskPicker.value=catalog.tasks.some(t=>t.id===params.get('task'))?params.get('task'):'medium';
       const initialModel=params.get('model');modelPicker.value=catalog.models.some(m=>m.id===initialModel)?initialModel:'qwen';
       chooseContext(params.get('context'));
-      // Preserve the already paired 200K example unless a context was specified.
-      if(!params.get('context')&&taskPicker.value==='medium'&&modelPicker.value==='qwen'){
-        const r=catalog.tasks.find(t=>t.id==='medium').models.qwen.runs.find(r=>r.context==='200k-max');if(r)contextPicker.value=r.id;
-      }
       const initialTask=catalog.tasks.find(t=>t.id===taskPicker.value),initialPath=params.get('path')||initialTask.views?.find(v=>v.id===params.get('state'))?.route;
       if(initialPath&&/^\/(?!\/)/.test(initialPath)&&!initialPath.includes('\\')&&initialPath.length<1800)$('#comparison-route').value=initialPath;
       taskPicker.addEventListener('change',()=>{chooseContext();render();});modelPicker.addEventListener('change',()=>{chooseContext();render();});contextPicker.addEventListener('change',()=>render());
