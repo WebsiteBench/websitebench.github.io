@@ -4,9 +4,28 @@ from pathlib import Path
 import unittest
 
 from build_waffle import score_record, select_record
+from annotation_scores import supplement
 
 
 class WaffleTests(unittest.TestCase):
+    def test_latest_note_fills_a_blank_only_for_the_bound_recording(self):
+        note=dict(recording_id='current-run',score='192/393',passed=192,total=393,
+                  context='1m',source_cell='B61',source_url='https://example.test/note',id='note-B61')
+        missing=dict(status='missing',run='current-run',cells=['O845'])
+        value=supplement(missing,[note])
+        self.assertEqual((value['passed'],value['total'],value['source_sheet'],value['cells']),
+                         (192,393,'old-Missing traces (note)',['B61']))
+        self.assertEqual(supplement(dict(missing,run='another-run'),[note]),dict(missing,run='another-run'))
+        for state in ['scored','withdrawn','invalid']:
+            original=dict(missing,status=state)
+            self.assertEqual(supplement(original,[note]),original)
+
+    def test_amazon_and_notion_current_notes_supersede_old_blank_cells(self):
+        data=json.loads((Path(__file__).resolve().parents[1]/'data/waffle.json').read_text())
+        for task,passed,total in [('amazon',582,1025),('notion',192,393)]:
+            entry=next(t for t in data['tasks'] if t['id']==task)['results']['opus55']['contexts']['recorded']
+            self.assertEqual((entry['passed'],entry['total'],entry['source_type']), (passed,total,'hf_canonical'))
+            self.assertTrue(entry['source_url'].endswith(f'benchmark/{task}/claude-opus-5-5/1m/score.json'))
     def test_contexts_do_not_select_the_best_score(self):
         records = [score_record({'context': '1M', 'cell': 'O1', 'score': '0/347'}),
                    score_record({'context': '200k', 'cell': 'O2', 'score': '80/347'})]
@@ -46,15 +65,15 @@ class WaffleTests(unittest.TestCase):
         self.assertIn('sol61', model_ids)
         self.assertNotIn('sol', model_ids)
         medium = next(t for t in data['tasks'] if t['id'] == 'medium')['results']['qwen']['contexts']
-        self.assertEqual((medium['1m']['passed'], medium['1m']['total'], medium['1m']['cells']), (61, 650, ['O448']))
-        self.assertEqual((medium['200k']['passed'], medium['200k']['total'], medium['200k']['cells']), (56, 650, ['O132']))
+        self.assertEqual((medium['1m']['passed'], medium['1m']['total']), (61, 650))
+        self.assertEqual((medium['200k']['passed'], medium['200k']['total']), (56, 650))
         self.assertNotEqual(medium['1m']['run'], medium['200k']['run'])
         for task in data['tasks']:
             self.assertEqual(set(task['results']), model_ids)
             for result in task['results'].values():
                 for entry in result['contexts'].values():
                     if entry['status'] == 'scored':
-                        self.assertTrue(entry['cells'])
+                        self.assertTrue(entry['source_url'].startswith('https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/'))
                         self.assertTrue(0 <= entry['passed'] <= entry['total'])
 
 

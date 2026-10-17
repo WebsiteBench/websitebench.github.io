@@ -26,10 +26,22 @@
 
   const tooltip = document.createElement('div');
   tooltip.className = 'result-tooltip'; tooltip.id = 'result-tooltip'; tooltip.role = 'tooltip'; tooltip.hidden = true; document.body.appendChild(tooltip);
-  const hideTooltip = () => { tooltip.hidden = true; };
+  let tooltipHideTimer, tooltipSource;
+  const hideTooltip = () => { clearTimeout(tooltipHideTimer); tooltip.hidden = true; tooltipSource = null; };
+  const scheduleTooltipHide = () => {
+    clearTimeout(tooltipHideTimer);
+    tooltipHideTimer = setTimeout(() => {
+      if (!tooltip.matches(':hover') && !tooltip.contains(document.activeElement) && document.activeElement !== tooltipSource) hideTooltip();
+    }, 200);
+  };
+  tooltip.addEventListener('pointerenter', () => clearTimeout(tooltipHideTimer));
+  tooltip.addEventListener('pointerleave', scheduleTooltipHide);
+  tooltip.addEventListener('focusin', () => clearTimeout(tooltipHideTimer));
+  tooltip.addEventListener('focusout', scheduleTooltipHide);
   const bindTooltip = (element, html) => {
     element.setAttribute('aria-describedby', tooltip.id);
     const show = event => {
+      clearTimeout(tooltipHideTimer); tooltipSource = element;
       tooltip.innerHTML = html; tooltip.hidden = false;
       const rect = element.getBoundingClientRect();
       const width = tooltip.offsetWidth, height = tooltip.offsetHeight;
@@ -39,8 +51,8 @@
       tooltip.style.top = Math.max(8, Math.min(innerHeight - height - 8, y + 15)) + 'px';
     };
     element.addEventListener('pointerenter', show); element.addEventListener('focus', show); element.addEventListener('click', show);
-    element.addEventListener('pointerleave', () => { if (document.activeElement !== element) hideTooltip(); });
-    element.addEventListener('blur', hideTooltip);
+    element.addEventListener('pointerleave', scheduleTooltipHide);
+    element.addEventListener('blur', scheduleTooltipHide);
   };
   document.addEventListener('keydown', event => { if (event.key === 'Escape') hideTooltip(); });
   window.addEventListener('scroll', hideTooltip, true);
@@ -201,8 +213,7 @@
     chunks.forEach((chunk, block) => {
     html += `<table class="task-waffle-table" style="width:${labelWidth + visible.length * pitch}px"><caption class="sr-only">${columns === 2 ? `Tasks ${block * 37 + 1}–${block * 37 + chunk.length} of 74` : 'All 74 website tasks'} and 9 models. Read tasks down the left block, then down the right block: easiest first, hardest last. Models are ordered strongest to weakest from left to right in both blocks. Both axes use mean reported pass rate in the selected context, excluding unscored cells. Switch context for GLM, DeepSeek and Qwen. Other models keep their recorded context. A faint diagonal mark means no usable score in this view, not zero.</caption><colgroup><col style="width:${labelWidth}px">${visible.map(() => `<col style="width:${pitch}px">`).join('')}</colgroup><thead><tr><th scope="col" class="task-name-heading" title="Tasks ranked by mean pass rate, easier first. Read down the left block, then the right block.">${columns === 2 ? `${block * 37 + 1}–${block * 37 + chunk.length} · ${block === 0 ? 'Easier' : 'Harder'}` : 'Easy → hard'}</th>`;
     visible.forEach(model => {
-      const records = tasks.flatMap(t => t.results[model.id].records);
-      const labels = [...new Set(records.map(r => r.label))];
+      const labels = [...new Set(tasks.map(task => entryFor(task, model).label).filter(Boolean))];
       const context = model.variable_context ? contextLabel(contextPicker.value) : labels.length === 1 && labels[0] !== 'Recorded context' ? labels[0].replace(/k/ig,'K') : '';
       const meanLabel = model.mean === null ? 'No scored tasks' : `Mean pass rate: ${model.mean.toFixed(2)}% · ${model.count}/74 scored tasks`;
       html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" title="${escape(model.name)} · ${escape(context || 'recorded context')}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span></span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
@@ -214,7 +225,7 @@
       visible.forEach(model => {
         const entry = entryFor(task, model), score = trialScore(entry);
         if (score !== null) scored++; else unscored[entry.status] = (unscored[entry.status] || 0) + 1;
-        const description = score !== null ? `${entry.passed}/${entry.total} tests (${score.toFixed(1)}%)` : entry.status === 'conflict' ? 'Conflicting source scores' : entry.status === 'withdrawn' ? 'Source score withdrawn' : entry.status === 'invalid' ? 'Invalid source fraction' : 'Score not reported';
+        const description = score !== null ? `${entry.passed}/${entry.total} tests (${score.toFixed(1)}%)` : entry.status === 'conflict' ? 'Conflicting source scores' : entry.status === 'withdrawn' ? 'Source score withdrawn' : entry.status === 'incomparable' ? `Legacy scoring protocol: ${entry.value}` : entry.status === 'invalid' ? 'No valid evaluation' : 'Score not reported';
         const classes = `waffle-point ${score !== null ? 'scored' : 'missing'}${entry.status === 'conflict' ? ' conflict' : ''}`;
         const attributes = `class="${classes}"${score !== null ? ` style="--score-color:${scoreColor(score)}"` : ''} data-task="${escape(task.id)}" data-model="${escape(model.id)}" data-score="${score === null ? '' : score}" aria-label="${escape(task.name)}, ${escape(model.name)}: ${escape(description)}"`;
         const href = entry.run ? `tasks.html?task=${encodeURIComponent(task.id)}&model=${encodeURIComponent(model.id)}&context=${encodeURIComponent(entry.run)}` : '';
@@ -233,17 +244,20 @@
       else if (entry.status === 'conflict') {
         const records = task.results[model.id].records.filter(r => r.context === entryFor(task, model).context || entry.cells.includes(r.cell));
         details += `<span>Different fractions in the source: ${records.map(r => escape(r.value || 'blank')).join(', ')}.</span>`;
-      } else details += `<span>${entry.status === 'withdrawn' ? 'Score withdrawn in source comments.' : entry.status === 'invalid' ? 'Source fraction is malformed.' : 'The source has no score for this task and context.'} This is not a zero.</span>`;
-      if (entry.note) details += `<span>${escape(entry.note)}</span>`;
+      } else details += `<span>${entry.status === 'withdrawn' ? 'Score withdrawn in the source.' : entry.status === 'invalid' ? 'The current evaluation is invalid.' : entry.status === 'incomparable' ? `Legacy fraction: ${escape(entry.value)}; uses a different scoring protocol.` : 'No current valid score for this task and context.'} This is not a zero.</span>`;
+      if (entry.note) {
+        const note = entry.note.split('\n').find(line => line.trim()) || '';
+        details += `<span>${escape(note.slice(0, 240))}${note.length > 240 ? '…' : ''}</span>`;
+      }
       if (entry.repaired) details += '<span>Published score is for a repaired candidate; replay shows the archived original.</span>';
-      details += `<span>Source: ${escape(taskData.source.sheet)}${entry.cells.length ? '!' + entry.cells.map(escape).join(', ') : ''}</span>`;
+      details += entry.source_url ? `<span>Source: <a href="${escape(entry.source_url)}" target="_blank" rel="noopener">HF score file ↗</a></span>` : `<span>Source: ${escape(entry.source_sheet || taskData.source.sheet)}${entry.cells.length ? '!' + entry.cells.map(escape).join(', ') : ''}</span>`;
       if (entry.run) details += '<span class="tooltip-status">Click to compare the website and browse its trajectory →</span>';
       else details += '<span class="tooltip-status">No unique recorded trace is bound to this context.</span>';
       bindTooltip(point, details);
       point.addEventListener('pointerenter', () => point.closest('tr').classList.add('is-highlighted'));
       point.addEventListener('pointerleave', () => point.closest('tr').classList.remove('is-highlighted'));
     });
-    const missingLabels = {missing:'blank', withdrawn:'withdrawn', conflict:'conflict', invalid:'invalid'};
+    const missingLabels = {missing:'unscored', withdrawn:'withdrawn', conflict:'conflict', invalid:'invalid', incomparable:'legacy'};
     $('#waffle-coverage').textContent = `${scored}/666 scores` + Object.entries(unscored).map(([state,count]) => ` · ${count} ${missingLabels[state]}`).join('');
     $('#waffle-legend').innerHTML = `<span class="waffle-simple-legend"><span>Test pass rate</span>${[0,10,25,50,100].map(value => `<span class="legend-item"><i style="background:${scoreColor(value)}" aria-hidden="true"></i>${value}%</span>`).join('')}<span class="legend-item"><i class="legend-unscored" aria-hidden="true"></i>Unscored</span>${unscored.conflict ? '<span class="legend-item"><i class="legend-conflict" aria-hidden="true"></i>Conflict</span>' : ''}</span>`;
     $('#waffle-note').textContent = 'Sorted by mean test pass rate. Unscored cells excluded.';

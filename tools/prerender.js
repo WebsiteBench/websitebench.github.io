@@ -66,7 +66,7 @@ taskData.final_selection = finalRuns;
 // Waffle is a current per-context export, independent of the historical
 // aggregate leaderboard and its model IDs. Never reuse an old model's scores.
 const waffle = JSON.parse(fs.readFileSync(path.join(root, 'data/waffle.json'), 'utf8'));
-if (waffle.version !== 1 || waffle.tasks.length !== 74 || waffle.models.length !== 9) throw new Error('Invalid current Waffle cohort');
+if (![1, 2].includes(waffle.version) || waffle.tasks.length !== 74 || waffle.models.length !== 9) throw new Error('Invalid current Waffle cohort');
 const waffleModels = new Set(waffle.models.map(m => m.id));
 if (!waffleModels.has('sol61') || waffleModels.has('sol') || !waffle.tasks.some(t => t.id === 'untappd') || waffle.tasks.some(t => t.id === 'samsung')) throw new Error('Waffle contains an obsolete model or task');
 for (const task of waffle.tasks) {

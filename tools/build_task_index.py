@@ -27,7 +27,7 @@ def context_key(value):
     return float(match[1]) * (1000 if match[2] == 'm' else 1) if match else 0
 
 
-def build(master_path, private_path, website_artifacts=None):
+def build(master_path, private_path, website_artifacts=None, export_legacy_public=False):
     ledger = json.loads(master_path.read_text())
     old = json.loads((ROOT / 'data/task-catalog.json').read_text())
     names = {t['id']: t['name'] for t in old['tasks']}
@@ -118,16 +118,25 @@ def build(master_path, private_path, website_artifacts=None):
         from website_artifacts import attach
         artifact_report = attach(public, private, website_artifacts)
         print(json.dumps({'website_artifacts': artifact_report}))
+    from annotation_scores import attach as attach_annotation_scores
+    print(json.dumps({'cell_note_scores': attach_annotation_scores(public)}))
+    if not export_legacy_public:
+        current = json.loads((ROOT / 'data/task-materials.json').read_text())
+        current_runs = {r['id']: r for t in current['tasks'] for m in t['models'].values() for r in m['runs']}
+        for uid, recording in private['runs'].items():
+            if uid in current_runs:
+                recording['public'] = current_runs[uid]
     private_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = private_path.with_suffix('.tmp')
     temporary.touch(mode=0o600, exist_ok=True)
     temporary.chmod(0o600)
     temporary.write_text(json.dumps(private, ensure_ascii=False))
     temporary.replace(private_path)
-    destination = ROOT / 'data/task-materials.json'
-    temporary = destination.with_suffix('.tmp')
-    temporary.write_text(json.dumps(public, ensure_ascii=False, separators=(',', ':')) + '\n')
-    temporary.replace(destination)
+    if export_legacy_public:
+        destination = ROOT / 'data/task-materials.json'
+        temporary = destination.with_suffix('.tmp')
+        temporary.write_text(json.dumps(public, ensure_ascii=False, separators=(',', ':')) + '\n')
+        temporary.replace(destination)
     print(json.dumps({'tasks': len(public['tasks']), 'models': len(models),
                       'recorded_contexts': len(private['runs']),
                       'pairs_with_trace': sum(bool(m['runs']) for t in public['tasks'] for m in t['models'].values()),
@@ -139,5 +148,6 @@ if __name__ == '__main__':
     parser.add_argument('--master', type=Path, required=True)
     parser.add_argument('--private-index', type=Path, required=True)
     parser.add_argument('--website-artifacts', type=Path, help='A fully downloaded and verified website artifact repository')
+    parser.add_argument('--export-legacy-public', action='store_true', help='Reproduce the archived pre-HF public index; current website data uses sync_hf_catalog.py')
     args = parser.parse_args()
-    build(args.master, args.private_index, args.website_artifacts)
+    build(args.master, args.private_index, args.website_artifacts, args.export_legacy_public)

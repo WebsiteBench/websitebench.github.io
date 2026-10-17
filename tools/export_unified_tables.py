@@ -1,0 +1,189 @@
+"""Refresh the published tables and site exports from canonical JSON files.
+
+This operation has no workbook dependency. Download the catalog metadata, edit
+the relevant benchmark/.../score.json, and regenerate the derived indexes.
+"""
+import argparse
+from collections import Counter
+import csv
+import hashlib
+import json
+from pathlib import Path
+import shutil
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+from build_unified_catalog import export_waffle, read, write, write_site
+
+
+def parquet(path, rows):
+    keys = list(dict.fromkeys(k for row in rows for k in row))
+    pq.write_table(pa.Table.from_pylist([{k: row.get(k) for k in keys} for row in rows]), path, compression='zstd')
+
+
+def refresh(root, previous):
+    catalog = read(root / 'catalog.json')
+    pairs = catalog['pairs']
+    cohort = read(previous / 'sources/cohort.json')
+    for pair in pairs:
+        for entry in pair['contexts']:
+            score = read(root / entry['files']['score'])
+            assert (score['task_id'], score['model_id'], score['context']) == (entry['task_id'], entry['model_id'], entry['context'])
+            entry.update(score=score, score_status=score['status'], fraction=score['fraction'], comparable=score['comparable'], evidence_level=score['evidence_level'])
+        pair['scored'] = any(e['score_status'] == 'scored' for e in pair['contexts'])
+        write(root / f"benchmark/{pair['task_id']}/{pair['model_id']}/index.json", pair)
+    entries = [e for p in pairs for e in p['contexts']]
+    summary = catalog['summary']
+    summary.update(scored_pairs=sum(p['scored'] for p in pairs), score_statuses=dict(Counter(e['score_status'] for e in entries)))
+    write(root / 'catalog.json', catalog)
+    export_waffle(root, cohort, pairs)
+    waffle = read(root / 'site/waffle.json')
+    view_coverage = {}
+    for context in ('1m', '200k'):
+        missing_scores = []
+        for task in waffle['tasks']:
+            for model in waffle['models']:
+                result = task['results'][model['id']]['contexts'][context if model['variable_context'] else 'recorded']
+                if result['status'] != 'scored':
+                    missing_scores.append(dict(task_id=task['id'], task=task['name'], model=model['source_id'],
+                                               context=context if model['variable_context'] else result['label'], status=result['status'],
+                                               reason=result.get('note') or 'No current score bound to this context.', source=result.get('source_url')))
+        view_coverage[context] = 666 - len(missing_scores)
+        write(root / f'missing/scores-{context}.json', missing_scores)
+    summary.update(waffle_1m_scored=view_coverage['1m'], waffle_200k_scored=view_coverage['200k'])
+    write(root / 'catalog.json', catalog)
+    public = read(root / 'site/task-materials.json')
+    aliases = {m['source_id']: m['id'] for m in public['models']}
+    tasks = {t['id']: t for t in public['tasks']}
+    for pair in pairs:
+        model = tasks[pair['task_id']]['models'][aliases[pair['model_id']]]
+        model['scores'] = list(dict.fromkeys(e['fraction'] for e in pair['contexts'] if e['fraction']))
+        for run in model['runs']:
+            entry = next((e for e in pair['contexts'] if e['recording_id'] == run['id']), None)
+            run['scores'] = [dict(value=entry['fraction'], context=entry['context'], source='HF canonical catalog', cell='',
+                                  source_url=f"https://huggingface.co/datasets/{catalog['repo_id']}/blob/main/{entry['files']['score']}",
+                                  verified=entry['evidence_level'] != 'published_declaration')] if entry and entry['fraction'] else []
+    write_site(root / 'site/task-materials.json', public)
+    data = root / 'data'
+    data.mkdir(exist_ok=True)
+    current_scores = []
+    coverage = []
+    for pair in pairs:
+        for entry in pair['contexts']:
+            current_scores.append(dict(entry['score'], score_path=entry['files']['score']))
+        coverage.append(dict(task_id=pair['task_id'], task_name=pair['task_name'], model_id=pair['model_id'], model_name=pair['model_name'],
+                             trajectory_found=pair['trajectory'], website_found=pair['website'], has_published_score=pair['scored'],
+                             metadata_path=f"benchmark/{pair['task_id']}/{pair['model_id']}/index.json"))
+        detail = read(previous / f"pairs/{pair['task_id']}/{pair['model_id']}/index.json")
+        detail.setdefault('historical_publications', detail.get('published_scores', []))
+        detail['published_scores'] = [e['score'] for e in pair['contexts']]
+        detail['pair'].update(has_published_score=pair['scored'], score_values=[e['fraction'] for e in pair['contexts'] if e['fraction']], canonical_path=coverage[-1]['metadata_path'])
+        detail['pair']['missing_reason'] = '; '.join(text for key, text in [('trajectory', 'No baseline trace located'), ('website', 'No baseline website code located'), ('scored', 'No current valid published score')] if not pair[key])
+        detail['score_policy'] = 'Current canonical JSON scores; original publications retained as history. Latest explicit invalid/closed results withdraw stale scores. Empty placeholder rows do not withdraw existing publications.'
+        write(root / detail['pair']['metadata_path'], detail)
+    parquet(data / 'scores.parquet', current_scores)
+    parquet(data / 'pairs.parquet', coverage)
+    for name in ('coverage', 'missing-materials', 'missing-scores'):
+        selected = coverage if name == 'coverage' else [p for p in coverage if not p['has_published_score']] if name == 'missing-scores' else [p for p in coverage if not p['trajectory_found'] or not p['website_found']]
+        with (data / f'{name}.csv').open('w') as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(coverage[0]), lineterminator='\n')
+            writer.writeheader()
+            writer.writerows(selected)
+    by_model = []
+    for model in cohort['models']:
+        selected = [p for p in pairs if p['model_id'] == model['source_id']]
+        by_model.append(dict(model=model['name'], tasks=74, trajectories=sum(p['trajectory'] for p in selected), websites=sum(p['website'] for p in selected), published_scores=sum(p['scored'] for p in selected)))
+    with (data / 'coverage-by-model.csv').open('w') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(by_model[0]), lineterminator='\n')
+        writer.writeheader()
+        writer.writerows(by_model)
+    task_rows = []
+    for task in cohort['tasks']:
+        selected = [p for p in coverage if p['task_id'] == task['id']]
+        old = read(previous / f"tasks/{task['id']}/index.json")
+        old['task'].update(pairs_with_published_score=sum(p['has_published_score'] for p in selected))
+        for p in old['pairs']:
+            current = next(r for r in selected if r['model_id'] == p['model_id'])
+            p['has_published_score'] = current['has_published_score']
+        write(root / f"tasks/{task['id']}/index.json", old)
+        task_rows.append(old['task'])
+    parquet(data / 'tasks.parquet', task_rows)
+    # Payload and provenance tables are unchanged; the original claims remain
+    # downloadable as history rather than appearing as current blank scores.
+    for name in ('recordings', 'materials', 'observations'):
+        if previous.resolve() != root.resolve():
+            shutil.copyfile(previous / f'data/{name}.parquet', data / f'{name}.parquet')
+    history = root / 'history'
+    history.mkdir(exist_ok=True)
+    if not (history / 'previous-score-publications.parquet').is_file():
+        shutil.copyfile(previous / 'data/scores.parquet', history / 'previous-score-publications.parquet')
+    if not (history / 'previous-catalog-readme.md').is_file():
+        shutil.copyfile(previous / 'README.md', history / 'previous-catalog-readme.md')
+    status = read(previous / 'status.json')
+    status.pop('complete', None)
+    status.update(schema_version='2.0.0', pairs_with_published_scores=summary['scored_pairs'], published_score_rows=len(current_scores), canonical_summary=summary,
+                  phase='catalog_ready', catalog_ready=True, all_located_materials_uploaded=True,
+                  cohort_complete=all(p['trajectory'] and p['website'] and p['scored'] for p in pairs),
+                  score_authority=dict(path='benchmark/**/score.json', catalog='catalog.json', migration='sources/workbook-migration.json', policy='Canonical versioned JSON; the workbook is retained only as migration provenance.'))
+    write(root / 'status.json', status)
+    write(root / 'sources/score-authority.json', status['score_authority'])
+    write(root / 'manifest.json', dict(version=2, catalog='catalog.json', status='status.json', root='benchmark', site='site',
+                                     tables={n: f'data/{n}.parquet' for n in ('pairs', 'tasks', 'recordings', 'scores', 'materials', 'observations')},
+                                     integrity='SHA256SUMS', migration='sources/workbook-migration.json'))
+    missing = dict(trajectories='trajectory', websites='website')
+    for name, kind in [('missing-trajectories', 'trajectory'), ('missing-websites', 'website'), ('missing-evaluations', 'evaluation')]:
+        write(root / f'missing/{name}.json', [dict(task=e['task_id'], model=e['model_id'], context=e['context'], status=e['score_status'], directory=e['directory']) for e in entries if kind in e['missing'] and (kind != 'evaluation' or e['fraction'])])
+    write(root / 'missing/unscored.json', [dict(task=e['task_id'], model=e['model_id'], context=e['context'], status=e['score_status'], directory=e['directory']) for e in entries if e['score_status'] != 'scored'])
+    for name, key in missing.items():
+        write(root / f'missing/{name}.json', [dict(task_id=p['task_id'], task=p['task_name'], model=p['model_id'], directories=[e['directory'] for e in p['contexts']], action='Locate and publish the original material; do not substitute another context.') for p in pairs if not p[key]])
+    write(root / 'missing/scores.json', [dict(task_id=p['task_id'], task=p['task_name'], model=p['model_id'], contexts=[dict(context=e['context'], status=e['score_status'], qualifications=e['score']['qualifications']) for e in p['contexts']]) for p in pairs if not p['scored']])
+    (root / 'missing/README.md').write_text('# 缺失与无分清单\n\n'
+        f'- [Waffle 默认视图缺分](scores-1m.json)：{666-view_coverage["1m"]} 格，与网页空格逐一对应。\n'
+        f'- [Waffle 200K 视图缺分](scores-200k.json)：{666-view_coverage["200k"]} 格。\n'
+        '- [缺轨迹](trajectories.json)、[缺网站代码](websites.json)：按题目与模型列出。\n'
+        '- [所有上下文都无有效分数](scores.json)：同一模型在其他上下文有分数时，不会进入这张表。\n\n'
+        '缺文件与无有效分数是不同情况。无分记录会保留无效、已结案、仅有旧版等原因，不等于要求重新生成网站。\n')
+    task_overview = '# WebsiteBench: 74 tasks × 9 models\n\n| Task | Traces | Websites | Current scores |\n|---|---:|---:|---:|\n'
+    for task in cohort['tasks']:
+        selected = [p for p in pairs if p['task_id'] == task['id']]
+        task_url = f"https://huggingface.co/datasets/{catalog['repo_id']}/tree/main/benchmark/{task['id']}"
+        task_overview += f"| [{task['name']}]({task_url}) | {sum(p['trajectory'] for p in selected)}/9 | {sum(p['website'] for p in selected)}/9 | {sum(p['scored'] for p in selected)}/9 |\n"
+        text = f"# {task['name']}\n\n| Model | Trace | Website | Current published fractions by context |\n|---|---|---|---|\n"
+        for pair in selected:
+            url = task_url + '/' + pair['model_id']
+            scores = '; '.join(e['context'] + ': ' + (e['fraction'] or e['score_status']) for e in pair['contexts'])
+            text += f"| [{pair['model_name']}]({url}) | {'✓' if pair['trajectory'] else 'MISSING'} | {'✓' if pair['website'] else 'MISSING'} | {scores} |\n"
+        (root / 'benchmark' / task['id'] / 'README.md').write_text(text)
+    (root / 'benchmark/README.md').write_text(task_overview)
+    original_sums = ''.join(line + '\n' for line in (previous / 'SHA256SUMS').read_text().splitlines() if '  benchmark/' not in line)
+    (root / 'SHA256SUMS').write_text(original_sums + ''.join(c['sha256'] + '  ' + c['destination'] + '\n' for c in read(root / 'sources/tree-copies.json')))
+    card = '---\nlanguage: [en, zh]\nconfigs:\n'
+    for name in ('pairs', 'tasks', 'recordings', 'scores', 'materials', 'observations'):
+        card += f'- config_name: {name}\n' + ('  default: true\n' if name == 'pairs' else '') + f'  data_files: data/{name}.parquet\n'
+    card += '\n---\n\n# WebsiteBench\n\n74 tasks × 9 models. **Start in [benchmark/](https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/tree/main/benchmark).** Only the current evaluation protocol contributes scores. The versioned JSON files are the current catalog; Excel is no longer a runtime or update dependency.\n\n'
+    card += '```text\nbenchmark/<task>/<model>/<context>/\n  score.json                 # published score, metric and verification level\n  trajectory.tar.zst         # ATIF + referenced images\n  website.tar.gz             # generated website (.tar.zst for normalized exports)\n  reference.tar.gz           # exact bound reference, when available\n  evaluation.json.zst         # valid raw evaluation matching the published fraction\n  provenance.json            # run identity, hashes, limitations and prior claims\n```\n\n'
+    card += 'An absent material has a **`trajectory.MISSING.json`**, **`website.MISSING.json`**, or **`evaluation.MISSING.json`** in the same folder. A run without a valid score has **`score.UNSCORED.json`**, including the reason. These markers contain no fabricated scores. Different contexts stay in separate folders; folder count is not the number of independent runs.\n\n'
+    card += '## What needs attention\n\n- [Missing trajectories](missing/trajectories.json) — task/model pairs without a located baseline trace.\n- [Missing website code](missing/websites.json) — task/model pairs without bound baseline code.\n- [No current valid score](missing/scores.json) — includes closed or invalid evaluations; this does not automatically call for a rerun.\n- [Context-level missing materials](missing/missing-trajectories.json) and [unscored contexts](missing/unscored.json) keep context restrictions visible.\n- [One-page coverage](data/coverage-by-model.csv) and [all 666 pairs](data/coverage.csv).\n\n'
+    card += f'The Waffle views use their exact context: [default 1M view missing scores](missing/scores-1m.json) ({666-view_coverage["1m"]} cells), [200K view missing scores](missing/scores-200k.json) ({666-view_coverage["200k"]} cells). These lists match the website one cell at a time. The model summary below counts a score in **any** recorded context.\n\n'
+    card += '| Model | Traces | Websites | Published scores (any context) |\n|---|---:|---:|---:|\n'
+    for model in by_model:
+        card += f"| {model['model']} | {model['trajectories']}/74 | {model['websites']}/74 | {model['published_scores']}/74 |\n"
+    card += '\n## Reading scores\n\n`score.json` separates the reported fraction, T1/T2/T3, scoring protocol, exact recording ID, and evidence level. `published_declaration` means a current source reports the score; `matching_valid_evaluation` means a valid equal-case-v1 evaluation matches it; `selected_run_and_cases_verified` also checks explicit selection and case identities. Duplicate copies of the same evaluation are one piece of score evidence. Original 1000-case / functional-only scores and earlier publications without verified new-protocol evidence live in `history/benchmark/`, never in current score fields or Waffle. Their current folder is marked `needs_current_evaluation`. A missing score is never zero. All recorded raw evaluations, including invalid/old ones, remain separately labelled under `evaluations/`; `evaluation.json.zst` is specifically a valid new-protocol evaluation matching the current fraction.\n\n'
+    card += 'The final migration reads all 1,126 Harbor tab records (959 rows within the official cohort), all 1,170 workbook notes (including all 934 old-Missing traces notes), and existing published claims. Repeated source rows are provenance, not extra runs. Explicit current invalid/closed results supersede stale scores. Empty placeholder rows do not erase existing published results. Original values, source cells and limitations are retained in `provenance.json`, [migration provenance](sources/workbook-migration.json), and [history/](history). No maximum-score selection is used. Rounded Sol context labels 258k/258.4k are one context; original labels remain recorded. Context configuration that was not verified is explicitly identified.\n\n'
+    card += '## Website and updates\n\nThe website imports the small, checksummed [site exports](site) at a pinned HF revision. Update the relevant canonical score/material file, regenerate the derived tables/site exports, validate, and publish one catalog revision. There is no need to edit Excel. Large payloads reuse verified blobs; downloading the entire repository is unnecessary. Older source directories and `objects/` remain available as archive paths.\n\n'
+    card += '```sh\npython tools/export_unified_tables.py --root .\n# Website checkout:\npython tools/sync_hf_catalog.py --revision <40-character-HF-commit>\nnode tools/prerender.js\n```\n\n'
+    card += 'Source presence does not certify that a website launches unchanged. [Known replay limitations](sources/known-replay-limitations.json) and original licensing/attribution still apply. External credentials were redacted during normalization; hashes document the retained bytes. Reference exports are not borrowed across recordings.\n\n## Citation\n\nSee [CITATION.bib](CITATION.bib) and [CITATION.cff](CITATION.cff).\n'
+    (root / 'README.md').write_text(card)
+    manifest = read(root / 'manifest-v2.json')
+    manifest['site_sha256'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (root / 'site').iterdir()}
+    write(root / 'manifest-v2.json', manifest)
+    return summary
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--root', type=Path, required=True)
+    parser.add_argument('--previous', type=Path)
+    args = parser.parse_args()
+    print(json.dumps(refresh(args.root, args.previous or args.root)))

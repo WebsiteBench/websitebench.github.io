@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 
 from build_task_index import ALIASES, context_key
+from annotation_scores import load as annotation_scores, supplement
 
 ROOT = Path(__file__).resolve().parents[1]
 VARIABLE_MODELS = {'glm', 'deepseek', 'qwen'}
@@ -67,6 +68,7 @@ def build(ledger, materials):
     catalog = {t['id']: t for t in materials['tasks']}
     rows = {(r['task'], r['model']): r for r in ledger['rows']}
     models = [dict(m, variable_context=m['id'] in VARIABLE_MODELS) for m in materials['models']]
+    annotations = annotation_scores()
     result = {'version': 1, 'updated': ledger['generated_at'],
               'source': {'workbook': 'WebsiteBenchHarbor (2).xlsx', 'sheet': 'run_result_clean'},
               'models': models, 'tasks': []}
@@ -87,6 +89,9 @@ def build(ledger, materials):
                 # Bind only a unique matching trace; never guess among runs.
                 if len(matches) == 1:
                     selected['run'] = matches[0]['id']
+                selected = supplement(selected, [s for s in annotations
+                    if s['task_id']==task_id and s['model_id']==model['source_id']
+                    and (not model['variable_context'] or s['context']==context)])
                 if repaired and selected['status'] == 'scored':
                     selected['repaired'] = True
                 by_context[context] = selected
@@ -97,10 +102,13 @@ def build(ledger, materials):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--legacy-export', action='store_true', help='Explicitly reproduce the archived workbook import; current website data uses sync_hf_catalog.py')
     parser.add_argument('--master', type=Path, required=True)
     parser.add_argument('--materials', type=Path, default=ROOT / 'data/task-materials.json')
     parser.add_argument('--workbook', type=Path)
     args = parser.parse_args()
+    if not args.legacy_export:
+        parser.error('Current data comes from HF: use tools/sync_hf_catalog.py. Add --legacy-export only to reproduce the archived workbook import.')
     data = build(json.loads(args.master.read_text()), json.loads(args.materials.read_text()))
     if args.workbook:
         data['source']['sha256'] = hashlib.sha256(args.workbook.read_bytes()).hexdigest()
@@ -117,7 +125,7 @@ if __name__ == '__main__':
                                      context.upper() if model['variable_context'] else entry.get('label', 'Recorded context'),
                                      entry.get('passed', ''), entry.get('total', ''),
                                      100 * entry['passed'] / entry['total'] if scored else '', entry['status'],
-                                     'run_result_clean!' + ','.join(entry['cells']),
+                                     entry.get('source_sheet', 'run_result_clean') + '!' + ','.join(entry['cells']),
                                      '; '.join(filter(None, [entry.get('note'), 'Score is for a repaired candidate' if entry.get('repaired') else None]))])
         states = [t['results'][m['id']]['contexts'][context if m['variable_context'] else 'recorded']['status']
                   for t in data['tasks'] for m in data['models']]

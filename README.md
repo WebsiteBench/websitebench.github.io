@@ -35,31 +35,31 @@ Open `?view=pareto#results`, `?view=waffle#results`, or `?view=waffle&context=20
 
 Brand marks are vendored from Lobe Icons under its included MIT license; see `assets/logos/README.md`. The display question uses “reconstruct complex websites”; the paper citation retains its original title.
 
-## Load per-task Waffle results
+## Sync current results from HF
 
-Both Waffle and the task browser derive from the same private `master.json` ledger. The current score authority is the uploaded `WebsiteBenchHarbor (2).xlsx`, tab `run_result_clean`. Do not replace these fractions with older verifier rewards, fill blank scores with zero, or select the highest-scoring context.
+Waffle and the task browser import the same versioned JSON catalog from `TIGER-Lab/WebsiteBenchArtifacts`. `data/unified-source.json` pins the HF commit and checksums. Excel is a frozen migration source, not an update or runtime dependency. Current scores live separately from ATIF, website code and raw evaluations under `benchmark/<task>/<model>/<context>/`. Missing files and unscored runs have explicit markers.
 
 ```sh
-python3 tools/build_waffle.py --master /private/master.json --workbook /private/WebsiteBenchHarbor.xlsx
+python3 tools/sync_hf_catalog.py --revision <40-character-HF-commit>
 node tools/prerender.js
-python3 -m unittest discover -s tools -p test_waffle.py -v
+python3 -m unittest discover -s tools -p 'test_*.py'
 ```
 
-This writes the public score-only `data/waffle.json`, plus `data/waffle-1m.csv` and `data/waffle-200k.csv`. It reads current task/model metadata and exact trace IDs from `data/task-materials.json`. Score export is independent of trace availability. Each selected score retains its spreadsheet citation; source annotations withdrawing a mismatched context are respected. Unverified context annotations remain visible in tooltips instead of hiding published scores. Conflicting fractions for the same context are retained without guessing.
+The import verifies all four site exports before replacing the local files. Per-task fractions link to their canonical HF score files and exact recorded contexts. Current invalid/closed results supersede stale scores. Empty placeholder rows do not withdraw existing results with verified new-protocol evidence. Conflicting fractions remain conflicts; no maximum is selected. Old 1000-case / functional-only scores and unverified earlier publications stay in HF history and do not fill current gaps.
 
-The current 1M view has 609 usable fractions, 56 blank pairs and one conflicting pair (DeepSeek / Fandango). The 200K view has 574 usable fractions; missing or withdrawn 200K scores never fall back to a 1M score. These views do not assert reproduction of the older aggregate leaderboard.
+The current 1M view has 604 usable fractions, 55 unscored cells and seven invalid evaluations. The 200K view has 577 usable fractions, 86 unscored cells and three invalid evaluations. Context selection applies to GLM, DeepSeek and Qwen; other models keep their recorded context. Missing current results never inherit a legacy or other-context score. The aggregate Table/Pareto remains the separately documented reported snapshot; these exports do not claim to reproduce it.
 
-`tools/import_workbook.py`, `data/task-results.json`, `data/evaluated-tasks.json` and `data/final-runs.json` preserve an older workbook/cohort import and the curated Medium screenshot bindings. They do not feed the current Waffle. `tools/prerender.js` still checks those legacy screenshot bindings separately; it validates and embeds the current Waffle export independently.
+`tools/build_unified_catalog.py` performs the one-time migration of all 1,126 Harbor records (959 official-cohort rows) and all 1,170 workbook notes, including 934 notes in `old-Missing traces`. `tools/export_unified_tables.py` refreshes derived tables and site exports from canonical JSON without reading Excel; `tools/validate_unified_catalog.py` checks the release tree. Older workbook builders and screenshot bindings remain for historical reproducibility and do not feed the current Waffle.
 
 ## Task browser and trajectories
 
 `tasks.html` has one task, one model and one recorded context selected at a time.
 Website / Trajectory tabs share that selection. The homepage stays small.
 
-`data/task-materials.json` is generated from the verified material ledger. It
+`data/task-materials.json` is imported from the verified HF catalog. It
 contains the accepted 74-task cohort (including Untappd), the current nine-model
 list (including GPT 6.1 Sol), context identities, availability, and score citations
-from `run_result_clean`. Different contexts remain distinct. Nothing is called a
+from canonical score files. Different contexts remain distinct. Nothing is called a
 final leaderboard run, and no highest-scoring run is selected automatically.
 The published aggregate leaderboard remains the separately documented snapshot.
 
