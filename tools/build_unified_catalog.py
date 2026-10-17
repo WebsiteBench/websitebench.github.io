@@ -358,14 +358,15 @@ def export_waffle(output, cohort, pairs):
     policy_path = output / 'sources/display-contexts.json'
     policy = read(policy_path) if policy_path.is_file() else {'contexts': {'glm-5.3-flash': '1m', 'deepseek-v4.1-flash': '1m', 'qwen3.8-max': '200k'}}
     models = [dict(m, default_context=policy['contexts'].get(m['source_id'], 'recorded')) for m in prior['models']]
-    result = dict(version=2, updated='2026-10-16', default_view='overview', source=dict(repository=REPO, sheet='HF canonical catalog', path='catalog.json'), models=models, tasks=[])
+    result = dict(version=2, updated='2026-10-17', cohort_id=cohort.get('cohort_id'), default_view='overview', source=dict(repository=REPO, sheet='HF canonical catalog', path='catalog.json'), models=models, tasks=[])
     for task in cohort['tasks']:
         t = dict(id=task['id'], name=task['name'], results={})
         for model in models:
             entries = lookup[task['id'], model['source_id']]['contexts']
             contexts = {}
-            for target in (['1m', '200k'] if model['variable_context'] else ['recorded']):
-                candidates = [e for e in entries if e['context'] == target] if model['variable_context'] else entries
+            for target in (['1m', '200k', 'overview'] if model['variable_context'] else ['recorded']):
+                selected = policy.get('task_overrides', {}).get(model['source_id'], {}).get(task['id'], model['default_context']) if target == 'overview' else target
+                candidates = [e for e in entries if e['context'] == selected] if model['variable_context'] else entries
                 # Multiple numeric contexts for a fixed-context model require
                 # review rather than automatic maximum/first-run selection.
                 entry = candidates[0] if len(candidates) == 1 else None
@@ -377,15 +378,22 @@ def export_waffle(output, cohort, pairs):
                     state = 'missing'
                 contexts[target] = dict(status=state, passed=score.get('passed') if state == 'scored' else None,
                                         total=score.get('total') if state == 'scored' else None,
-                                        value=score.get('fraction'), label=entry['context'].upper() if entry else target.upper(),
-                                        context=target, cells=[], source_sheet='HF canonical catalog', source_type='hf_canonical',
-                                        source_url=f"https://huggingface.co/datasets/{REPO}/blob/main/{entry['files']['score']}" if entry else '',
+                                        value=score.get('fraction'), label=entry['context'].upper() if entry else selected.upper(),
+                                        context=entry['context'] if entry else selected, cells=[], source_sheet='HF canonical catalog', source_type='hf_canonical',
+                                        source_url=f"https://huggingface.co/datasets/{REPO}/blob/main/{entry['files']['score']}" if entry else f"https://huggingface.co/datasets/{REPO}/blob/main/benchmark/{task['id']}/{model['source_id']}/index.json",
                                         run=entry['recording_id'] if entry else None,
                                         repaired=score.get('candidate_variant') == 'repaired',
                                         note=('Legacy scoring protocol; retained separately from the current test pass metric.' if state == 'incomparable' else
                                               '\n'.join(score.get('qualifications', [])))[:2200])
-            if model['variable_context']:
-                contexts['overview'] = dict(contexts[model['default_context']])
+                value = contexts[target]
+                reason = '\n'.join(score.get('qualifications', []))
+                value['failure_kind'] = None if state == 'scored' else (
+                    'timeout' if re.search(r'57600|生成.*(?:超时|预算)|generation.*(?:timeout|budget)', reason, re.I) else
+                    'error' if state == 'invalid' or re.search(r'内容拒绝|cyber|CaseProtocolError', reason, re.I) else
+                    'unverified' if score.get('status') == 'needs_current_evaluation' else 'unscored')
+                if not entry:
+                    alternatives = [e for e in entries if e['score_status'] == 'scored']
+                    value['note'] = 'No result is registered for this context.' + (' Published in: ' + ', '.join(e['context'].upper() + ' ' + e['fraction'] for e in alternatives) + '.' if alternatives else '')
             t['results'][model['id']] = dict(contexts=contexts, records=[])
         result['tasks'].append(t)
     write_site(output / 'site/waffle.json', result)

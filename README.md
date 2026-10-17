@@ -13,31 +13,23 @@ python3 -m http.server 8000
 # Open http://localhost:8000
 ```
 
-## Update results
+## Results and updates
 
-Edit `data/leaderboard.json`, then regenerate the HTML table and CSV:
+The active cohort is **70 tasks × 9 models**. Untappd, RoomSketcher, Workable and edX are excluded from every current view; their original materials remain in HF history. `data/cohort.json` contains the exact active task list.
 
-```sh
-node tools/prerender.js
-```
+Table, Pareto and Waffle share the same selected canonical results from `TIGER-Lab/WebsiteBenchArtifacts`. GPT 6.1 Sol replaces the historical GPT 5.6 Sol. Do not edit aggregate percentages or generated CSVs by hand.
 
-This script uses only Node's standard library. The aggregate JSON is the source for Table and Pareto only; do not edit generated table rows or CSV values by hand. Those two views retain the original published evaluation snapshot. Waffle and the task browser use the current material ledger, described below; old GPT 5.6 Sol aggregate scores are never relabeled as GPT 6.1 Sol.
+- **Table:** the arithmetic mean of available per-task pass fractions, with each task weighted equally. Overall and Request/Browser/System include coverage counts; missing/invalid results are excluded, never treated as zero. Missing group counts stay blank. Cost, tokens and turns are recalculated from resource values published with the selected score/context; estimates and partial usage remain qualified.
+- **Pareto:** accuracy and resource means use the same paired task subset for each point. Hover shows coverage. A model without the selected resource data has no point. The frontier connects the visible reported points; the line is a guide, and no confidence intervals are invented.
+- **Waffle:** one cell per task/model, sorted easy to hard and high to low. Desktop uses two 35-task blocks. Grayscale represents a measured pass fraction; red means error, orange means timeout, and a diagonal mark means no usable score or pending verification. All states retain their source and context. Clicking a bound cell opens that exact recorded run.
 
-## Results views
+The shared context selector applies to all three tabs. Overview uses Qwen 200K, DeepSeek 1M and the recorded settings for the other models. GLM uses 1M with eight explicit 200K task selections (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker). This choice is recorded in HF `sources/display-contexts.json`, and the mixed column/cells show actual contexts. Strict 1M/200K comparisons remain available. No maximum score is selected.
 
-The three tabs occupy the same results area. Table and Pareto read the static aggregate table. Waffle reads the separate current `data/waffle.json` export embedded by `node tools/prerender.js`. Organization filtering applies to Table and Pareto; the Waffle shows the full model list.
+Overview contains **621/630 scored cells**: five errors, two generation timeouts and two pending new-protocol verifications remain. Strict 1M has 594 scored cells; strict 200K has 562. The [current gap report](https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/missing/score-gaps.md) explains each remaining cell. The 200K and 1M labels are reported context-window configurations, independent of the evaluation protocol.
 
-- **Table:** original metrics, sortable columns, and model brand marks.
-- **Pareto:** Overall / Request / Browser / System pass rate versus mean Cost / Tokens / Turns. Supports log or linear resource axes and focused or full percentage axes. The frontier is recomputed among visible models. Its connecting line is a visual guide, not a measured interpolation. No confidence intervals are estimated from aggregate scores.
-- **Waffle:** 74 current tasks × 9 current models, one cell per pair. Includes Untappd and GPT 6.1 Sol; excludes Samsung and the historical GPT 5.6 Sol. Desktop splits the sorted task list into two adjacent 37-task blocks so real square cells and readable names fit together. Smaller screens use one continuous table. Headers include company logos. Overview uses explicit per-model defaults: Qwen 200K, GLM/DeepSeek 1M. The 1M-only/200K-only views apply to those three models; other models retain their recorded context. Missing scores use a faint diagonal mark, conflicting fractions use a muted amber hatch, and zero is a scored light-gray cell. Neither missing nor conflicting values are assigned a numerical score. Hover shows the exact fraction and source cell. A uniquely bound trace links to that exact context in the task browser. The continuous grayscale interpolates calibrated RGB anchors (0%→244, 5%→218, 10%→182, 25%→96, 50%→32, 100%→0). The 0%, 10%, 25%, 50% and 100% swatches use the same mapping; numerical scores are unchanged. Model headers show the actual context; hover retains coverage and the exact source.
+## Sync from HF
 
-Open `?view=pareto#results`, `?view=waffle#results`, or `?view=waffle&context=200k#results`. Waffle defaults to Overview, following HF `sources/display-contexts.json`. Qwen shows the 200K configuration confirmed by all 74 Book1 rows (71 scored; Apple, RoomSketcher and Untappd unscored). Explicit `context=1m` and `context=200k` views remain available. No task falls back to another context and no maximum score is selected. These are browsing configurations, not a claim of final leaderboard selection. Both axes are sorted by descending mean available pass rate in the selected context: tasks from easiest to hardest (down the left block, then down the right block), and models from strongest to weakest left to right. Missing, withdrawn and conflicting fractions are excluded rather than counted as zero; real zero scores are included. Context switches re-rank both axes. Model header tooltips show the mean and scored-task coverage; task name tooltips show the mean and scored-model coverage. This display ordering is not a replacement for the separate published aggregate leaderboard. The CSV link downloads the displayed context's per-task records; Table/Pareto retain the historical aggregate CSV. Without JavaScript, the static table and CSV remain available.
-
-Brand marks are vendored from Lobe Icons under its included MIT license; see `assets/logos/README.md`. The display question uses “reconstruct complex websites”; the paper citation retains its original title.
-
-## Sync current results from HF
-
-Waffle and the task browser import the same versioned JSON catalog from `TIGER-Lab/WebsiteBenchArtifacts`. `data/unified-source.json` pins the HF commit and checksums. Excel is a frozen migration source, not an update or runtime dependency. Current scores live separately from ATIF, website code and raw evaluations under `benchmark/<task>/<model>/<context>/`. Missing files and unscored runs have explicit markers.
+`data/unified-source.json` pins one HF commit and the hashes of all 13 site exports. The importer verifies every file before replacing website data. Scores, ATIF, website code, evaluations and provenance remain separate files under `benchmark/<task>/<model>/<context>/`. Excel is retained only as migration history.
 
 ```sh
 python3 tools/sync_hf_catalog.py --revision <40-character-HF-commit>
@@ -45,11 +37,7 @@ node tools/prerender.js
 python3 -m unittest discover -s tools -p 'test_*.py'
 ```
 
-The import verifies all five site exports before replacing the local files. Per-task fractions link to their canonical HF score files and exact recorded contexts. Current invalid/closed results supersede stale scores. Empty placeholder rows do not withdraw existing results with verified new-protocol evidence. Conflicting fractions remain conflicts; no maximum is selected. Old 1000-case / functional-only scores and unverified earlier publications stay in HF history and do not fill current gaps.
-
-The default Overview has 625 usable fractions and 41 cells without a valid score. The 1M view has 604 usable fractions, 55 unscored cells and seven invalid evaluations. The 200K view has 577 usable fractions, 86 unscored cells and three invalid evaluations. 200K and 1M describe reported context-window settings (approximately 200,000 and 1,000,000 tokens), independently of the scoring protocol. Context selection applies to GLM, DeepSeek and Qwen; other models keep their recorded context. Missing current results never inherit a legacy or other-context score. The aggregate Table/Pareto remains the separately documented reported snapshot; these exports do not claim to reproduce it.
-
-`tools/build_unified_catalog.py` performs the one-time migration of all 1,126 Harbor records (959 official-cohort rows) and all 1,170 workbook notes, including 934 notes in `old-Missing traces`. `tools/export_unified_tables.py` refreshes derived tables and site exports from canonical JSON without reading Excel; `tools/validate_unified_catalog.py` checks the release tree. Older workbook builders and screenshot bindings remain for historical reproducibility and do not feed the current Waffle.
+On the HF metadata checkout, edit canonical JSON, then run `tools/export_unified_tables.py --root .` and `tools/validate_unified_catalog.py --root .` before publishing. `tools/build_leaderboard.py` derives all context-specific means, resource/score pairings and per-task audit inputs. The original 74-task publication and workbook migration stay in history; they do not feed the current aggregates. Brand marks are vendored from Lobe Icons under its included MIT license.
 
 ## Task browser and trajectories
 
@@ -57,7 +45,7 @@ The default Overview has 625 usable fractions and 41 cells without a valid score
 Website / Trajectory tabs share that selection. The homepage stays small.
 
 `data/task-materials.json` is imported from the verified HF catalog. It
-contains the accepted 74-task cohort (including Untappd), the current nine-model
+contains the active 70-task cohort, the current nine-model
 list (including GPT 6.1 Sol), context identities, availability, and score citations
 from canonical score files. Different contexts remain distinct. Nothing is called a
 final leaderboard run, and no highest-scoring run is selected automatically.
@@ -100,7 +88,7 @@ python3 tools/serve_preview.py --task-index /private/task-browser/index.json --t
 ```
 
 Reference preparation restores missing tracked files and hydrates LFS-managed HTML,
-images, fonts and data for only the accepted 74 tasks. It verifies each LFS hash
+images, fonts and data for only the active 70 tasks. It verifies each LFS hash
 and writes a separate snapshot; it does not change the existing checkout.
 
 Install `zstandard` for cached `.tar.zst` archives. `orjson` is optional and speeds
@@ -217,7 +205,7 @@ Push the reviewed changes to GitHub. In **Settings → Pages**, choose **Deploy 
 | `analysis.html`, `run.html` | Analysis, data checks, citation, and run instructions |
 | `data/analysis.json`, `tools/render-analysis.py` | Analysis values/source provenance and duration-figure rendering |
 | `data/task-previews.json` | Explicitly paired screenshot sources |
-| `data/task-catalog.json` | Generated 74-task browser catalog |
+| `data/task-catalog.json` | Generated active task browser catalog |
 | `assets/css/site.css` | Responsive layout, light/dark themes, and print styles |
 | `assets/js/site.js` | Table sorting, theme selection, and copy buttons |
 | `assets/js/results.js` | Shared result tabs, filtering, Pareto plotting, Waffle rendering, and tooltips |
@@ -225,9 +213,9 @@ Push the reviewed changes to GitHub. In **Settings → Pages**, choose **Deploy 
 | `data/leaderboard.json` | Evaluation data |
 | `data/leaderboard.csv` | Generated downloadable results |
 | `data/task-results.json` | Historical workbook records used by legacy curated screenshot bindings |
-| `data/waffle.json` | Current 74 × 9 per-context published fractions, score citations, and exact viewer links |
+| `data/waffle.json` | Current 70 × 9 per-context published fractions, score citations, and exact viewer links |
 | `tools/build_waffle.py` | Export Waffle and context CSVs from the same ledger as the task browser |
-| `data/evaluated-tasks.json` | Accepted list of exactly 74 website task IDs |
+| `data/evaluated-tasks.json` | Active list of exactly 70 website task IDs |
 | `data/final-runs.json` | Historical explicit selection manifest; not used for current per-context Waffle |
 | `tools/prerender.js` | Generate table rows and CSV from JSON |
 | `tools/import_workbook.py` | Audit and import actual workbook runs for an explicitly selected 74-task cohort |

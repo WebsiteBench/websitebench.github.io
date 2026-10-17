@@ -503,3 +503,12 @@ code { font-family: var(--mono); }
 .hero-question { max-width: none; font-size: 23px; }
 #board tbody th, #board tbody td { padding-block: 10px; }
 @media (max-width: 700px) { .hero h1 { font-size: clamp(28px, 7.7vw, 52px); } .hero-question { font-size: 22px; } }
+
+/* Per-metric coverage and non-numeric outcome states. */
+.metric-coverage { display: block; font: 9px/1.4 var(--mono); color: var(--muted); }
+.waffle-point.error, .legend-error { background: #e84450; }
+.waffle-point.timeout, .legend-timeout { background: #f39a29; }
+.results-toolbar > label { display: flex; align-items: center; gap: 8px; font: 11px var(--mono); color: var(--muted); }
+.results-toolbar > label select { font: inherit; background: var(--bg); color: var(--ink); border: 1px solid var(--rule); padding: 4px 7px; }
+.results-toolbar .results-tabs { margin-left: auto; }
+.results-toolbar { scroll-margin-top: 64px; }

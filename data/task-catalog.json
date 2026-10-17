@@ -5,63 +5,81 @@
       "name": "Claude Opus 5.5",
       "short": "Opus 5.5",
       "org": "Anthropic",
-      "logo": "assets/logos/anthropic.svg"
+      "logo": "assets/logos/anthropic.svg",
+      "source_id": "claude-opus-5-5",
+      "default_context": "recorded"
     },
     {
       "id": "opus5",
       "name": "Claude Opus 5",
       "short": "Opus 5",
       "org": "Anthropic",
-      "logo": "assets/logos/anthropic.svg"
-    },
-    {
-      "id": "sol",
-      "name": "GPT 5.6 Sol",
-      "short": "GPT 5.6 Sol",
-      "org": "OpenAI",
-      "logo": "assets/logos/openai.svg"
+      "logo": "assets/logos/anthropic.svg",
+      "source_id": "claude-opus-5",
+      "default_context": "recorded"
     },
     {
       "id": "luna",
       "name": "GPT 5.6 Luna",
       "short": "GPT 5.6 Luna",
       "org": "OpenAI",
-      "logo": "assets/logos/openai.svg"
+      "logo": "assets/logos/openai.svg",
+      "source_id": "gpt-5.6-luna",
+      "default_context": "recorded"
     },
     {
       "id": "grok",
       "name": "Grok 4.6",
       "short": "Grok 4.6",
       "org": "xAI",
-      "logo": "assets/logos/xai.svg"
+      "logo": "assets/logos/xai.svg",
+      "source_id": "grok-4.6",
+      "default_context": "recorded"
     },
     {
       "id": "glm",
       "name": "GLM 5.3 Flash",
       "short": "GLM 5.3 Flash",
       "org": "Z.ai",
-      "logo": "assets/logos/zai.svg"
+      "logo": "assets/logos/zai.svg",
+      "source_id": "glm-5.3-flash",
+      "default_context": "1m"
     },
     {
       "id": "kimi",
       "name": "Kimi K3",
       "short": "Kimi K3",
       "org": "Kimi",
-      "logo": "assets/logos/kimi.svg"
+      "logo": "assets/logos/kimi.svg",
+      "source_id": "kimi-k3",
+      "default_context": "recorded"
     },
     {
       "id": "deepseek",
       "name": "DeepSeek V4.1 Flash",
       "short": "DeepSeek V4.1 Flash",
       "org": "DeepSeek",
-      "logo": "assets/logos/deepseek.svg"
+      "logo": "assets/logos/deepseek.svg",
+      "source_id": "deepseek-v4.1-flash",
+      "default_context": "1m"
     },
     {
       "id": "qwen",
       "name": "Qwen 3.8 Max",
       "short": "Qwen 3.8 Max",
       "org": "Qwen Team",
-      "logo": "assets/logos/qwen.svg"
+      "logo": "assets/logos/qwen.svg",
+      "source_id": "qwen3.8-max",
+      "default_context": "200k"
+    },
+    {
+      "id": "sol61",
+      "name": "GPT 6.1 Sol",
+      "short": "GPT 6.1 Sol",
+      "org": "OpenAI",
+      "logo": "assets/logos/openai.svg",
+      "source_id": "gpt-6.1-sol",
+      "default_context": "recorded"
     }
   ],
   "tasks": [
@@ -226,11 +244,6 @@
       "views": []
     },
     {
-      "id": "edx",
-      "name": "edX",
-      "views": []
-    },
-    {
       "id": "etsy",
       "name": "Etsy",
       "views": []
@@ -343,8 +356,7 @@
               "run_id": "xlsx-3fe67e9178baf494",
               "context": "200K",
               "http_status": 200,
-              "capture_kind": "frozen-candidate replay",
-              "is_final": false
+              "capture_kind": "frozen-candidate replay"
             }
           }
         },
@@ -367,8 +379,7 @@
               "run_id": "xlsx-3fe67e9178baf494",
               "context": "200K",
               "http_status": 200,
-              "capture_kind": "frozen-candidate replay",
-              "is_final": false
+              "capture_kind": "frozen-candidate replay"
             }
           }
         }
@@ -425,16 +436,6 @@
       "views": []
     },
     {
-      "id": "roomsketcher",
-      "name": "RoomSketcher",
-      "views": []
-    },
-    {
-      "id": "samsung",
-      "name": "Samsung US",
-      "views": []
-    },
-    {
       "id": "simplify-jobs",
       "name": "Simplify Jobs",
       "views": []
@@ -472,11 +473,6 @@
     {
       "id": "wayfair",
       "name": "Wayfair",
-      "views": []
-    },
-    {
-      "id": "workable",
-      "name": "Workable",
       "views": []
     },
     {

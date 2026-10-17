@@ -28,35 +28,6 @@
   });
   updateTheme();
 
-  const board = document.getElementById('board');
-  const body = document.getElementById('board-body');
-  const columns = { overall: 2, request: 3, browser: 4, system: 5, cost: 6, tokens: 7, turns: 8 };
-  const scoreKeys = ['overall', 'request', 'browser', 'system'];
-  if (board && body) {
-  const rows = Array.from(body.rows);
-  let sortKey = 'overall';
-  let descending = true;
-  board.querySelectorAll('[data-sort]').forEach(button => {
-    button.hidden = false;
-    button.previousElementSibling.hidden = true;
-    button.addEventListener('click', () => {
-      const key = button.dataset.sort;
-      descending = key === sortKey ? !descending : scoreKeys.includes(key);
-      sortKey = key;
-      const value = (row, column) => Number(row.cells[column].dataset.value);
-      rows.sort((a, b) => (value(a, columns[key]) - value(b, columns[key])) * (descending ? -1 : 1) || value(b, 2) - value(a, 2));
-      rows.forEach((row, index) => {
-        row.cells[0].textContent = index + 1;
-        body.appendChild(row);
-      });
-      board.querySelectorAll('thead th').forEach(th => th.removeAttribute('aria-sort'));
-      button.parentElement.setAttribute('aria-sort', descending ? 'descending' : 'ascending');
-      board.querySelectorAll('.sort-arrow').forEach(arrow => { arrow.textContent = '↕'; });
-      button.querySelector('.sort-arrow').textContent = descending ? '↓' : '↑';
-    });
-  });
-
-  }
   document.querySelectorAll('[data-copy]').forEach(button => {
     if (!navigator.clipboard || !window.isSecureContext) return;
     button.hidden = false;

@@ -134,7 +134,8 @@
     else if(runs.some(r=>r.id===chosenContexts.get(`${task.id}/${model.id}`)))contextPicker.value=chosenContexts.get(`${task.id}/${model.id}`);
     else {
       const same=selection?.model===model.id&&selection?.record?runs.find(r=>r.context===selection.record.context):null;
-      const configured=runs.find(r=>r.context.toLowerCase().match(/\d+(?:\.\d+)?[mk]/)?.[0]===model.default_context);
+      const selected=task.models[model.id]?.display_context||model.default_context;
+      const configured=runs.find(r=>r.context.toLowerCase().match(/\d+(?:\.\d+)?[mk]/)?.[0]===selected);
       if(same||configured)contextPicker.value=(same||configured).id;
     }
     $('#context-control').hidden=runs.length<=1;

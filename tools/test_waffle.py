@@ -8,7 +8,7 @@ from annotation_scores import supplement
 
 
 class WaffleTests(unittest.TestCase):
-    def test_qwen_overview_matches_all_74_rows_of_the_supplied_200k_table(self):
+    def test_qwen_active_rows_match_the_original_74_row_200k_table(self):
         root = Path(__file__).resolve().parents[1]
         expected = json.loads((root / 'tools/fixtures/qwen-200k-book1.json').read_text())
         data = json.loads((root / 'data/waffle.json').read_text())
@@ -77,8 +77,8 @@ class WaffleTests(unittest.TestCase):
 
     def test_current_public_cohort_and_score_citations(self):
         data = json.loads((Path(__file__).resolve().parents[1] / 'data/waffle.json').read_text())
-        self.assertEqual(len({t['id'] for t in data['tasks']}), 74)
-        self.assertIn('untappd', {t['id'] for t in data['tasks']})
+        self.assertEqual(len({t['id'] for t in data['tasks']}), 70)
+        self.assertFalse({'untappd','roomsketcher','workable','edx'} & {t['id'] for t in data['tasks']})
         self.assertNotIn('samsung', {t['id'] for t in data['tasks']})
         model_ids = {m['id'] for m in data['models']}
         self.assertEqual(len(model_ids), 9)

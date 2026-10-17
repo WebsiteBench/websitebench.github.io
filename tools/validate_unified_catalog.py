@@ -24,8 +24,12 @@ def validate(root):
         assert (copy['sha256'], copy['bytes']) == (material['sha256'], material['bytes'])
         assert not PurePosixPath(copy['destination']).is_absolute() and '..' not in PurePosixPath(copy['destination']).parts
     pairs = catalog['pairs']
-    assert len(pairs) == len({(p['task_id'], p['model_id']) for p in pairs}) == 666
-    assert len({p['task_id'] for p in pairs}) == 74 and len({p['model_id'] for p in pairs}) == 9
+    cohort = read(root / 'sources/cohort.json')
+    task_ids = {t['id'] for t in cohort['tasks']}
+    model_ids = {m['source_id'] for m in cohort['models']}
+    pair_count = len(task_ids) * len(model_ids)
+    assert len(pairs) == len({(p['task_id'], p['model_id']) for p in pairs}) == pair_count
+    assert {p['task_id'] for p in pairs} == task_ids and {p['model_id'] for p in pairs} == model_ids
     note_pairs = set()
     entries = []
     for pair in pairs:
@@ -58,7 +62,7 @@ def validate(root):
             if score.get('historical_score_path'):
                 assert score['status'] == 'needs_current_evaluation'
                 assert read(root / score['historical_score_path'])['fraction'] is not None
-    assert len(note_pairs) == 666, len(note_pairs)
+    assert len(note_pairs) == pair_count, len(note_pairs)
     migration = read(root / 'sources/workbook-migration.json')
     assert migration['official_records'] == len(migration['records']) == 959
     assert len(migration['cell_notes']) == 1170
@@ -66,6 +70,8 @@ def validate(root):
     scores = pq.read_table(root / 'data/scores.parquet').to_pylist()
     assert len(scores) == len(entries) and Counter(s['status'] for s in scores) == Counter(e['score_status'] for e in entries)
     waffle = read(root / 'site/waffle.json')
+    assert {t['id'] for t in waffle['tasks']} == task_ids
+    policy = read(root / 'sources/display-contexts.json')
     matrix_counts = {}
     lookup = {(p['task_id'], p['model_id']): p for p in pairs}
     for ctx in ('overview', '1m', '200k'):
@@ -76,11 +82,11 @@ def validate(root):
                 value = task['results'][model['id']]['contexts'][ctx if model['variable_context'] else 'recorded']
                 states.append(value['status'])
                 if value['status'] == 'scored':
-                    selected_context = model.get('default_context') if ctx == 'overview' else ctx
+                    selected_context = policy.get('task_overrides', {}).get(model['source_id'], {}).get(task['id'], model.get('default_context')) if ctx == 'overview' else ctx
                     matching = [e for e in lookup[task['id'], model['source_id']]['contexts'] if e['fraction'] == value['value'] and (not model['variable_context'] or e['context'] == selected_context)]
                     assert len(matching) == 1 and matching[0]['score']['comparable']
                     assert value['run'] == matching[0]['recording_id']
-        assert len(states) == 666
+        assert len(states) == pair_count
         matrix_counts[ctx] = dict(Counter(states))
         view_missing = root / f'missing/scores-{ctx}.json'
         if view_missing.is_file():
@@ -100,7 +106,18 @@ def validate(root):
     manifest = read(root / 'manifest-v2.json')
     for name, digest in manifest['site_sha256'].items():
         assert hashlib.sha256((root / 'site' / name).read_bytes()).hexdigest() == digest
-    return dict(valid=True, official_pairs=666, contexts=len(entries), copied_materials=len(copies), original_matrix_notes_preserved=len(note_pairs),
+    board = read(root / 'site/leaderboard-views.json')
+    assert board['total_tasks'] == len(task_ids)
+    for ctx, models in board['views'].items():
+        for model in models:
+            known = [t['results'][model['id']]['contexts'][ctx if model['variable_context'] else 'recorded'] for t in waffle['tasks']]
+            known = [e for e in known if e['status'] == 'scored']
+            assert model['coverage']['overall'] == len(known)
+            assert abs(model['overall'] - sum(100*e['passed']/e['total'] for e in known)/len(known)) < 1e-10
+            for resource, scores in model['pareto'].items():
+                for score, profile in scores.items():
+                    assert profile['count'] == len(profile['task_ids']) and set(profile['task_ids']) <= task_ids
+    return dict(valid=True, official_pairs=pair_count, contexts=len(entries), copied_materials=len(copies), original_matrix_notes_preserved=len(note_pairs),
                 score_statuses=dict(Counter(e['score_status'] for e in entries)), matrix=matrix_counts, metadata_files_scanned=scanned)
 
 
