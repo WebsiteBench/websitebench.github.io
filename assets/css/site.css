@@ -512,3 +512,5 @@ code { font-family: var(--mono); }
 .results-toolbar > label select { font: inherit; background: var(--bg); color: var(--ink); border: 1px solid var(--rule); padding: 4px 7px; }
 .results-toolbar .results-tabs { margin-left: auto; }
 .results-toolbar { scroll-margin-top: 64px; }
+.project-credits { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 16px; font-size: 13px; }
+.project-credits small { margin-left: 5px; color: var(--muted); font: 10px var(--mono); }
