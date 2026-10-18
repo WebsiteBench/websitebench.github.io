@@ -174,11 +174,11 @@ node tools/prerender.js
 
 ## Analysis figures
 
-Analysis now leads with Human trajectory, Early stopping, and Exploration + implementation, in that order. Each section has a short result, explicit study scope, and a visible figure with a full-resolution link. Human traces cover 18 paired Grok 4.6 tasks; the exploration/implementation analysis covers 20 Grok 4.6 tasks. The Kimi K3 × Lowe’s stop-review intervention is labeled as a single case, separate from the reported median duration.
+Analysis follows the current paper: Human trajectory, Exploration + implementation, and Early stopping. Figures 4 and 5 are direct high-resolution renders of the paper figures, with unchanged chart contents. Their source asset names, source-PDF hash, page and crop geometry are recorded in `assets/figures/paper/provenance.json`. The full paper is not published by this website.
 
-`data/analysis.json` records the values and provenance from the previous project website at revision `9a6ffd2`. The human-trace and gaps figures are retained assets. `tools/render-analysis.py` renders the early-stopping SVG from those reported numbers using matplotlib; it is a new website chart, not an extracted paper figure. The current paper PDF/LaTeX was not available when these sections were prepared. Review the numbers, wording, sample scopes, and retained figures against the current paper before publishing. This does not certify the workbook's final leaderboard runs.
+Human traces cover 18 matched Grok 4.6 website pairs. The exploration analysis covers 20 runs; its pre-edit coverage applies to the 17 trajectories that reached the checkpoint. Distinct page, workflow, and requirement denominators are preserved. Early stopping follows the paper text and reports the Kimi K3 × Lowe’s example in a separate single-case table; it does not display an invented paper figure.
 
-To regenerate the duration figure, run `python tools/render-analysis.py` in an environment with matplotlib. Serving the site needs no additional dependency.
+`data/analysis.json` distinguishes matching the current paper from verifying the underlying raw analysis tables. Matching a figure does not independently reproduce its experiment or certify the canonical leaderboard. The Overleaf project was read only.
 
 ## Deploy on GitHub Pages
 
