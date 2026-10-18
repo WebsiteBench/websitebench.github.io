@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use WebsiteBench, please cite the paper below."
+title: "WebsiteBench"
+type: dataset
+authors:
+  - name: "Anonymous"
+abstract: "WebsiteBench contains 74 expert-built and expert-reviewed website reconstruction tasks and 50,356 hidden tests. In each task, an agent explores a locally hosted website through a browser and builds a runnable offline site that looks and behaves the same way."
+keywords:
+  - benchmark
+  - AI agents
+  - web agents
+  - website reconstruction
+preferred-citation:
+  type: generic
+  title: "WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?"
+  authors:
+    - name: "Anonymous"
+  year: 2026

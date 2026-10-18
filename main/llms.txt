@@ -1,0 +1,17 @@
+# WebsiteBench
+
+WebsiteBench asks whether AI agents can reconstruct a website through browser exploration. The active website cohort has 70 tasks and nine models, with a 16-hour run budget. Untappd, RoomSketcher, Workable and edX are excluded; historical materials are preserved.
+
+## Results
+
+Table, Pareto and Waffle use the same versioned HF catalog and context policy. Overall and T1/T2/T3 are arithmetic means of available per-task fractions. Missing scores are excluded, never counted as zero. Coverage is shown for each metric. Resource values are reported estimates or partial records where qualified; Pareto uses the same task subset on both axes.
+
+- Canonical data: https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts
+- Active tasks: data/cohort.json
+- Contexts and aggregates: data/leaderboard-views.json
+- Exact per-task scores: data/waffle.json
+- Remaining gaps: https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/missing/score-gaps.md
+- Run instructions: run.html
+- Task explorer and ATIF browser: tasks.html
+- Analysis: analysis.html
+- Citation: CITATION.bib

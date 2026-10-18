@@ -1,0 +1,35 @@
+{
+  "task": "medium",
+  "reference_source_revision": "d1c5375f93260cf375b9159b13ed380f062ffbfe",
+  "reference_kind": "local reference snapshot replay",
+  "model": "qwen3.8-max",
+  "context": "200K",
+  "run_id": "xlsx-3fe67e9178baf494",
+  "source": "https://huggingface.co/datasets/xyz-harbor/websitebench-harbor-trajectories/tree/main/medium-job/qwen3.8-max/run1",
+  "source_archive": "medium-job.tar.zst.age",
+  "source_archive_sha256": "52d9341e2abd9eeb571a72cf6a44d6bf8bc2ec59c303db4a548c5e4372491573",
+  "candidate_server_sha256": "a4ac90e6af08cefd043491c46e94470021f1a473a86832e4fcc74e63b036ad59",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "routes": [
+    "/",
+    "/about"
+  ],
+  "capture_conditions": {
+    "anonymous": true,
+    "seed": 0,
+    "timezone": "UTC",
+    "locale": "en-US",
+    "device_scale_factor": 1,
+    "network": "isolated local replay"
+  },
+  "files": {
+    "reference-home.png": "c3bdeb1f1df8e0c7a2d6c0ed0e601402d953c445b36bad34ce4288fcdb46e4cb",
+    "qwen-home.png": "405f683d7f978f369adf98087459085361f7628d307ee6f466a72c2bdbced75f",
+    "reference-about.png": "15e0fc8df05e93e0d6fd4b6b2565e27502d15c1a280cc4bf1d303c79175df9fc",
+    "qwen-about.png": "2675bb3bcb4a510789377edadab478fc44a25c370e541792a9ff7293f331ce7e"
+  },
+  "final_leaderboard_run_verified": false
+}

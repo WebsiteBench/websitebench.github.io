@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tasks · WebsiteBench</title>
+  <meta name="description" content="A benchmark for rebuilding full-stack websites through browser exploration. 70 expert-built websites, hidden tests, and nine evaluated models.">
+  <link rel="canonical" href="https://websitebench.github.io/tasks.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://websitebench.github.io/tasks.html">
+  <meta property="og:title" content="Tasks · WebsiteBench">
+  <meta property="og:description" content="Compare a reference website with one model reconstruction at a time.">
+  <meta property="og:image" content="https://websitebench.github.io/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#fafaf8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23262624'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='monospace' font-size='24' fill='%23fafaf8'%3Ew%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <script src="assets/js/site.js" defer></script>
+
+
+<script src="assets/js/tasks.js" defer></script>
+<script src="assets/js/trajectory.js" defer></script>
+</head>
+<body><a class="skip" href="#main">Skip to content</a>
+<header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">[w]</span> WEBSITEBENCH</a><nav aria-label="Main navigation"><a href="index.html#results">Leaderboard</a><a href="tasks.html">Tasks</a><a href="analysis.html">Analysis</a><a href="run.html">Run</a></nav><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" hidden><span aria-hidden="true">◐</span></button></div></header>
+<main id="main" class="wrap subpage task-browser"><div class="task-explorer-controls"><label>Task<select id="task-picker" aria-label="Choose a benchmark task"></select></label><label>Model<select id="model-picker" aria-label="Choose one model"></select></label><label id="context-control" hidden>Context<select id="context-picker" aria-label="Choose a recorded context"></select></label></div>
+<div class="task-explorer-title"><div><h1 id="explorer-task-name">Tasks</h1><p id="task-record-summary" class="task-record-summary"></p></div><span id="explorer-task-position"></span></div>
+<p id="task-selection-notice" class="table-note" role="status" hidden></p>
+<div class="task-content-tabs" role="tablist" aria-label="Task view"><button type="button" id="task-tab-website" role="tab" aria-selected="true" aria-controls="task-website" data-task-panel="website">Website</button><button type="button" id="task-tab-trajectory" role="tab" aria-selected="false" aria-controls="trajectory-panel" data-task-panel="trajectory" tabindex="-1">Trajectory</button></div>
+<div id="task-website" role="tabpanel" aria-labelledby="task-tab-website">
+<div class="comparison-tools"><form id="comparison-route-form"><label for="comparison-route" class="sr-only">Page path on both websites</label><span aria-hidden="true">↳</span><input id="comparison-route" value="/" placeholder="/page" autocomplete="off" spellcheck="false"><button type="submit">Go</button></form><label class="compact-check"><input type="checkbox" id="sync-scroll" checked>Sync scroll</label><label class="compact-check"><input type="checkbox" id="sync-navigation">Sync navigation</label><select id="comparison-layout" aria-label="Comparison layout"><option value="stacked">Top / bottom</option><option value="side">Side by side</option></select><button type="button" id="reset-preview" title="Restart both websites with fresh state">↺ Reset</button></div>
+<div id="preview-mode-control" class="preview-mode" hidden><button type="button" data-preview-mode="interactive" aria-pressed="true">Interactive</button><button type="button" data-preview-mode="screenshot" aria-pressed="false">Screenshot</button></div><label id="state-control" class="preview-state" hidden>Page<select id="state-picker" aria-label="Choose matching page state"></select></label>
+<div id="comparison-empty" class="comparison-empty" hidden><span class="empty-symbol" aria-hidden="true">[w]</span><p id="comparison-empty-message"></p><button id="start-preview" type="button" class="button">Start interactive comparison →</button><button id="open-task-trace" type="button" class="text-link">View trajectory →</button></div>
+<div class="comparison-stage" hidden><section class="comparison-pane" aria-labelledby="reference-heading"><header><h2 id="reference-heading">Reference</h2><span id="reference-version"></span><a id="reference-live-link" target="_blank" rel="noopener noreferrer" hidden aria-label="Open interactive reference at full size">↗</a></header><div id="reference-preview" class="comparison-preview"></div></section><section class="comparison-pane" aria-labelledby="candidate-heading"><header><h2 id="candidate-heading">Model reconstruction</h2><span id="candidate-model-name"></span><a id="candidate-live-link" target="_blank" rel="noopener noreferrer" hidden aria-label="Open interactive model reconstruction at full size">↗</a></header><div id="candidate-preview" class="comparison-preview"></div></section></div>
+</div>
+<section id="trajectory-panel" class="trajectory-viewer" role="tabpanel" aria-labelledby="task-tab-trajectory" hidden>
+  <div class="trace-toolbar"><label id="trace-run-control" hidden>Run<select id="trace-run" aria-label="Choose a recorded trajectory"></select></label><label id="trace-document-control" hidden>Agent<select id="trace-document" aria-label="Choose an embedded agent trajectory"></select></label><label class="trace-file-button">Open ATIF<input id="trace-file" type="file" accept=".json,.png,.jpg,.jpeg,.webp,.gif,.wav,.mp3,.ogg,.m4a" multiple><span class="sr-only">Choose one ATIF JSON file, optionally with its media files</span></label><span class="trace-local-note">Local files stay in your browser.</span></div>
+  <p id="trace-status" class="trace-status" role="status">Choose a trajectory or open an ATIF JSON file.</p>
+  <div id="trace-run-details"></div>
+  <div id="trace-content" hidden>
+    <div class="trace-controls"><label class="trace-search-label"><span class="sr-only">Search trajectory messages, calls and results</span><input id="trace-search" type="search" placeholder="Search messages, calls, results…"></label><select id="trace-filter" aria-label="Filter trajectory steps"><option value="all">All steps</option><option value="tools">With tool calls</option><option value="agent">Agent</option><option value="user">User</option><option value="system">System</option></select><span id="trace-match-count"></span><div class="trace-step-controls"><button type="button" id="trace-previous" aria-label="Previous matching step">←</button><label>Step <input id="trace-step-number" type="number" min="1" step="1" aria-label="Go to trajectory step"></label><span id="trace-step-total"></span><button type="button" id="trace-next" aria-label="Next matching step">→</button></div></div>
+    <div class="trace-layout"><nav id="trace-step-list" class="trace-step-list" aria-label="Trajectory steps"></nav><article id="trace-step-detail" class="trace-step-detail" aria-label="Selected trajectory step" tabindex="-1"></article></div>
+  </div>
+</section>
+<div class="task-explorer-footer"><button type="button" id="previous-task">← Previous task</button><span id="preview-status" role="status"></span><button type="button" id="next-task">Next task →</button></div>
+<noscript><p class="table-note">Task comparisons require JavaScript.</p></noscript></main>
+<footer class="footer wrap"><span class="footer-brand">[w] WebsiteBench</span><div><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts" target="_blank" rel="noopener noreferrer">Traces &amp; artifacts ↗</a><a href="analysis.html#cite">Cite</a><a href="https://github.com/WebsiteBench/websitebench.github.io">Website source ↗</a></div></footer><p class="sr-only" id="copy-status" role="status"></p>
+</body></html>
