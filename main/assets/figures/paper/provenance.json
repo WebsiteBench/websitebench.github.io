@@ -1,0 +1,35 @@
+{
+  "source_kind": "current_paper_pdf",
+  "source_pdf_sha256": "a58718359c39830a85d702c16d8f977a8b70b0cacd9dde5b2f9a3306bcbfca46",
+  "checked_at": "2026-10-18T13:19:33.683301+00:00",
+  "method": "Unaltered figure regions rendered from the current compiled PDF at 360 DPI using Poppler. No redrawing or data edits.",
+  "raw_analysis_tables_verified": false,
+  "figures": [
+    {
+      "file": "figure4-human-trace.png",
+      "paper_figure": 4,
+      "page": 7,
+      "source_asset": "figures/a_finalized/figures4_5_v5_20261011/figure4_human_trace.pdf",
+      "clip_points": [
+        108,
+        80,
+        396,
+        126
+      ],
+      "sha256": "2099750ca3b4054fd443cbdb3ba10fadf5f3bb9a7b68d37977c6817d6707f9d3"
+    },
+    {
+      "file": "figure5-exploration-gaps.png",
+      "paper_figure": 5,
+      "page": 8,
+      "source_asset": "figures/a_finalized/figures4_5_v5_20261011/figure5_exploration_gaps.pdf",
+      "clip_points": [
+        108,
+        252,
+        396,
+        132
+      ],
+      "sha256": "f1f61cd066402a3e6d0afc1c4a0dd5e1cd5187becdb9b074c20303077aadf8a2"
+    }
+  ]
+}

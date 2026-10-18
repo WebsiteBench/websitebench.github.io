@@ -1,11 +1,14 @@
 {
   "source": {
-    "kind": "previous_project_website",
-    "repository": "https://github.com/WebsiteBench/websitebench.github.io",
-    "revision": "9a6ffd2b5d2cdad0c90685a5aecb0985756bcb50",
-    "files": ["index.html", "llms.txt", "assets/figures/human-trace.png", "assets/figures/gaps.png"],
-    "paper_version_verified": false,
-    "note": "Transcribed from the existing project website and retained figures. The current paper has not been supplied; review these values against that version before publishing. These analyses are separate from the final leaderboard run selection."
+    "kind": "current_paper",
+    "paper_snapshot_sha256": "a58718359c39830a85d702c16d8f977a8b70b0cacd9dde5b2f9a3306bcbfca46",
+    "source_files": [
+      "figures/a_finalized/figures4_5_v5_20261011/figure4_human_trace.pdf",
+      "figures/a_finalized/figures4_5_v5_20261011/figure5_exploration_gaps.pdf"
+    ],
+    "paper_version_verified": true,
+    "raw_analysis_tables_verified": false,
+    "note": "Figures 4 and 5 and their stated summaries were checked against the current compiled paper. Images are direct figure-region renders, not redrawn charts. This does not certify raw experimental tables or the current leaderboard selection."
   },
   "human_trajectory": {
     "model": "Grok 4.6",
@@ -16,23 +19,34 @@
     "tied": 6,
     "lower": 2,
     "sign_test_p": 0.039,
-    "figure": "assets/figures/human-trace.webp"
+    "figure": "assets/figures/paper/figure4-human-trace.png",
+    "paper_figure": 4,
+    "workflow_terminal_coverage": {
+      "independent": "approximately 40%",
+      "human_trace": "nearly 80%",
+      "checkpoint": "before_first_implementation_edit"
+    }
   },
   "early_stopping": {
     "budget_hours": 16,
     "reported_median_hours": 3.57,
     "case": {
       "model": "Kimi K3",
-      "task": "Lowe’s",
+      "task": "Lowe\u2019s",
       "intervention": "Claude Code /goal stop review",
       "baseline_hours": 1.0,
       "review_hours": 10.9,
       "baseline_score_percent": 0,
       "review_score_percent": 31.3,
       "first_rejected_exit_hours": 10.25,
-      "scope": "single_case"
+      "scope": "single_case",
+      "baseline_steps": 130,
+      "review_steps": 879,
+      "baseline_tokens_millions": 10.6,
+      "review_tokens_millions": 87.9
     },
-    "figure": "assets/figures/early-stopping.svg"
+    "figure": null,
+    "presentation": "Paper text and a single-case table; no paper figure is asserted."
   },
   "exploration_implementation": {
     "model": "Grok 4.6",
@@ -52,6 +66,8 @@
       "validation": 27.0,
       "other": 8.2
     },
-    "figure": "assets/figures/gaps.webp"
+    "figure": "assets/figures/paper/figure5-exploration-gaps.png",
+    "paper_figure": 5,
+    "trajectories_reaching_checkpoint": 17
   }
 }

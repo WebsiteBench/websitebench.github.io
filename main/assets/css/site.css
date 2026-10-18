@@ -514,3 +514,13 @@ code { font-family: var(--mono); }
 .results-toolbar { scroll-margin-top: 64px; }
 .project-credits { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 16px; font-size: 13px; }
 .project-credits small { margin-left: 5px; color: var(--muted); font: 10px var(--mono); }
+.paper-figure-viewport { overflow-x:auto; background:#fff; border:1px solid var(--rule); border-radius:4px; }
+.paper-figure-viewport a { display:block; }
+.paper-figure-viewport img { display:block; width:100%; height:auto; }
+.paper-scroll-hint { display:none; }
+.continuation-table caption { text-align:left; margin:0 0 12px; color:var(--muted); font-size:13px; }
+.continuation-table thead th { font-weight:600; }
+@media (max-width:700px) {
+  .paper-figure-viewport a { min-width:820px; }
+  .paper-scroll-hint { display:block; margin-top:4px; }
+}
