@@ -7,11 +7,15 @@ from build_leaderboard import summarize, number
 ROOT=Path(__file__).resolve().parents[1]
 
 class LeaderboardTests(unittest.TestCase):
-    def test_available_task_macro_average_preserves_zero_and_missing(self):
+    def test_test_pooled_score_differs_from_task_average_and_preserves_zero(self):
         metrics=['overall','request','browser','system','cost','tokens','turns']
         rows=[dict(task_id=str(i),context='1M',status='scored' if value is not None else 'missing',metrics={k:value if k=='overall' else None for k in metrics}) for i,value in enumerate([0,9,None])]
+        for row,counts in zip(rows,[dict(passed=0,total=10),dict(passed=9,total=100),None]):
+            row['counts']={key:counts if key=='overall' else None for key in ['overall','request','browser','system']}
         result=summarize(dict(id='example'),rows,3)
-        self.assertEqual(result['overall'],4.5)
+        self.assertAlmostEqual(result['overall'],100*9/110)
+        self.assertNotEqual(result['overall'],4.5)
+        self.assertEqual(result['score_counts']['overall'],dict(passed=9,total=110))
         self.assertEqual(result['coverage']['overall'],2)
         self.assertIsNone(result['cost'])
         self.assertEqual(result['pareto']['cost']['overall']['count'],0)
@@ -25,9 +29,9 @@ class LeaderboardTests(unittest.TestCase):
         for view,models in board['views'].items():
             for model in models:
                 entries=[t['results'][model['id']]['contexts'][view if model['variable_context'] else 'recorded'] for t in waffle['tasks']]
-                scores=[100*e['passed']/e['total'] for e in entries if e['status']=='scored']
+                scores=[e for e in entries if e['status']=='scored']
                 self.assertEqual(model['coverage']['overall'],len(scores))
-                self.assertAlmostEqual(model['overall'],sum(scores)/len(scores))
+                self.assertAlmostEqual(model['overall'],100*sum(e['passed'] for e in scores)/sum(e['total'] for e in scores))
                 for resource,scores in model['pareto'].items():
                     for profile in scores.values():
                         self.assertEqual(profile['count'],len(profile['task_ids']))
@@ -49,3 +53,18 @@ class LeaderboardTests(unittest.TestCase):
         self.assertEqual(number('0'),0)
         self.assertIsNone(number(''))
         self.assertIsNone(number('unknown'))
+
+    def test_pareto_pools_tests_only_for_tasks_with_paired_resource_data(self):
+        rows=[]
+        for task,passed,total,cost in [('small',0,10,1),('large',9,100,3),('no-cost',1,1,None)]:
+            metrics={key:None for key in ['overall','request','browser','system','cost','tokens','turns']}
+            metrics.update(overall=100*passed/total,cost=cost)
+            counts={key:None for key in ['overall','request','browser','system']}
+            counts['overall']=dict(passed=passed,total=total)
+            rows.append(dict(task_id=task,context='1M',status='scored',metrics=metrics,counts=counts))
+        result=summarize(dict(id='example'),rows,3)
+        self.assertAlmostEqual(result['overall'],100*10/111)
+        profile=result['pareto']['cost']['overall']
+        self.assertEqual(profile['task_ids'],['small','large'])
+        self.assertEqual(profile['resource_mean'],2)
+        self.assertAlmostEqual(profile['score_mean'],100*9/110)

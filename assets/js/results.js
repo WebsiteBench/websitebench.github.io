@@ -64,7 +64,7 @@
     company.closest('label').hidden = view === 'waffle';
     $('#results-description').textContent = view === 'waffle'
       ? `${taskData.tasks.length} tasks × ${taskData.models.length} models · selected per-task results.`
-      : `${taskData.tasks.length} tasks · mean per-task pass rate · coverage shown; missing scores excluded.`;
+      : `Current ${taskData.tasks.length}-task results · test-pooled pass rate · coverage shown; missing scores excluded.`;
     activeView = view; hideTooltip();
     tabs.forEach(tab => { const selected = tab.dataset.view === view; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
     panels.forEach(panel => { panel.hidden = panel.id !== `result-${view}`; });
@@ -193,6 +193,11 @@
     const scores = entries.map(trialScore).filter(score => score !== null);
     return {mean: scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null, count: scores.length};
   };
+  const poolEntries = entries => {
+    const known=entries.filter(e=>e.status==='scored');
+    const passed=known.reduce((sum,e)=>sum+e.passed,0),total=known.reduce((sum,e)=>sum+e.total,0);
+    return {mean:total?100*passed/total:null,count:known.length};
+  };
   const byMeanDescending = (a, b) => a.mean === null || b.mean === null
     ? Number(a.mean === null) - Number(b.mean === null) || a.name.localeCompare(b.name)
     : b.mean - a.mean || a.name.localeCompare(b.name);
@@ -201,9 +206,9 @@
   function renderWaffle() {
     hideTooltip();
     // Rank both axes using only scored cells in the selected context. Every
-    // task has equal weight in a model mean; unscored cells are never zeros.
+    // model score pools test counts; task difficulty averages model pass rates. Missing results are never zeros.
     const visible = waffleModels.map(model => ({...model,
-      ...summarize(tasks.map(task => entryFor(task, model))),
+      ...poolEntries(tasks.map(task => entryFor(task, model))),
     })).sort(byMeanDescending);
     const rows = tasks.map(task => ({task, name: task.name,
       ...summarize(visible.map(model => entryFor(task, model))),
@@ -223,11 +228,11 @@
     const unscored = {};
     const chunks = columns === 2 ? [rows.slice(0,blockSize), rows.slice(blockSize)] : [rows];
     chunks.forEach((chunk, block) => {
-    html += `<table class="task-waffle-table" style="width:${labelWidth + visible.length * pitch}px"><caption class="sr-only">${columns === 2 ? `Tasks ${block * blockSize + 1}–${block * blockSize + chunk.length} of ${tasks.length}` : `All ${tasks.length} website tasks`} and ${visible.length} models. Read tasks down the left block, then down the right block: easiest first, hardest last. Models are ordered strongest to weakest from left to right in both blocks. Both axes use mean reported pass rate in the selected context, excluding unscored cells. Switch context for GLM, DeepSeek and Qwen. Other models keep their recorded context. Red means error, orange means timeout, and a diagonal mark means unscored. None is zero.</caption><colgroup><col style="width:${labelWidth}px">${visible.map(() => `<col style="width:${pitch}px">`).join('')}</colgroup><thead><tr><th scope="col" class="task-name-heading" title="Tasks ranked by mean pass rate, easier first. Read down the left block, then the right block.">${columns === 2 ? `${block * blockSize + 1}–${block * blockSize + chunk.length} · ${block === 0 ? 'Easier' : 'Harder'}` : 'Easy → hard'}</th>`;
+    html += `<table class="task-waffle-table" style="width:${labelWidth + visible.length * pitch}px"><caption class="sr-only">${columns === 2 ? `Tasks ${block * blockSize + 1}–${block * blockSize + chunk.length} of ${tasks.length}` : `All ${tasks.length} website tasks`} and ${visible.length} models. Read tasks down the left block, then down the right block: easiest first, hardest last. Models are ordered strongest to weakest from left to right in both blocks. Models use test-pooled pass rate; tasks use mean model pass rate. Unscored cells are excluded. Switch context for GLM, DeepSeek and Qwen. Other models keep their recorded context. Red means error, orange means timeout, and a diagonal mark means unscored. None is zero.</caption><colgroup><col style="width:${labelWidth}px">${visible.map(() => `<col style="width:${pitch}px">`).join('')}</colgroup><thead><tr><th scope="col" class="task-name-heading" title="Tasks ranked by mean pass rate, easier first. Read down the left block, then the right block.">${columns === 2 ? `${block * blockSize + 1}–${block * blockSize + chunk.length} · ${block === 0 ? 'Easier' : 'Harder'}` : 'Easy → hard'}</th>`;
     visible.forEach(model => {
       const labels = [...new Set(tasks.map(task => entryFor(task, model).label).filter(Boolean))];
       const context = labels.filter(label=>!/recorded/i.test(label)).map(label=>label.replace(/k/ig,'K')).sort().join(' / ');
-      const meanLabel = model.mean === null ? 'No scored tasks' : `Mean pass rate: ${model.mean.toFixed(2)}% · ${model.count}/${tasks.length} scored tasks`;
+      const meanLabel = model.mean === null ? 'No scored tasks' : `Test-pooled pass rate: ${model.mean.toFixed(2)}% · ${model.count}/${tasks.length} scored tasks`;
       html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" data-context="${escape(context)}" title="${escape(model.name)} · ${escape(context || 'recorded context')}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span>${context ? `<small class="task-model-context">${escape(context)}</small>` : ''}</span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
     });
     html += '</tr></thead><tbody>';
@@ -276,7 +281,7 @@
     const missingLabels = {missing:'unscored', withdrawn:'withdrawn', conflict:'conflict', invalid:'invalid', incomparable:'legacy'};
     $('#waffle-coverage').textContent = `${scored}/${tasks.length*waffleModels.length} scored` + ['error','timeout','unscored'].map(kind=>{const count=tasks.reduce((n,task)=>n+visible.filter(model=>{const e=entryFor(task,model);return e.status!=='scored'&&(e.failure_kind===kind||(kind==='unscored'&&!['error','timeout'].includes(e.failure_kind)));}).length,0);return count?` · ${count} ${kind}`:'';}).join('');
     $('#waffle-legend').innerHTML = `<span class="waffle-simple-legend"><span>Test pass rate</span>${[0,10,25,50,100].map(value => `<span class="legend-item"><i style="background:${scoreColor(value)}" aria-hidden="true"></i>${value}%</span>`).join('')}<span class="legend-item"><i class="legend-error" aria-hidden="true"></i>Error</span><span class="legend-item"><i class="legend-timeout" aria-hidden="true"></i>Timeout</span><span class="legend-item"><i class="legend-unscored" aria-hidden="true"></i>Unscored</span>${unscored.conflict ? '<span class="legend-item"><i class="legend-conflict" aria-hidden="true"></i>Conflict</span>' : ''}</span>`;
-    $('#waffle-note').innerHTML = 'Sorted by mean test pass rate. Unscored cells excluded. <a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/missing/score-gaps.md" target="_blank" rel="noopener">Score details ↗</a>';
+    $('#waffle-note').innerHTML = 'Models: test-pooled score. Tasks: easy → hard. Unscored cells excluded. <a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts/blob/main/missing/score-gaps.md" target="_blank" rel="noopener">Score details ↗</a>';
   }
   contextPicker.addEventListener('change', () => {
     models=boardData.views[contextPicker.value];

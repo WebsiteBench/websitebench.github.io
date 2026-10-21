@@ -4,7 +4,7 @@ WebsiteBench asks whether AI agents can reconstruct a website through browser ex
 
 ## Results
 
-Table, Pareto and Waffle use the same versioned HF catalog and context policy. Overall and T1/T2/T3 are arithmetic means of available per-task fractions. Missing scores are excluded, never counted as zero. Coverage is shown for each metric. Resource values are reported estimates or partial records where qualified; Pareto uses the same task subset on both axes.
+Table, Pareto and Waffle use the same versioned HF catalog and context policy. Overall and T1/T2/T3 use the paper’s test-pooled formula: 100 × sum(passed tests) / sum(total tests). The current 70-task catalog and updated runs differ from the frozen 74-task paper snapshot. Missing scores are excluded, never counted as zero. Coverage is shown for each metric. Resource values are reported estimates or partial records where qualified; Pareto uses the same task subset on both axes.
 
 - Canonical data: https://huggingface.co/datasets/TIGER-Lab/WebsiteBenchArtifacts
 - Active tasks: data/cohort.json

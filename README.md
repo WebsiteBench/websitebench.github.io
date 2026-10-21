@@ -17,11 +17,11 @@ python3 -m http.server 8000
 
 The active cohort is **70 tasks × 9 models**. Untappd, RoomSketcher, Workable and edX are excluded from every current view; their original materials remain in HF history. `data/cohort.json` contains the exact active task list.
 
-Table, Pareto and Waffle share the same selected canonical results from `TIGER-Lab/WebsiteBenchArtifacts`. GPT 6.1 Sol replaces the historical GPT 5.6 Sol. Do not edit aggregate percentages or generated CSVs by hand.
+Table, Pareto and Waffle share the same selected canonical results from `TIGER-Lab/WebsiteBenchArtifacts`. GPT 6.1 Sol replaces the historical GPT 5.6 Sol. This current 70-task catalog uses updated run/context selections and differs from the paper’s frozen 74-task Table 1. Do not edit aggregate percentages or generated CSVs by hand.
 
-- **Table:** the arithmetic mean of available per-task pass fractions, with each task weighted equally. Overall and Request/Browser/System include coverage counts; missing/invalid results are excluded, never treated as zero. Missing group counts stay blank. Cost, tokens and turns are recalculated from resource values published with the selected score/context; estimates and partial usage remain qualified.
-- **Pareto:** accuracy and resource means use the same paired task subset for each point. Hover shows coverage. A model without the selected resource data has no point. The frontier connects the visible reported points; the line is a guide, and no confidence intervals are invented.
-- **Waffle:** one cell per task/model, sorted easy to hard and high to low. Desktop uses two 35-task blocks. Grayscale represents a measured pass fraction; red means error, orange means timeout, and a diagonal mark means no usable score or pending verification. All states retain their source and context. Clicking a bound cell opens that exact recorded run.
+- **Table:** the paper’s test-pooled metric: 100 × sum(passed tests) / sum(total tests). Overall and Request/Browser/System include coverage counts; missing/invalid results are excluded, never treated as zero. Missing group counts stay blank. Cost, tokens and turns are recalculated from resource values published with the selected score/context; estimates and partial usage remain qualified.
+- **Pareto:** test-pooled accuracy and resource means use the same paired task subset for each point. Hover shows coverage. A model without the selected resource data has no point. The frontier connects the visible reported points; the line is a guide, and no confidence intervals are invented.
+- **Waffle:** one cell per task/model, tasks sorted by mean model pass rate, and models by test-pooled pass rate. Desktop uses two 35-task blocks. Grayscale represents a measured pass fraction; red means error, orange means timeout, and a diagonal mark means no usable score or pending verification. All states retain their source and context. Clicking a bound cell opens that exact recorded run.
 
 The shared context selector applies to all three tabs. Overview uses Qwen 200K, DeepSeek 1M and the recorded settings for the other models. GLM uses 1M with eight explicit 200K task selections (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker). This choice is recorded in HF `sources/display-contexts.json`, and the mixed column/cells show actual contexts. Strict 1M/200K comparisons remain available. No maximum score is selected.
 
@@ -49,7 +49,7 @@ contains the active 70-task cohort, the current nine-model
 list (including GPT 6.1 Sol), context identities, availability, and score citations
 from canonical score files. Different contexts remain distinct. Nothing is called a
 final leaderboard run, and no highest-scoring run is selected automatically.
-The published aggregate leaderboard remains the separately documented snapshot.
+Leaderboard aggregates are derived from this same selected catalog and its test counts.
 
 Generate the public catalog and private bindings:
 

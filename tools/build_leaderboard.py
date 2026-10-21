@@ -1,6 +1,7 @@
 """Derive all leaderboard views from the exact canonical Waffle selection.
 
-Each task has equal weight. Missing results are excluded, with coverage shown;
+Scores pool passed/total test counts, following the paper's Table 1 definition.
+Missing results are excluded, with coverage shown;
 resource/accuracy Pareto coordinates always use the same paired task subset.
 """
 import csv
@@ -32,17 +33,19 @@ def unique(values):
 def task_record(root, task, model, entry):
     row = dict(task_id=task['id'], model_id=model['id'], context=entry['label'], status=entry['status'],
                source=entry['source_url'], run_id=entry['run'], failure_kind=entry.get('failure_kind'),
-               metrics={k: None for k in (*SCORES, *RESOURCES)})
+               metrics={k: None for k in (*SCORES, *RESOURCES)}, counts={k: None for k in SCORES})
     if entry['status'] != 'scored':
         return row
     path = entry['source_url'].split('/blob/main/', 1)[1]
     score = read(root / path)
     provenance = read(root / Path(path).parent / 'provenance.json')
     row['metrics']['overall'] = 100 * score['passed'] / score['total']
+    row['counts']['overall'] = dict(passed=score['passed'], total=score['total'])
     for key, group in SCORES.items():
         value = fraction(score.get('groups', {}).get(group)) if group else None
         if value:
             row['metrics'][key] = 100 * value[0] / value[1]
+            row['counts'][key] = dict(passed=value[0], total=value[1])
     # Only resources explicitly published with the selected fraction and context.
     # Old rows, duplicate disagreements, missing usage and trace step counts are
     # never silently used to populate these fields.
@@ -64,10 +67,22 @@ def task_record(root, task, model, entry):
     return row
 
 
+def pool(rows, key):
+    known = [r['counts'][key] for r in rows if r['counts'][key] is not None]
+    passed, total = sum(c['passed'] for c in known), sum(c['total'] for c in known)
+    return dict(passed=passed, total=total, percentage=100 * passed / total if total else None, count=len(known))
+
+
 def summarize(model, rows, total):
     current = dict(model, group='open' if model['id'] in ('glm', 'kimi', 'deepseek', 'qwen') else 'frontier', total_tasks=total)
     current['coverage'] = {}
-    for key in (*SCORES, *RESOURCES):
+    current['score_counts'] = {}
+    for key in SCORES:
+        pooled = pool(rows, key)
+        current[key] = pooled['percentage']
+        current['coverage'][key] = pooled['count']
+        current['score_counts'][key] = dict(passed=pooled['passed'], total=pooled['total'])
+    for key in RESOURCES:
         values = [r['metrics'][key] for r in rows if r['metrics'][key] is not None]
         current[key] = mean(values) if values else None
         current['coverage'][key] = len(values)
@@ -79,8 +94,9 @@ def summarize(model, rows, total):
         current['pareto'][resource] = {}
         for score in SCORES:
             paired = [r for r in rows if r['metrics'][resource] is not None and r['metrics'][score] is not None]
+            pooled = pool(paired, score)
             current['pareto'][resource][score] = dict(resource_mean=mean(r['metrics'][resource] for r in paired) if paired else None,
-                score_mean=mean(r['metrics'][score] for r in paired) if paired else None, count=len(paired), task_ids=[r['task_id'] for r in paired])
+                score_mean=pooled['percentage'], passed=pooled['passed'], total=pooled['total'], count=len(paired), task_ids=[r['task_id'] for r in paired])
     return current
 
 
@@ -90,7 +106,8 @@ def build(root):
     cohort = read(root / 'sources/cohort.json')
     total = len(cohort['tasks'])
     export = dict(schema_version=2, cohort_id=cohort.get('cohort_id'), total_tasks=total, default_view='overview',
-        aggregation='Arithmetic mean of per-task test pass fractions; each available task has equal weight. Missing/invalid results are excluded, not zero. Coverage is shown for every metric.',
+        aggregation='Test-pooled: 100 × sum(passed tests) / sum(total tests), for Overall and each test category. Missing/invalid results are excluded, not zero. Coverage is shown for every metric.',
+        score_scope='Current 70-task catalog with updated run/context selections; not the paper Table 1 frozen 74-task snapshot. The paper reports GPT 5.6 Sol; this catalog reports GPT 6.1 Sol.',
         resources='Means of reported resource values bound to the selected score/context; estimates and partial usage remain qualified. Pareto accuracy and resources use the same paired task subset.', views={})
     all_rows = {}
     for view in ('overview', '1m', '200k'):
@@ -111,4 +128,11 @@ def build(root):
     write_site(root / 'site/leaderboard.json', export['views']['overview'])
     (root / 'site/leaderboard.csv').write_bytes((root / 'site/leaderboard-overview.csv').read_bytes())
     write(root / 'data/leaderboard-inputs.json', dict(cohort_id=cohort.get('cohort_id'), views=all_rows))
+    write(root / 'sources/leaderboard-policy.json', dict(
+        aggregation='test_pooled', percentage_formula='100 * sum(passed tests) / sum(total tests)',
+        score_categories=SCORES, missing='Exclude missing/invalid records; do not assign zero.',
+        resources='Arithmetic mean per task, preserving partial/estimated usage qualifications.',
+        pareto='Resource mean and pooled score use the identical paired task subset.',
+        active_tasks=total, paper_tasks=74, paper_snapshot_reproduced=False,
+        scope=export['score_scope'], inputs='data/leaderboard-inputs.json'))
     return export

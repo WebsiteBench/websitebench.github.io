@@ -8,8 +8,9 @@ if(ids.length!==70||new Set(ids).size!==70||!same(ids,waffle.tasks.map(t=>t.id))
 if(modelIDs.length!==9||!modelIDs.includes('sol61')||modelIDs.includes('sol'))throw Error('Obsolete leaderboard model list');
 for(const view of ['overview','1m','200k'])for(const model of board.views[view]){
  const entries=waffle.tasks.map(t=>t.results[model.id].contexts[model.variable_context?view:'recorded']).filter(e=>e.status==='scored');
- const mean=entries.reduce((n,e)=>n+100*e.passed/e.total,0)/entries.length;
- if(model.coverage.overall!==entries.length||Math.abs(model.overall-mean)>1e-9)throw Error('Leaderboard and Waffle disagree');
+ const passed=entries.reduce((n,e)=>n+e.passed,0),total=entries.reduce((n,e)=>n+e.total,0);
+ const pooled=100*passed/total;
+ if(model.coverage.overall!==entries.length||Math.abs(model.overall-pooled)>1e-9||model.score_counts.overall.passed!==passed||model.score_counts.overall.total!==total)throw Error('Leaderboard and Waffle test counts disagree');
 }
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let html=fs.readFileSync(path.join(root,'index.html'),'utf8');

@@ -18,6 +18,11 @@ def validate(root):
     copies = read(root / 'sources/tree-copies.json')
     destinations = {c['destination']: c for c in copies}
     assert len(copies) == len(destinations)
+    checksum_rows = [line.split('  ', 1) for line in (root / 'SHA256SUMS').read_text().splitlines()]
+    checksums = {path: digest for digest, path in checksum_rows}
+    assert len(checksums) == len(checksum_rows), 'Duplicate material checksum paths'
+    for copy in copies:
+        assert checksums[copy['destination']] == copy['sha256']
     source_materials = {m['path']: m for m in pq.read_table(root / 'data/materials.parquet').to_pylist()}
     for copy in copies:
         material = source_materials[copy['source']]
@@ -113,10 +118,14 @@ def validate(root):
             known = [t['results'][model['id']]['contexts'][ctx if model['variable_context'] else 'recorded'] for t in waffle['tasks']]
             known = [e for e in known if e['status'] == 'scored']
             assert model['coverage']['overall'] == len(known)
-            assert abs(model['overall'] - sum(100*e['passed']/e['total'] for e in known)/len(known)) < 1e-10
+            passed, total = sum(e['passed'] for e in known), sum(e['total'] for e in known)
+            assert abs(model['overall'] - 100*passed/total) < 1e-10
+            assert model['score_counts']['overall'] == dict(passed=passed, total=total)
             for resource, scores in model['pareto'].items():
                 for score, profile in scores.items():
                     assert profile['count'] == len(profile['task_ids']) and set(profile['task_ids']) <= task_ids
+                    if profile['count']:
+                        assert abs(profile['score_mean'] - 100*profile['passed']/profile['total']) < 1e-10
     return dict(valid=True, official_pairs=pair_count, contexts=len(entries), copied_materials=len(copies), original_matrix_notes_preserved=len(note_pairs),
                 score_statuses=dict(Counter(e['score_status'] for e in entries)), matrix=matrix_counts, metadata_files_scanned=scanned)
 

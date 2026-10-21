@@ -1,20 +1,20 @@
 {
   "repository": "TIGER-Lab/WebsiteBenchArtifacts",
-  "revision": "a686cce28e64864507d19b12d677585d010f0631",
-  "manifest_sha256": "3a46949132168c12167fe2aad1dfa8616e0eb7eefa7ff9d87578dc48a0a24ab7",
+  "revision": "15c5ba37bce5aead96bdf019dad54f716c4f2ff8",
+  "manifest_sha256": "a3dd6886bef770ba47ed92b3b20626c706ea541a682336d4d59bdf60242dd9bf",
   "files": {
-    "leaderboard-1m.csv": "b982a58c1addd2d47d72dd32d80c95d93d47dd1880491666c85538d5a14ed6ce",
-    "waffle-overview.csv": "c3eda6a87453a50ed0c37cf0f4ecb40fefb85c089b290131c0a4b6ae66ef4754",
-    "waffle.json": "aee4c42bf67380afbcf8094140389c0cc513c751ee3d80dad9ce3515569871d9",
-    "waffle-200k.csv": "71b477b37d1375f21ef59ef3dfd1d06c4a235cebe3efba4f0a7f7af244ba9675",
-    "leaderboard-overview.csv": "ea1a10c5e19786308d279be1334f4d115c47c486e2a4864f6bd0425a9fb9857c",
-    "leaderboard-200k.csv": "8a0e8f997f6b7215c4f4a210b3e21f2f8620bd41ac184be7aa1c7726af06a073",
-    "cohort.json": "024182de4cc296ffe9b5e094563db093ada88e2ad6b837b12797ac8fce6f2c3e",
-    "score-gaps.json": "4a0e7fc4fd96742f881e3aafe88f10c5d7a9df310a564a7d0abbe454e24c0e13",
-    "leaderboard.csv": "ea1a10c5e19786308d279be1334f4d115c47c486e2a4864f6bd0425a9fb9857c",
-    "leaderboard.json": "c2e0462bcf67e2720d2b51c83a7d712a121c78d241fe274fa41c6cd4c1b03ffb",
     "task-materials.json": "501395cd0dd92740bb8bfec4cf2dd141fd2b36868ff7f40e039d3340d3b35a52",
     "waffle-1m.csv": "d2258645c855d99c972e39e9862a5931bdd2bb1ce617b83aa1ef00990c77cdc4",
-    "leaderboard-views.json": "2ed26c0145747fda266c420f1399f598a792e8b844138dd4069fccf2c1403b8c"
+    "leaderboard.json": "99c892a1bbbe3a0e1ed780849d9e9a1b53ed8f90c198f0080bc1ad0922e448c1",
+    "waffle.json": "aee4c42bf67380afbcf8094140389c0cc513c751ee3d80dad9ce3515569871d9",
+    "leaderboard-overview.csv": "12432fae9f5460ead065c522cfb08a51f182d594d96c609164af5bb9d64e201b",
+    "waffle-200k.csv": "71b477b37d1375f21ef59ef3dfd1d06c4a235cebe3efba4f0a7f7af244ba9675",
+    "waffle-overview.csv": "c3eda6a87453a50ed0c37cf0f4ecb40fefb85c089b290131c0a4b6ae66ef4754",
+    "leaderboard-views.json": "962513bedad9a75bfd325c9cf8b9f28b3f23e1169deffcce43b075d993b6d0b2",
+    "cohort.json": "024182de4cc296ffe9b5e094563db093ada88e2ad6b837b12797ac8fce6f2c3e",
+    "leaderboard-1m.csv": "a59600e5193976014d65816f3da0ea5a66b5629706c6da7ee908d8ead308116a",
+    "score-gaps.json": "4a0e7fc4fd96742f881e3aafe88f10c5d7a9df310a564a7d0abbe454e24c0e13",
+    "leaderboard-200k.csv": "edbd68c56cf0560f1f88614c00892cac3e55c5d97587bc8e253901bf265d2e18",
+    "leaderboard.csv": "12432fae9f5460ead065c522cfb08a51f182d594d96c609164af5bb9d64e201b"
   }
 }
