@@ -591,7 +591,16 @@
     }
     $('#tree-replay').addEventListener('click', play);
     const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    Promise.race([fontsReady, new Promise(r => setTimeout(r, 1200))]).then(play);
+    // Start the story when the reader reaches it, rather than above the fold.
+    Promise.race([fontsReady, new Promise(r => setTimeout(r, 1200))]).then(() => {
+      if (!('IntersectionObserver' in window)) { play(); return; }
+      const entrance = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        entrance.disconnect();
+        play();
+      }, { threshold: .2 });
+      entrance.observe(tree);
+    });
     let lastW = grid.clientWidth;
     if ('ResizeObserver' in window) {
       new ResizeObserver(() => {

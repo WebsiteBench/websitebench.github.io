@@ -17,10 +17,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..700&family=Martian+Mono:wdth,wght@75..112.5,300..700&family=Noto+Sans+Math&display=swap">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/home.css">
 <noscript><style>.divider, .ghost, .title-seam, .title-tag, #run-tests, #restart, #reset, #tree-replay { display: none !important; } .tree.is-armed .leaf, .tree.is-armed .cat-node, .tree.is-armed .root-node, .tree.is-armed .root-l2 { opacity: 1 !important; scale: 1 !important; translate: 0 !important; }</style></noscript>
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
-<body>
+<body class="motion-home">
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="topbar" id="topbar">
@@ -51,6 +52,8 @@
 
 <!-- ============ HERO + LEADERBOARD ============ -->
 <section class="hero wrap" id="top">
+  <div class="wb-hero-layout">
+  <div class="wb-hero-copy">
   <h1 class="headline">
     <span class="title">
       <span class="title-in" id="title">
@@ -73,6 +76,53 @@
       <!-- Replace this note with Paper, Code and Data buttons once they are public. -->
       <span class="soon">Paper, code and data coming soon</span>
     </div>
+  </div>
+  </div>
+    <section class="wb-showcase" aria-label="An illustrated world of website workflows">
+      <div class="wb-showcase-top"><span><i></i> A whole website. Every interaction.</span><button class="wb-motion-toggle" type="button" aria-pressed="false" hidden>Pause motion <span aria-hidden="true">Ⅱ</span></button></div>
+      <div class="wb-scene" aria-hidden="true">
+        <div class="wb-scene-grid"></div>
+        <div class="wb-plane">
+          <div class="wb-window wb-commerce" style="--i:0">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>storefront.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><rect x="18" y="17" width="100" height="8" rx="4"/><rect x="204" y="17" width="52" height="8" rx="4"/><g class="wb-products"><rect x="18" y="42" width="72" height="73" rx="5"/><rect x="102" y="42" width="72" height="73" rx="5"/><rect x="186" y="42" width="72" height="73" rx="5"/></g><g class="wb-detail" fill="none" stroke="currentColor" stroke-width="2"><path d="M40 67h28l4 29H36zM47 67v-5a7 7 0 0 1 14 0v5"/><path d="M126 64h24v34h-24zM130 59h16M130 103h16"/><path d="M212 62h20v10h9v25h-38V72h9z"/></g><path d="M18 130h45m39 0h45m39 0h45" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>
+            <div class="wb-window-label"><b>Storefront</b><span>cart → checkout</span></div>
+          </div>
+          <div class="wb-window wb-analytics" style="--i:1">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>analytics.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><rect x="17" y="17" width="66" height="8" rx="4"/><g class="wb-chart-bars"><rect x="25" y="95" width="24" height="36" rx="3"/><rect x="65" y="71" width="24" height="60" rx="3"/><rect x="105" y="84" width="24" height="47" rx="3"/><rect x="145" y="47" width="24" height="84" rx="3"/><rect x="185" y="61" width="24" height="70" rx="3"/><rect x="225" y="32" width="24" height="99" rx="3"/></g><path class="wb-chart-line" d="M24 86 78 55 117 68 158 33 195 44 249 15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="wb-window-label"><b>Analytics</b><span>filter → explore</span></div>
+          </div>
+          <div class="wb-window wb-editor" style="--i:2">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>editor.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><rect x="16" y="16" width="50" height="122" rx="4"/><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M83 22h100m-100 16h156m-156 16h139"/><path opacity=".3" d="M83 80h148m-148 14h131m-131 14h153m-153 14h85"/></g><rect class="wb-selection" x="78" y="70" width="170" height="61" rx="4"/><path class="wb-caret" d="M177 114v16" stroke="currentColor" stroke-width="2"/></svg>
+            <div class="wb-window-label"><b>Editor</b><span>write → save</span></div>
+          </div>
+          <div class="wb-window wb-calendar" style="--i:3">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>calendar.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><rect x="18" y="14" width="87" height="8" rx="4"/><path d="M18 37h240M18 64h240M18 91h240M18 118h240M66 37v108M114 37v108M162 37v108M210 37v108" stroke="currentColor" stroke-opacity=".16"/><g class="wb-events"><rect x="69" y="41" width="89" height="18" rx="4"/><rect x="165" y="68" width="40" height="18" rx="4"/><rect x="21" y="95" width="89" height="18" rx="4"/><rect x="117" y="122" width="89" height="18" rx="4"/></g><circle cx="234" cy="104" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <div class="wb-window-label"><b>Calendar</b><span>schedule → sync</span></div>
+          </div>
+          <div class="wb-window wb-canvas" style="--i:4">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>canvas.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><path d="M28 29h220v98H28zM28 29l220 98M248 29 28 127" fill="none" stroke="currentColor" stroke-opacity=".12"/><path d="M57 101C74 8 195 144 219 48" fill="none" stroke="currentColor" stroke-width="3"/><g class="wb-handles" stroke="currentColor" stroke-width="2"><path d="M57 101 88 36M219 48l-29 67"/><circle cx="88" cy="36" r="5"/><circle cx="190" cy="115" r="5"/><rect x="51" y="95" width="12" height="12" rx="2"/><rect x="213" y="42" width="12" height="12" rx="2"/></g><rect x="106" y="124" width="64" height="20" rx="10"/></svg>
+            <div class="wb-window-label"><b>Canvas</b><span>draw → transform</span></div>
+          </div>
+          <div class="wb-window wb-workspace" style="--i:5">
+            <div class="wb-window-bar"><span class="wb-window-dots"><i></i><i></i><i></i></span><span>workspace.web</span><span class="wb-window-mark">↗</span></div>
+            <svg viewBox="0 0 276 154" fill="currentColor" aria-hidden="true"><g opacity=".25"><rect x="18" y="16" width="72" height="9" rx="4"/><rect x="102" y="16" width="72" height="9" rx="4"/><rect x="186" y="16" width="72" height="9" rx="4"/></g><g class="wb-tickets"><rect x="18" y="37" width="72" height="43" rx="5"/><rect x="18" y="90" width="72" height="43" rx="5"/><rect x="102" y="37" width="72" height="57" rx="5"/><rect x="186" y="37" width="72" height="43" rx="5"/></g><path d="M29 51h36m-36 11h23m21 42H29m84-53h35m-35 12h46m38-12h33" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="243" cy="66" r="5"/></svg>
+            <div class="wb-window-label"><b>Workspace</b><span>move → persist</span></div>
+          </div>
+        </div>
+        <div class="wb-scan"></div>
+        <span class="wb-scene-note">Appearance · Workflows · Persistent state</span>
+      </div>
+      <div class="wb-workflow" aria-label="Benchmark workflow">
+        <span><b>01</b> Explore <small>Observe the reference</small></span><i aria-hidden="true">→</i>
+        <span><b>02</b> Rebuild <small>Recover the behavior</small></span><i aria-hidden="true">→</i>
+        <span><b>03</b> Evaluate <small>Test what persists</small></span>
+      </div>
+    </section>
   </div>
   <p class="keyline" id="results"><span>74 expert-built websites</span><span>50,356 hidden tests</span><span>9 models</span><span>16 hours per run</span></p>
   <div class="board-tools">
@@ -394,5 +444,6 @@
 </dialog>
 
 <script src="assets/js/site.js" defer></script>
+<script src="assets/js/home.js" defer></script>
 </body>
 </html>
