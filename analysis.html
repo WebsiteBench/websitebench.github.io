@@ -55,9 +55,9 @@
 <link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=nav2-20261106">
+<link rel="stylesheet" href="assets/css/site.css?v=pages3-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=nav2-20261106" defer></script>
+<script src="assets/js/site.js?v=pages3-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -69,7 +69,7 @@
       <a href="/#results">Leaderboard</a>
       <a href="/run">Run</a>
       <a href="/tasks">Tasks</a>
-      <a href="/#task">Eval</a>
+      <a href="/eval">Eval</a>
       <a href="/analysis" aria-current="page">Analysis</a>
       <a href="/#cite">Citation</a>
     </nav>
@@ -89,7 +89,117 @@
     <h1>Analysis</h1>
     <a class="route" href="#top">/analysis</a>
   </header>
-  <p class="page-intro" id="findings">A <strong>user workflow</strong> is a sequence of actions that completes a goal, such as selecting a product, adding it to a cart, checking out and viewing the order confirmation. The paper traces why agents fall short through three studies.</p>
+<section class="section" id="why" aria-labelledby="why-h">
+  <header class="sec-head">
+    <h2 id="why-h">Why even the best agent passes only about one test in <span data-fact="one-in">four</span></h2>
+    <a class="route" href="#why">/why</a>
+  </header>
+  <p class="intro">A <strong>user workflow</strong> is a sequence of actions that completes a user goal and ends in an observable result. For example: browse products, add an item to the cart, check out and see the order confirmation.</p>
+  <figure class="tree is-armed" id="tree" aria-labelledby="tree-cap">
+    <div class="tree-grid" id="tree-grid">
+      <div class="group" data-cat="1">
+        <span class="leaf" style="grid-row:1"><i>1</i>Stops before the result</span>
+        <span class="leaf" style="grid-row:2"><i>1</i>Never sees the confirmation</span>
+      </div>
+      <a class="cat-node" data-cat="1" href="#f1-h" style="grid-row:1 / 3"><b><i>1</i>Underexploration</b><span>Agents start <strong>nearly every workflow</strong> before coding, but finish <strong>few</strong></span></a>
+      <div class="group" data-cat="2">
+        <span class="leaf" style="grid-row:3"><i>2</i>Right labels, wrong images</span>
+        <span class="leaf" style="grid-row:4"><i>2</i>?tab=coming-soon ignored</span>
+        <span class="leaf" style="grid-row:5"><i>2</i>Booking routes return 404</span>
+        <span class="leaf" style="grid-row:6"><i>2</i>Review fails after restart</span>
+      </div>
+      <a class="cat-node" data-cat="2" href="#f2-h" style="grid-row:3 / 7"><b><i>2</i>Failure to implement observed behavior</b><span>What the agent saw <strong>rarely reaches its code</strong></span></a>
+      <div class="group" data-cat="3">
+        <span class="leaf" style="grid-row:7"><i>3</i>Stops at 1.0 h of 16 with 0%</span>
+        <span class="leaf" style="grid-row:8"><i>3</i>Declares done, bugs remain</span>
+      </div>
+      <a class="cat-node" data-cat="3" href="#f3-h" style="grid-row:7 / 9"><b><i>3</i>Early stopping</b><span>Most runs end <strong>well before</strong> the 16-hour limit</span></a>
+      <div class="root-node" id="root-node" style="grid-row:1 / 9">
+        <span class="root-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg>WebsiteBench</span>
+        <b class="root-big" data-fact="best-turns">2,234.8</b>
+        <span class="root-l1">agent turns per task, on average, for the best model</span>
+        <span class="root-l2">and it still passes only <em data-fact="best-overall">26.2%</em> of hidden tests</span>
+      </div>
+    </div>
+    <svg class="tree-lines" id="tree-lines" aria-hidden="true"></svg>
+    <div class="tree-foot">
+      <figcaption id="tree-cap">The three failure modes the paper identifies, with examples drawn from its case studies.</figcaption>
+      <button class="dt-btn dt-btn-quiet" id="tree-replay" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</button>
+    </div>
+  </figure>
+</section>
+<section class="section" id="findings" aria-labelledby="findings-h">
+  <header class="sec-head">
+    <h2 id="findings-h">Three ways the rebuilds go wrong</h2>
+    <a class="route" href="#findings">/findings</a>
+  </header>
+  <p class="intro">We traced Grok 4.6 runs from what the agent observed, to the code it wrote, to the tests it failed, and compared runs with and without a human exploration trace.</p>
+  <article class="finding" aria-labelledby="f1-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>1</span>Underexploration</p>
+      <h3 id="f1-h">Agents visit the pages but seldom follow a workflow to its end</h3>
+      <p>By their first code edit, agents had visited nearly every core page and started nearly every core workflow, but had followed only a few to their final step. They stop a multi-step interaction before it ends, so they never see what a checkout confirms or what a saved record looks like afterwards.</p>
+      <p>A human exploration trace, a log of browser actions with no page content, raised the scores. The largest gains came on websites where the agent exploring alone had passed no hidden tests.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">A checkout workflow, and where agents stop</p>
+      <ol class="flow" aria-label="A checkout workflow in four steps. Agents browse products, add to cart and check out, but stop before the order confirmation, the result that hidden tests check.">
+        <li class="flow-step"><i aria-hidden="true">1</i><span>Browse products</span></li>
+        <li class="flow-step"><i aria-hidden="true">2</i><span>Add to cart</span></li>
+        <li class="flow-step is-stop"><i aria-hidden="true">3</i><span>Check out</span></li>
+        <li class="flow-step is-missed"><i aria-hidden="true">4</i><span>Order confirmation</span></li>
+      </ol>
+      <div class="flow-notes" aria-hidden="true"><span class="flow-stop">The agent stops here</span><span class="flow-check">Hidden tests check this result</span></div>
+    </div>
+  </article>
+  <article class="finding" aria-labelledby="f2-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>2</span>Failure to implement observed behavior</p>
+      <h3 id="f2-h">What agents observe rarely reaches their code</h3>
+      <p>We checked the behaviors that an agent had observed during exploration and that its trajectory and submitted code let us verify: page contents, workflows and persisted state. Almost none were implemented the way the agent had seen them.</p>
+      <p>Effort is lopsided too. Most tool calls explored the reference or checked the rebuild, and only a small share edited code.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Two traced Grok 4.6 runs: what the agent saw, and what it built</p>
+      <div class="cases">
+        <div class="case">
+          <p class="case-site">AMC Theatres</p>
+          <p class="case-row"><b class="case-k is-saw">Saw</b><span>Opened <code>/movies?tab=coming-soon</code> and captured the Coming Soon list.</span></p>
+          <p class="case-row"><b class="case-k is-built">Built</b><span>Clicking the tab works, but the server ignores the <code>tab</code> query, so the URL opens the default list.</span></p>
+        </div>
+        <div class="case">
+          <p class="case-site">PetSmart</p>
+          <p class="case-row"><b class="case-k is-saw">Saw</b><span>A homepage screenshot with matching artwork on the Fish, Bird and Small Pet cards.</span></p>
+          <p class="case-row"><b class="case-k is-built">Built</b><span>The cards keep their labels, but all three show dog artwork.</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+  <article class="finding" aria-labelledby="f3-h">
+    <div class="finding-text">
+      <p class="finding-tag"><span>3</span>Early stopping</p>
+      <h3 id="f3-h">Agents stop with most of the clock left</h3>
+      <p>Runs may take 16 hours, yet most ended well before the limit. We then enabled Claude Code’s <code>/goal</code> hook for Kimi K3 on the Lowe’s task, so that a review had to accept each attempt to stop.</p>
+      <p>At 10.25 hours the agent declared its repairs complete. The hook rejected the exit, and the agent went on to check that cart, order, account and session state survived a restart. The score rose from 0% to 31.3%.</p>
+    </div>
+    <div class="finding-viz">
+      <p class="viz-title">Kimi K3 on Lowe’s, without and with the <code>/goal</code> hook</p>
+      <div class="runs" role="img" aria-label="On a 16-hour axis, the original run stops after 1.0 hour and passes 0% of hidden tests. With the /goal hook the run continues to 10.9 hours and passes 31.3%.">
+        <div class="run"><span class="run-label">Original run</span><span class="run-track"><i style="width:6.25%"></i><b class="run-end" style="left:6.25%">1.0 h · 0%</b></span></div>
+        <div class="run is-goal"><span class="run-label">With <code>/goal</code></span><span class="run-track"><i style="width:68.125%"><b class="run-in">10.9 h · 31.3%</b></i></span></div>
+        <div class="run run-axis" aria-hidden="true"><span></span><span class="run-ticks"><em style="left:0">0 h</em><em style="left:25%">4 h</em><em style="left:50%">8 h</em><em style="left:75%">12 h</em><em style="left:100%">16 h</em></span></div>
+      </div>
+      <dl class="deltas">
+        <div><dt>Hours</dt><dd>1.0 <span>→</span> 10.9</dd></div>
+        <div><dt>Steps</dt><dd>130 <span>→</span> 879</dd></div>
+        <div><dt>Tokens</dt><dd>10.6M <span>→</span> 87.9M</dd></div>
+        <div><dt>Score</dt><dd>0% <span>→</span> 31.3%</dd></div>
+      </dl>
+    </div>
+  </article>
+  <p class="findings-more"><a class="link-btn" href="/analysis">How the three studies were run, with two traced cases, on the Analysis page <span aria-hidden="true">→</span></a></p>
+</section>
+  <p class="page-intro page-intro-studies">The paper traces why agents fall short through three studies.</p>
   <nav class="tabs page-nav" aria-label="Analysis sections"><a class="tab" href="#human-trajectory">Human trajectory</a><a class="tab" href="#exploration-implementation">Exploration and implementation</a><a class="tab" href="#early-stopping">Early stopping</a><a class="tab" href="#benchmark">Evaluation</a></nav>
 
   <section class="study" id="human-trajectory" aria-labelledby="human-trajectory-heading">
@@ -154,7 +264,7 @@
         </tbody>
       </table>
     </div>
-    <p class="run-links"><a class="link-btn" href="/#benchmark">Test levels and scoring rules <span aria-hidden="true">→</span></a></p>
+    <p class="run-links"><a class="link-btn" href="/eval#benchmark">Test levels and scoring rules <span aria-hidden="true">→</span></a></p>
   </section>
 </main>
 

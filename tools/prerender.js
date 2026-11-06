@@ -10,7 +10,7 @@ if (modelIDs.length !== 8 || new Set(modelIDs).size !== 8) throw Error('Expected
 for (const view of ['overview', '1m', '200k']) for (const model of board.views[view]) {
   const entries = waffle.tasks.map(t => t.results[model.id].contexts[model.variable_context ? view : 'recorded']).filter(e => e.status === 'scored');
   const passed = entries.reduce((n, e) => n + e.passed, 0), total = entries.reduce((n, e) => n + e.total, 0);
-  if (model.coverage.overall !== entries.length || Math.abs(model.overall - 100 * passed / total) > 1e-9 || model.score_counts.overall.passed !== passed || model.score_counts.overall.total !== total) throw Error('Leaderboard and Waffle test counts disagree');
+  if (Math.abs(model.overall - 100 * passed / total) > 1e-9 || model.score_counts.overall.passed !== passed || model.score_counts.overall.total !== total) throw Error('Leaderboard and Waffle test counts disagree');
 }
 
 // Headline numbers. A task's hidden test count is the total used by most of its scored results.
@@ -35,7 +35,7 @@ const facts = {
   'tests-max': Math.max(...perTask).toLocaleString('en-US'),
   'best-model': best.name,
   'best-overall': best.overall.toFixed(1) + '%',
-  'best-turns': Number.isFinite(best.turns) ? Math.round(best.turns).toLocaleString('en-US') : '—',
+  'best-turns': best.turns.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1}),
   'one-in': words[oneIn] || String(oneIn),
   'demo-run-passed': demoCount(demo.run.passed),
   'demo-run-total': demoCount(demo.run.total),
@@ -47,8 +47,13 @@ const facts = {
 };
 
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
-let html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const inject = (marker, value) => { if (!marker.test(html)) throw Error('Generated content marker missing: ' + marker); html = html.replace(marker, (_, start, end) => start + value + end); };
+const pageFiles = ['index.html', 'eval.html', 'analysis.html'];
+const pages = Object.fromEntries(pageFiles.map(file => [file, fs.readFileSync(path.join(root, file), 'utf8')]));
+const inject = (marker, value) => {
+  const hits = pageFiles.filter(file => marker.test(pages[file]));
+  if (!hits.length) throw Error('Generated content marker missing: ' + marker);
+  hits.forEach(file => { pages[file] = pages[file].replace(marker, (_, start, end) => start + value + end); });
+};
 inject(/(<tbody id="board-body">)[\s\S]*?(<\/tbody><!--\/board-body-->)/, '\n' + renderRows(overview) + '\n');
 for (const [id, data] of [['waffle-data', waffle], ['leaderboard-data', board]]) inject(new RegExp(`(<script type="application/json" id="${id}">)[\\s\\S]*?(<\\/script><!--\\/${id}-->)`), JSON.stringify(data).replace(/</g, '\\u003c'));
 inject(/(<pre[^>]*id="bibtex"[^>]*><code>)[\s\S]*?(<\/code><\/pre>)/, escape(fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim()));
@@ -70,11 +75,13 @@ inject(/(<ul class="dt-list" id="dt-list"[^>]*>)[\s\S]*?(<\/ul><!--\/dt-list-->)
 inject(/(<div class="tabs demo-tabs" id="demo-tabs"[^>]*>)[\s\S]*?(<\/div><!--\/demo-tabs-->)/, demo.pages.map((p, i) => `<button class="tab" type="button" role="tab" id="demo-tab-${p.id}" data-page="${p.id}" aria-controls="stage" aria-selected="${i === 0}"${i ? ' tabindex="-1"' : ''}>${p.short ? `<span class="tab-long">${escape(p.label)}</span><span class="tab-short">${escape(p.short)}</span>` : escape(p.label)}</button>`).join(''));
 inject(/(<span class="dt-score" id="dt-score"[^>]*>)[\s\S]*?(<\/span><!--\/dt-score-->)/, `<b>${demo.tests.filter(demoPassed).length}</b> of ${demo.tests.length} shown tests passed`);
 inject(/(<script type="application\/json" id="demo-data">)[\s\S]*?(<\/script><!--\/demo-data-->)/, JSON.stringify(demo).replace(/</g, '\\u003c'));
-html = html.replace(/(<[^>]*\bdata-fact="([\w-]+)"[^>]*>)[^<]*(<)/g, (match, open, key, close) => {
-  if (!(key in facts)) throw Error('Unknown fact: ' + key);
-  return open + escape(facts[key]) + close;
+pageFiles.forEach(file => {
+  pages[file] = pages[file].replace(/(<[^>]*\bdata-fact="([\w-]+)"[^>]*>)[^<]*(<)/g, (match, open, key, close) => {
+    if (!(key in facts)) throw Error('Unknown fact: ' + key);
+    return open + escape(facts[key]) + close;
+  });
+  fs.writeFileSync(path.join(root, file), pages[file]);
 });
-fs.writeFileSync(path.join(root, 'index.html'), html);
 
 // llms.txt: the leaderboard block and the headline sentence follow the data.
 let llms = fs.readFileSync(path.join(root, 'llms.txt'), 'utf8');

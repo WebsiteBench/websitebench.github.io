@@ -7,10 +7,14 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  // Old homepage anchor for the run instructions, which now have their own page.
+  // Sections that moved off the homepage keep working from their old addresses.
   const cleanPath = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
   if (cleanPath !== location.pathname) history.replaceState(history.state, '', cleanPath + location.search + location.hash);
-  if (location.hash === '#run' && location.pathname === '/') { location.replace('/run'); return; }
+  if (location.pathname === '/') {
+    const moved = location.hash.slice(1);
+    const page = moved === 'run' ? '/run' : ['task', 'benchmark', 'tests'].includes(moved) ? `/eval#${moved}` : (moved === 'why' || moved === 'findings' || /^f\d/.test(moved)) ? `/analysis#${moved}` : '';
+    if (page) { location.replace(page); return; }
+  }
 
   /* ------------------------------------------------------------------ theme */
   const root = document.documentElement;

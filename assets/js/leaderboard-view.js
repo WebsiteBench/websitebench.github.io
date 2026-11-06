@@ -35,9 +35,9 @@
         `<td${isBest(m, k) ? ' class="best"' : ''} data-value="${finite(m[k]) ? m[k] : ''}" title="${escape(title(m, k))}">${format(k, m[k])}</td>`).join('');
       return `<tr data-model="${escape(m.id)}"><td class="rank">${index + 1}</td>`
         + `<th scope="row" class="model" title="${escape(m.org)}${context}"><span class="m-name"><img class="model-logo" src="${escape(m.logo)}" alt="" width="18" height="18">${escape(m.name)}</span>`
-        + `<span class="sr-only">${escape(m.org)}${context}, ${open ? 'open-source' : 'frontier'} model</span>`
+        + `<span class="sr-only">${escape(m.org)}${context}, ${open ? 'open-source' : 'proprietary'} model</span>`
         + `<span class="m-sub" aria-hidden="true">${sub}</span></th>`
-        + `<td class="col-overall" data-value="${finite(m.overall) ? m.overall : ''}" title="${escape(title(m, 'overall'))}"><span class="ov"><span class="bar" aria-hidden="true"><i class="${open ? 'open' : 'frontier'}" style="width:${overall.toFixed(2)}%"></i></span><b${isBest(m, 'overall') ? ' class="best"' : ''}>${format('overall', m.overall)}</b></span></td>`
+        + `<td class="col-overall" data-value="${finite(m.overall) ? m.overall : ''}" title="${escape(title(m, 'overall'))}"><span class="ov"><span class="bar" aria-hidden="true"><i class="${open ? 'open' : 'proprietary'}" style="width:${overall.toFixed(2)}%"></i></span><b${isBest(m, 'overall') ? ' class="best"' : ''}>${format('overall', m.overall)}</b></span></td>`
         + `${cells}</tr>`;
     }).join('\n');
   }

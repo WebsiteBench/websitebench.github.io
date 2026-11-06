@@ -17,9 +17,10 @@ python3 -m http.server 8000
 
 | Page | Content |
 | --- | --- |
-| `index.html` | Leaderboard (Table, Pareto and Waffle views), why scores are low, the task with one real run to compare (Uber Eats, Qwen 3.8 Max), the three findings, the hidden tests and scoring, and the citation |
+| `index.html` | Leaderboard (Table, Pareto and Waffle views) and citation |
+| `eval.html` | How a rebuild is evaluated, one real run to compare (Uber Eats, Qwen 3.8 Max) and the hidden tests |
 | `tasks.html` | A browsable sheet of the 70 websites and, for each one, every model's result beside a reference and rebuild comparison |
-| `analysis.html` | The human trajectory, exploration and implementation, and early-stopping studies, with two traced cases and the Lowe’s continuation run |
+| `analysis.html` | Why scores are low, the three findings, the human trajectory, exploration and implementation, and early-stopping studies, with two traced cases and the Lowe’s continuation run |
 | `run.html` | How to download a task and run an agent on it with Harbor |
 | `main/` | Redirects from the old preview address to the pages above |
 | `404.html` | The not-found page; it uses root-relative links because GitHub Pages serves it at any path |
@@ -29,8 +30,8 @@ python3 -m http.server 8000
 All views use the same results for the 70 tasks and eight models.
 
 - Scores are test-pooled pass rates: 100 × sum(passed tests) / sum(total tests), for Overall and for each test group (Request, Browser and System).
-- Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point uses the same task subset on both axes.
-- The context selector applies to all three views. Overview uses Qwen at 200K, DeepSeek at 1M, GLM at 1M with eight 200K results (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker), and the recorded setting for the other models. The 1M and 200K views use only that context.
+- Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point plots the model's Table values.
+- The context selector applies to all three views. Overview uses Qwen at 200K, DeepSeek at 1M, GLM at 1M with eight 200K results (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker), and the recorded setting for the other models. Prefer 1M and Prefer 200K change GLM, DeepSeek and Qwen, the three models with both contexts; the other six keep their one recorded context.
 
 | File | Content |
 | --- | --- |

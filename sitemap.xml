@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://website-bench.com/</loc></url>
-  <url><loc>https://website-bench.com/tasks</loc></url>
-  <url><loc>https://website-bench.com/analysis</loc></url>
   <url><loc>https://website-bench.com/run</loc></url>
+  <url><loc>https://website-bench.com/tasks</loc></url>
+  <url><loc>https://website-bench.com/eval</loc></url>
+  <url><loc>https://website-bench.com/analysis</loc></url>
 </urlset>

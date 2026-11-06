@@ -8,7 +8,7 @@
       "logo": "assets/logos/anthropic.svg",
       "source_id": "claude-opus-5-5",
       "default_context": "recorded",
-      "group": "frontier"
+      "group": "proprietary"
     },
     {
       "id": "opus5",
@@ -18,7 +18,7 @@
       "logo": "assets/logos/anthropic.svg",
       "source_id": "claude-opus-5",
       "default_context": "recorded",
-      "group": "frontier"
+      "group": "proprietary"
     },
     {
       "id": "grok",
@@ -28,7 +28,7 @@
       "logo": "assets/logos/xai.svg",
       "source_id": "grok-4.6",
       "default_context": "recorded",
-      "group": "frontier"
+      "group": "proprietary"
     },
     {
       "id": "glm",
@@ -78,7 +78,7 @@
       "logo": "assets/logos/openai.svg",
       "source_id": "gpt-6.1-sol",
       "default_context": "recorded",
-      "group": "frontier"
+      "group": "proprietary"
     }
   ],
   "tasks": [

@@ -13,7 +13,7 @@
 - The homepage compares one run with its reference: Qwen 3.8 Max with a 200K context window on the Uber Eats task, which passes 39 of 338 hidden tests.
 
 ## Results
-Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are means over the tasks with recorded values; Pareto uses the same task subset on both axes.
+Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point plots the model's Table values.
 
 ## Leaderboard (test-pooled percent of hidden tests passed: overall / Request / Browser / System)
 - Claude Opus 5.5: 26.2 / 71.2 / 21.8 / 35.4
@@ -41,5 +41,6 @@ Table, Pareto and Waffle use the same selected results and context settings. Ove
 - Per-task scores: https://website-bench.com/data/waffle.json
 - Run instructions: https://website-bench.com/run
 - Task browser, with every run's result and screenshots: https://website-bench.com/tasks
+- How a rebuild is evaluated, with one real run to compare: https://website-bench.com/eval
 - Analysis: https://website-bench.com/analysis
 - Citation: https://website-bench.com/CITATION.bib
