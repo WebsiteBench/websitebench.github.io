@@ -199,7 +199,7 @@
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h) + 24px); }
+html { scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h) + 24px); }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 img, svg { max-width: 100%; }
 a { color: inherit; text-decoration: underline 2px var(--link-line); text-underline-offset: 4px; }
@@ -223,8 +223,7 @@ strong { font-weight: 700; }
 }
 
 /* ---------- top bar ---------- */
-.topbar { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .2s ease; }
-.topbar.is-scrolled, .topbar.is-sub { border-bottom-color: var(--rule); }
+.topbar { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid var(--rule); }
 .topbar-in { position: relative; display: flex; align-items: center; gap: 20px; height: var(--topbar-h); }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -.025em; }
 .brand:hover { background: none; color: var(--ink); }
@@ -287,7 +286,6 @@ strong { font-weight: 700; }
 .facts li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 10px; align-items: baseline; height: var(--row); padding-top: calc((var(--row) - 19px) / 2); border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 13px; }
 .facts b { font: 600 16px/1.2 var(--font-display); font-feature-settings: 'tnum'; color: var(--ink); text-align: right; }
 /* ---------- hero ---------- */
-.home .brand > .brand-word { display: none; }
 .brand-word { display: block; width: 112px; line-height: 0; }
 .brand-word img { width: 100%; height: auto; }
 .hero-in { display: flex; flex-direction: column; align-items: center; padding-block: 22px 10px; text-align: center; }

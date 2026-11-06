@@ -39,7 +39,7 @@ Table, Pareto and Waffle use the same selected results and context settings. Ove
 - Tasks and models: https://website-bench.com/data/cohort.json
 - Contexts and aggregates: https://website-bench.com/data/leaderboard-views.json
 - Per-task scores: https://website-bench.com/data/waffle.json
-- Run instructions: https://website-bench.com/run.html
-- Task browser, with every run's result and screenshots: https://website-bench.com/tasks.html
-- Analysis: https://website-bench.com/analysis.html
+- Run instructions: https://website-bench.com/run
+- Task browser, with every run's result and screenshots: https://website-bench.com/tasks
+- Analysis: https://website-bench.com/analysis
 - Citation: https://website-bench.com/CITATION.bib

@@ -52,7 +52,7 @@ const inject = (marker, value) => { if (!marker.test(html)) throw Error('Generat
 inject(/(<tbody id="board-body">)[\s\S]*?(<\/tbody><!--\/board-body-->)/, '\n' + renderRows(overview) + '\n');
 for (const [id, data] of [['waffle-data', waffle], ['leaderboard-data', board]]) inject(new RegExp(`(<script type="application/json" id="${id}">)[\\s\\S]*?(<\\/script><!--\\/${id}-->)`), JSON.stringify(data).replace(/</g, '\\u003c'));
 inject(/(<pre[^>]*id="bibtex"[^>]*><code>)[\s\S]*?(<\/code><\/pre>)/, escape(fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim()));
-inject(/(<ul class="chips" id="site-list"[^>]*>)[\s\S]*?(<\/ul><!--\/site-list-->)/, cohort.tasks.slice().sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'})).map(t => `<li><a href="tasks.html?task=${encodeURIComponent(t.id)}">${escape(t.name)}</a></li>`).join(''));
+inject(/(<ul class="chips" id="site-list"[^>]*>)[\s\S]*?(<\/ul><!--\/site-list-->)/, cohort.tasks.slice().sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'})).map(t => `<li><a href="/tasks?task=${encodeURIComponent(t.id)}">${escape(t.name)}</a></li>`).join(''));
 
 // The task demo: its page tabs, hidden test rows, score and inline data follow data/demo-task.json.
 const DEMO_ICON = {

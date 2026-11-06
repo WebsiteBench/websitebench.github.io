@@ -8,7 +8,9 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   // Old homepage anchor for the run instructions, which now have their own page.
-  if (location.hash === '#run' && /(^|\/)(index\.html)?$/.test(location.pathname)) { location.replace('run.html'); return; }
+  const cleanPath = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+  if (cleanPath !== location.pathname) history.replaceState(history.state, '', cleanPath + location.search + location.hash);
+  if (location.hash === '#run' && location.pathname === '/') { location.replace('/run'); return; }
 
   /* ------------------------------------------------------------------ theme */
   const root = document.documentElement;
@@ -31,11 +33,6 @@
   syncTheme();
 
   /* ------------------------------------------------------------- top bar */
-  const topbar = $('#topbar');
-  const onScroll = () => topbar && topbar.classList.toggle('is-scrolled', window.scrollY > 8);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
   const menuBtn = $('#menu-btn');
   const toc = $('#toc');
   if (menuBtn && toc) {
@@ -53,7 +50,7 @@
   if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => scrollers.forEach(markScroll)); scrollers.forEach(el => ro.observe(el)); }
 
   // On the homepage, a section link stays active until the reader reaches the next one.
-  const tocMarks = $$('.toc a[href^="#"]').map(a => [a, $(a.getAttribute('href'))]).filter(([, section]) => section);
+  const tocMarks = (location.pathname === '/' ? $$('.toc a[href^="/#"]').map(a => [a, $(a.getAttribute('href').slice(1))]) : []).filter(([, section]) => section);
   if (tocMarks.length) {
     const follow = () => {
       const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;

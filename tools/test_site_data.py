@@ -138,7 +138,7 @@ class SiteDataTests(unittest.TestCase):
         page_text = (ROOT / 'index.html').read_text(encoding='utf-8')
         code = re.search(r'<pre[^>]*id="bibtex"[^>]*><code>(.*?)</code></pre>', page_text, re.S).group(1)
         self.assertEqual(html.unescape(code), bibtex)
-        names = re.findall(r'<li><a href="tasks.html\?task=[^"]+">([^<]+)</a></li>', page_text)
+        names = re.findall(r'<li><a href="/tasks\?task=[^"]+">([^<]+)</a></li>', page_text)
         self.assertEqual(sorted(html.unescape(n) for n in names), sorted(t['name'] for t in self.cohort['tasks']))
 
     def test_headline_numbers_match_the_data(self):

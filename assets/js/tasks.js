@@ -4,7 +4,7 @@
   const $ = selector => document.querySelector(selector);
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
   const count = value => value.toLocaleString('en-US');
-  const taskUrl = (task, extra = {}) => `tasks.html?${new URLSearchParams({task: task.id, ...extra})}`;
+  const taskUrl = (task, extra = {}) => `/tasks?${new URLSearchParams({task: task.id, ...extra})}`;
   const setPressed = (group, isOn) => group.querySelectorAll('button[aria-pressed]').forEach(b => b.setAttribute('aria-pressed', String(isOn(b))));
 
   const [materials, previews] = await Promise.all(['data/task-materials.json', 'data/task-previews.json'].map(url => fetch(url).then(r => r.json())));

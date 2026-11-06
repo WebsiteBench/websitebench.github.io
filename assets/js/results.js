@@ -233,14 +233,14 @@
       html += '</tr></thead><tbody>';
       chunk.forEach(({task, mean, count}) => {
         const difficulty = mean === null ? 'No scored models' : `Mean pass rate: ${mean.toFixed(1)}%`;
-        html += `<tr data-task="${escape(task.id)}"><th scope="row" class="task-name"><a href="tasks.html?task=${encodeURIComponent(task.id)}" title="${escape(task.name)}\n${escape(difficulty)}">${escape(task.name)}</a></th>`;
+        html += `<tr data-task="${escape(task.id)}"><th scope="row" class="task-name"><a href="/tasks?task=${encodeURIComponent(task.id)}" title="${escape(task.name)}\n${escape(difficulty)}">${escape(task.name)}</a></th>`;
         visible.forEach(model => {
           const entry = entryFor(task, model), score = trialScore(entry);
           if (score !== null) scored++;
           const description = score !== null ? `${entry.passed}/${entry.total} tests (${score.toFixed(1)}%)` : missingText(entry);
           const classes = `waffle-point ${score !== null ? 'scored' : 'missing'}${score === null && ['error', 'timeout'].includes(entry.failure_kind) ? ' ' + entry.failure_kind : ''}`;
           const attributes = `class="${classes}"${score !== null ? ` style="--score-color:${scoreColor(score)}"` : ''} data-task="${escape(task.id)}" data-model="${escape(model.id)}" aria-label="${escape(task.name)}, ${escape(model.name)}: ${escape(description)}"`;
-          const href = `tasks.html?task=${encodeURIComponent(task.id)}&model=${encodeURIComponent(model.id)}${entry.run ? `&context=${encodeURIComponent(entry.run)}` : ''}`;
+          const href = `/tasks?task=${encodeURIComponent(task.id)}&model=${encodeURIComponent(model.id)}${entry.run ? `&context=${encodeURIComponent(entry.run)}` : ''}`;
           html += `<td class="task-result"><a href="${href}" ${attributes}></a></td>`;
         });
         html += '</tr>';
