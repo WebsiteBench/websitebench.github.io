@@ -26,7 +26,7 @@ python3 -m http.server 8000
 
 ## Results
 
-All views use the same results for the 70 tasks and nine models.
+All views use the same results for the 70 tasks and eight models.
 
 - Scores are test-pooled pass rates: 100 × sum(passed tests) / sum(total tests), for Overall and for each test group (Request, Browser and System).
 - Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point uses the same task subset on both axes.
@@ -34,7 +34,7 @@ All views use the same results for the 70 tasks and nine models.
 
 | File | Content |
 | --- | --- |
-| `data/cohort.json` | The 70 tasks and nine models |
+| `data/cohort.json` | The 70 tasks and eight models |
 | `data/leaderboard-views.json` | Aggregates for each context view; `data/leaderboard.json` holds the Overview |
 | `data/waffle.json` | Per-task results for every model and context |
 | `data/leaderboard*.csv`, `data/waffle-*.csv` | CSV exports of the same numbers |
