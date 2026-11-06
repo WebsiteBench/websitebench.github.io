@@ -41,6 +41,6 @@ Table, Pareto and Waffle use the same selected results and context settings. Ove
 - Contexts and aggregates: https://website-bench.com/data/leaderboard-views.json
 - Per-task scores: https://website-bench.com/data/waffle.json
 - Run instructions: https://website-bench.com/run.html
-- Task explorer and ATIF reader: https://website-bench.com/tasks.html
+- Task browser, with every run's result and screenshots: https://website-bench.com/tasks.html
 - Analysis: https://website-bench.com/analysis.html
 - Citation: https://website-bench.com/CITATION.bib

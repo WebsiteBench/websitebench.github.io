@@ -106,6 +106,18 @@ class SiteDataTests(unittest.TestCase):
                     if e.get('run'):
                         self.assertIn(e['run'], runs[(task['id'], model)])
 
+    def test_previews_show_recorded_runs_and_existing_images(self):
+        runs = {t['id']: {r['id'] for value in t['models'].values() for r in value['runs']} for t in self.materials['tasks']}
+        for task, value in load('task-previews.json')['tasks'].items():
+            self.assertIn(task, self.ids)
+            for view in value['views']:
+                self.assertEqual({'id', 'label', 'route', 'viewport', 'reference', 'runs'}, set(view))
+                images = [view['reference']['image']] + [shot['image'] for shot in view['runs'].values() if 'image' in shot]
+                with self.subTest(task=task, view=view['id']):
+                    self.assertLessEqual(set(view['runs']), runs[task])
+                    for image in images:
+                        self.assertTrue((ROOT / image).is_file(), image)
+
     def test_records_carry_only_published_fields(self):
         self.assertEqual(set(self.cohort), {'tasks', 'models', 'cohort_id'})
         for task in self.waffle['tasks']:
