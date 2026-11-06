@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use WebsiteBench, please cite this repository."
+title: "WebsiteBench"
+type: dataset
+repository-code: "https://github.com/TIGER-AI-Lab/WebsiteBench"
+authors:
+  - name: "WebsiteBench Authors"
+abstract: "WebsiteBench contains 70 expert-built and expert-reviewed website reconstruction tasks and 46,916 hidden tests. In each task, an agent explores a locally hosted website through a browser and builds a runnable offline site that looks and behaves the same way."
+keywords:
+  - benchmark
+  - AI agents
+  - web agents
+  - website reconstruction
+preferred-citation:
+  type: generic
+  title: "WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?"
+  authors:
+    - name: "WebsiteBench Authors"
+  year: 2026
+  url: "https://github.com/TIGER-AI-Lab/WebsiteBench"

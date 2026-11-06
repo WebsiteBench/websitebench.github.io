@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Google tag (gtag.js) -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18557798739');
+
+  function gtag_report_conversion(url, event) {
+    var modified = event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0);
+    var navigated = false;
+    function followLink() {
+      if (url && !modified && !navigated) {
+        navigated = true;
+        window.location.assign(url);
+      }
+    }
+    gtag('event', 'conversion', {
+      send_to: 'AW-18557798739/g6CwCM2c0rIdENOShpFF',
+      event_callback: followLink,
+      event_timeout: 1000
+    });
+    if (url && !modified) window.setTimeout(followLink, 1000);
+    return modified;
+  }
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
+<title>Run · WebsiteBench</title>
+<meta name="description" content="Run an agent on WebsiteBench tasks with Harbor 0.25.0, from Harbor Hub or a downloaded copy.">
+<link rel="canonical" href="https://website-bench.com/run.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WebsiteBench">
+<meta property="og:url" content="https://website-bench.com/run.html">
+<meta property="og:title" content="Run · WebsiteBench">
+<meta property="og:description" content="Run an agent on WebsiteBench tasks with Harbor.">
+<meta property="og:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, nine models, 16 hours per run.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Run · WebsiteBench">
+<meta name="twitter:description" content="Run an agent on WebsiteBench tasks with Harbor.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
+<link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
+<link rel="stylesheet" href="assets/css/site.css?v=realdemo-20261105">
+<script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/js/site.js?v=realdemo-20261105" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar is-sub" id="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg><span>WebsiteBench</span></a>
+    <nav class="toc" id="toc" aria-label="Site">
+      <a href="index.html#results">Leaderboard</a>
+      <a href="tasks.html">Tasks</a>
+      <a href="analysis.html">Analysis</a>
+      <a href="run.html" aria-current="page">Run</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="toc" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="btn btn-ink btn-sm" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap page">
+  <header class="sec-head" id="top">
+    <h1>Run the benchmark</h1>
+    <a class="route" href="#top">/run</a>
+  </header>
+  <p class="page-intro">Requires uv and Docker. These commands set up the repository and run an agent on one task with Harbor, which fetches the task from Harbor Hub.</p>
+  <div class="run-block">
+    <div class="code-wrap">
+      <div class="code-head"><span>Run one task</span><button class="dt-btn" type="button" data-copy-target="quickstart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
+<pre class="code" id="quickstart"><code>git clone https://github.com/TIGER-AI-Lab/WebsiteBench.git
+cd WebsiteBench
+uv sync
+uv run harbor run --task websitebench/medium@v1 \
+  --agent codex --model '&lt;model&gt;' \
+  --allow-environment-host snapshot.debian.org \
+  --allow-environment-host deb.debian.org \
+  --allow-environment-host raw.githubusercontent.com \
+  --allow-environment-host github.com \
+  --allow-environment-host nodejs.org \
+  --allow-environment-host registry.npmjs.org</code></pre>
+    </div>
+    <ul class="notes">
+      <li>The repository pins Harbor 0.25.0. The 70 tasks form the Harbor Hub dataset <code>websitebench/WebsiteBench@v1</code>; replace <code>--task websitebench/medium@v1</code> with <code>--dataset websitebench/WebsiteBench@v1</code> to run all of them.</li>
+      <li>The same tasks are on <a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Hugging Face</a>. To run a task directory you have downloaded, pass <code>--path</code> with that directory instead of <code>--task</code>.</li>
+      <li>Set <code>--agent</code> and <code>--model</code> to the agent and model you want to evaluate.</li>
+      <li>Harbor installs the agent inside the task container during setup, and the task network allows only the browser there. The <code>--allow-environment-host</code> flags open the installer's download hosts for that step only. For Claude Code, allow <code>snapshot.debian.org</code>, <code>deb.debian.org</code> and <code>downloads.claude.ai</code> instead.</li>
+      <li>The Docker host needs Linux 6.7 or newer (Landlock ABI 4, used by the verifier's sandbox) and nftables <code>fib</code> support (used to enforce the task network policy).</li>
+      <li>Each task gives the agent up to 16 hours and the verifier up to 8 hours. Most tasks request 8 CPUs, 8 GiB of memory and 20 GiB of disk.</li>
+    </ul>
+  </div>
+  <p class="run-links"><a class="link-btn" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Setup details on GitHub <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Tasks on Hugging Face <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Tasks on Harbor Hub <span aria-hidden="true">↗</span></a><a class="link-btn" href="tasks.html">Browse the 70 tasks <span aria-hidden="true">→</span></a></p>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg>WebsiteBench</p>
+    <p class="footer-links"><a href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Dataset</a><a href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Harbor Hub</a><a href="index.html#cite">Cite</a><a href="#top">Back to top</a></p>
+  </div>
+</footer>
+</body>
+</html>

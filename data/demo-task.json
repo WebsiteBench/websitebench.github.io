@@ -1,0 +1,169 @@
+{
+  "task": "amazon",
+  "site": "Amazon",
+  "model": "Claude Opus 5.5",
+  "context": "1M",
+  "threshold": 0.99,
+  "run": {
+    "recording": "7aeaabbc539b97ea1b699c25",
+    "passed": 545,
+    "total": 1025,
+    "groups": {
+      "request": [33, 50],
+      "browser": [448, 911],
+      "system": [64, 64]
+    },
+    "stored_threshold": 0.75,
+    "passed_at_stored_threshold": 582
+  },
+  "pages": [
+    {
+      "id": "home",
+      "label": "Home",
+      "note": "1,440 px window",
+      "width": 1425,
+      "height": 785,
+      "split": 62,
+      "urls": { "reference": "/", "rebuild": "/" }
+    },
+    {
+      "id": "deals",
+      "label": "Today’s Deals",
+      "short": "Deals",
+      "note": "1,440 px window",
+      "width": 1425,
+      "height": 785,
+      "split": 3.1,
+      "urls": { "reference": "/gp/goldbox/", "rebuild": "/gp/goldbox/" }
+    },
+    {
+      "id": "phone",
+      "label": "Deals on a phone",
+      "short": "Phone",
+      "note": "390 px window",
+      "width": 390,
+      "height": 720,
+      "split": 50,
+      "phone": true,
+      "urls": { "reference": "/gp/goldbox/", "rebuild": "/gp/goldbox/" }
+    },
+    {
+      "id": "books",
+      "label": "Books",
+      "note": "1,024 px window, after a search",
+      "width": 1009,
+      "height": 556,
+      "split": 58,
+      "urls": { "reference": "/s/ref=nb_sb_noss?i=books&field-keywords=", "rebuild": "/s?i=books&field-keywords=" }
+    },
+    {
+      "id": "cart",
+      "label": "Add to cart",
+      "short": "Cart",
+      "note": "1,440 px window, signed out, after selecting +",
+      "width": 1425,
+      "height": 785,
+      "split": 65,
+      "urls": { "reference": "/ap/signin?openid.return_to=%2Fgp%2Fgoldbox%2F%3Ftheme%3Dkitchen", "rebuild": "/gp/cart/view.html" }
+    }
+  ],
+  "markers": [
+    {
+      "n": 1,
+      "page": "home",
+      "x": 99,
+      "y": 44.5,
+      "align": "right",
+      "box": { "x": 79.2, "y": 44.2, "w": 20.7, "h": 54 },
+      "label": "page too wide",
+      "title": "Page wider than the window",
+      "body": "At 1,440 px the rebuild’s page is 1,500 px wide. Its cards are 350 px wide, not 331 px, so the fourth column runs off the right edge.",
+      "cite": "Measured in the browser"
+    },
+    {
+      "n": 2,
+      "page": "home",
+      "x": 95,
+      "y": 30.5,
+      "align": "right",
+      "box": { "x": 95.6, "y": 22, "w": 4.3, "h": 15.3 },
+      "label": "arrow off screen",
+      "title": "Next arrow off screen",
+      "body": "The banner stretches with the wider page. That enlarges its art and puts the next arrow at 1,439 px, past the edge of the window. In the reference it starts at 1,363 px.",
+      "cite": "Measured in the browser"
+    },
+    {
+      "n": 3,
+      "page": "home",
+      "x": 4,
+      "y": 30.5,
+      "align": "left",
+      "label": "different arrows",
+      "title": "Different arrow characters",
+      "body": "The carousel arrows are ‹ › in the reference and ❮ ❯ in the rebuild. The test compares a hash of the page text, so the text check fails and no similarity is recorded.",
+      "cite": "amazon-t2-000",
+      "test": "amazon-t2-000"
+    },
+    {
+      "n": 4,
+      "page": "deals",
+      "x": 14.9,
+      "y": 56.7,
+      "align": "left",
+      "box": { "x": 1.7, "y": 53.8, "w": 12.8, "h": 5.8 },
+      "label": "filter wraps",
+      "title": "Filter label wraps",
+      "body": "“Beauty & Personal Care” breaks onto two lines in the rebuild, so the rest of the sidebar sits 17 px lower. Products, prices and photos match. The text checks pass, but similarity is 0.9413, below 0.99, so the test fails.",
+      "cite": "amazon-t2-010",
+      "test": "amazon-t2-010"
+    },
+    {
+      "n": 5,
+      "page": "phone",
+      "x": 97,
+      "y": 5.2,
+      "align": "right",
+      "label": "desktop layout",
+      "title": "No phone layout",
+      "body": "At 390 px the reference switches to a phone layout. The rebuild keeps its desktop layout on a page 1,010 px wide, so most of it is off screen. Similarity is 0.0397.",
+      "cite": "amazon-t2-048",
+      "test": "amazon-t2-048"
+    },
+    {
+      "n": 6,
+      "page": "books",
+      "x": 62,
+      "y": 5.4,
+      "align": "left",
+      "box": { "x": 55.5, "y": 1.3, "w": 5.8, "h": 8.2 },
+      "label": "not compared",
+      "title": "Header differs, but isn’t compared",
+      "body": "The search button sits 4 px further left and the category menu shows “Book”, not “Boo”. This test’s screenshot region starts at y = 64, below the header. Everything inside it matches: similarity 0.9999.",
+      "cite": "amazon-t2-156",
+      "test": "amazon-t2-156"
+    },
+    {
+      "n": 7,
+      "page": "cart",
+      "x": 76.5,
+      "y": 23.8,
+      "align": "right",
+      "box": { "x": 76.9, "y": 16.9, "w": 20.8, "h": 14.2 },
+      "label": "no sign-in",
+      "title": "Adds to the cart without sign-in",
+      "body": "Selecting + on a deal while signed out opens sign-in in the reference. The rebuild adds the item and opens the cart. Its form posts to /gp/cart/add, so the test can’t find the /gp/cart/add.html form it clicks.",
+      "cite": "amazon-t2-100",
+      "test": "amazon-t2-100"
+    }
+  ],
+  "tests": [
+    { "id": "amazon-t1a-009", "group": "Request", "text": "GET /s?k=books answers like the reference", "functional": true, "detail": "response matches" },
+    { "id": "amazon-t2-000", "group": "Browser L1", "text": "Home page shows the same text", "functional": false, "detail": "page text differs", "page": "home" },
+    { "id": "amazon-t2-010", "group": "Browser L1", "text": "Today’s Deals looks the same at 1,440 px", "functional": true, "ssim": 0.9412783518, "detail": "similarity 0.9413, below 0.99", "page": "deals" },
+    { "id": "amazon-t2-048", "group": "Browser L1", "text": "Today’s Deals looks the same at 390 px", "functional": true, "ssim": 0.0396637005, "detail": "similarity 0.0397, below 0.99", "page": "phone" },
+    { "id": "amazon-t2-156", "group": "Browser L2", "text": "Books page looks the same at 1,024 px after a search", "functional": true, "ssim": 0.9999996512, "detail": "similarity 0.9999", "page": "books" },
+    { "id": "amazon-t2-100", "group": "Browser L2", "text": "Add a kitchen deal with its + button", "functional": false, "detail": "no /gp/cart/add.html form", "page": "cart" },
+    { "id": "amazon-jrn-106", "group": "Browser L3", "text": "Compare two products, restart the server, reopen the comparison", "functional": false, "detail": "no /gp/compare/add form" },
+    { "id": "amazon-t3-000", "group": "System", "text": "compile.sh produces one executable", "functional": true, "detail": "exit status 0" }
+  ]
+}

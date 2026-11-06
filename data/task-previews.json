@@ -1,0 +1,42 @@
+{
+  "tasks": {
+    "medium": {
+      "views": [
+        {
+          "id": "home",
+          "label": "Home",
+          "route": "/",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-home.png"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-home.png"
+            }
+          }
+        },
+        {
+          "id": "about",
+          "label": "About",
+          "route": "/about",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "reference": {
+            "image": "assets/previews/medium/reference-about.png"
+          },
+          "models": {
+            "qwen": {
+              "image": "assets/previews/medium/qwen-about.png"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

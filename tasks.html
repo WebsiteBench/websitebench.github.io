@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Google tag (gtag.js) -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied'
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18557798739');
+
+  function gtag_report_conversion(url, event) {
+    var modified = event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0);
+    var navigated = false;
+    function followLink() {
+      if (url && !modified && !navigated) {
+        navigated = true;
+        window.location.assign(url);
+      }
+    }
+    gtag('event', 'conversion', {
+      send_to: 'AW-18557798739/g6CwCM2c0rIdENOShpFF',
+      event_callback: followLink,
+      event_timeout: 1000
+    });
+    if (url && !modified) window.setTimeout(followLink, 1000);
+    return modified;
+  }
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
+<title>Tasks · WebsiteBench</title>
+<meta name="description" content="Browse the 70 WebsiteBench tasks: every model's result on each task, recorded screenshots, and a reader for ATIF agent trajectories.">
+<link rel="canonical" href="https://website-bench.com/tasks.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WebsiteBench">
+<meta property="og:url" content="https://website-bench.com/tasks.html">
+<meta property="og:title" content="Tasks · WebsiteBench">
+<meta property="og:description" content="Every model’s result on each of the 70 WebsiteBench tasks.">
+<meta property="og:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, nine models, 16 hours per run.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tasks · WebsiteBench">
+<meta name="twitter:description" content="Every model’s result on each of the 70 WebsiteBench tasks.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
+<link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
+<link rel="stylesheet" href="assets/css/site.css?v=realdemo-20261105">
+<noscript><style>.explorer-controls, .explorer-pos, .task-content-tabs, #task-website, #trajectory-panel, .task-record-summary, .explorer-footer { display: none !important; }</style></noscript>
+<script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/js/site.js?v=realdemo-20261105" defer></script>
+<script src="assets/js/tasks.js?v=realdemo-20261105" defer></script>
+<script src="assets/js/trajectory.js?v=realdemo-20261105" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar is-sub" id="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg><span>WebsiteBench</span></a>
+    <nav class="toc" id="toc" aria-label="Site">
+      <a href="index.html#results">Leaderboard</a>
+      <a href="tasks.html" aria-current="page">Tasks</a>
+      <a href="analysis.html">Analysis</a>
+      <a href="run.html">Run</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="toc" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <a class="btn btn-ink btn-sm" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap page explorer">
+  <header class="sec-head explorer-head" id="top">
+    <h1 id="explorer-task-name">Tasks</h1>
+    <span class="explorer-pos" id="explorer-task-position"></span>
+  </header>
+  <div class="explorer-controls">
+    <label>Task <select id="task-picker" aria-label="Choose a task"></select></label>
+    <label>Model <select id="model-picker" aria-label="Choose a model"></select></label>
+    <label id="context-control" hidden>Run <select id="context-picker" aria-label="Choose a recorded run"></select></label>
+  </div>
+  <p id="task-selection-notice" class="table-note" role="status" hidden></p>
+  <div class="task-results-wrap" id="task-results"></div>
+  <p id="task-record-summary" class="task-record-summary"></p>
+
+  <div class="tabs task-content-tabs" role="tablist" aria-label="Task view">
+    <button type="button" id="task-tab-website" role="tab" aria-selected="true" aria-controls="task-website" data-task-panel="website">Screenshots</button>
+    <button type="button" id="task-tab-trajectory" role="tab" aria-selected="false" aria-controls="trajectory-panel" data-task-panel="trajectory" tabindex="-1">Trajectory</button>
+  </div>
+  <div id="task-website" role="tabpanel" aria-labelledby="task-tab-website">
+    <div class="comparison-tools">
+      <form id="comparison-route-form" class="replay-only" hidden><label for="comparison-route" class="sr-only">Page path on both websites</label><span aria-hidden="true">↳</span><input id="comparison-route" value="/" placeholder="/page" autocomplete="off" spellcheck="false"><button type="submit">Go</button></form>
+      <label class="compact-check replay-only" hidden><input type="checkbox" id="sync-scroll" checked>Sync scroll</label>
+      <label class="compact-check replay-only" hidden><input type="checkbox" id="sync-navigation">Sync navigation</label>
+      <div id="preview-mode-control" class="preview-mode" hidden><button type="button" data-preview-mode="interactive" aria-pressed="false">Interactive</button><button type="button" data-preview-mode="screenshot" aria-pressed="true">Screenshot</button></div>
+      <label id="state-control" class="preview-state" hidden>Page <select id="state-picker" aria-label="Choose a page"></select></label>
+      <select id="comparison-layout" aria-label="Comparison layout"><option value="stacked">Top / bottom</option><option value="side">Side by side</option></select>
+      <button type="button" id="reset-preview" class="replay-only" title="Restart both websites with fresh state" hidden>Reset</button>
+    </div>
+    <div id="comparison-empty" class="comparison-empty" hidden>
+      <p id="comparison-empty-message"></p>
+      <button id="start-preview" type="button" class="btn btn-sm" hidden>Start interactive comparison</button>
+      <button id="open-task-trace" type="button" class="link-btn" hidden>View trajectory <span aria-hidden="true">→</span></button>
+      <button id="show-example" type="button" class="link-btn" hidden>See the screenshot example: Medium, Qwen 3.8 Max <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="comparison-stage" hidden>
+      <section class="comparison-pane" aria-labelledby="reference-heading"><header><h2 id="reference-heading">Reference</h2><span id="reference-version"></span><a id="reference-live-link" target="_blank" rel="noopener noreferrer" hidden aria-label="Open the reference at full size">↗</a></header><div id="reference-preview" class="comparison-preview"></div></section>
+      <section class="comparison-pane" aria-labelledby="candidate-heading"><header><h2 id="candidate-heading">Rebuild</h2><span id="candidate-model-name"></span><a id="candidate-live-link" target="_blank" rel="noopener noreferrer" hidden aria-label="Open the rebuild at full size">↗</a></header><div id="candidate-preview" class="comparison-preview"></div></section>
+    </div>
+  </div>
+  <section id="trajectory-panel" class="trajectory-viewer" role="tabpanel" aria-labelledby="task-tab-trajectory" hidden>
+    <div class="trace-toolbar"><label id="trace-run-control" hidden>Run <select id="trace-run" aria-label="Choose a recorded trajectory"></select></label><label id="trace-document-control" hidden>Agent <select id="trace-document" aria-label="Choose an embedded agent trajectory"></select></label><label class="trace-file-button">Open an ATIF file<input id="trace-file" type="file" accept=".json,.png,.jpg,.jpeg,.webp,.gif,.wav,.mp3,.ogg,.m4a" multiple><span class="sr-only">Choose one ATIF JSON file, optionally with its media files</span></label><span class="trace-local-note">Files stay in your browser.</span></div>
+    <p id="trace-status" class="trace-status" role="status">Open an ATIF trajectory file (JSON) to read it step by step.</p>
+    <div id="trace-run-details"></div>
+    <div id="trace-content" hidden>
+      <div class="trace-controls"><label class="trace-search-label"><span class="sr-only">Search trajectory messages, calls and results</span><input id="trace-search" type="search" placeholder="Search messages, calls, results…"></label><select id="trace-filter" aria-label="Filter trajectory steps"><option value="all">All steps</option><option value="tools">With tool calls</option><option value="agent">Agent</option><option value="user">User</option><option value="system">System</option></select><span id="trace-match-count"></span><div class="trace-step-controls"><button type="button" id="trace-previous" aria-label="Previous matching step">←</button><label>Step <input id="trace-step-number" type="number" min="1" step="1" aria-label="Go to trajectory step"></label><span id="trace-step-total"></span><button type="button" id="trace-next" aria-label="Next matching step">→</button></div></div>
+      <div class="trace-layout"><nav id="trace-step-list" class="trace-step-list" aria-label="Trajectory steps"></nav><article id="trace-step-detail" class="trace-step-detail" aria-label="Selected trajectory step" tabindex="-1"></article></div>
+    </div>
+  </section>
+  <div class="explorer-footer"><button type="button" class="btn btn-sm" id="previous-task"><span aria-hidden="true">←</span> Previous task</button><span id="preview-status" role="status"></span><button type="button" class="btn btn-sm" id="next-task">Next task <span aria-hidden="true">→</span></button></div>
+  <noscript><p class="table-note">The task browser needs JavaScript. Per-task scores are also in <a href="data/waffle-overview.csv">data/waffle-overview.csv</a>.</p></noscript>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg>WebsiteBench</p>
+    <p class="footer-links"><a href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Dataset</a><a href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Harbor Hub</a><a href="index.html#cite">Cite</a><a href="#top">Back to top</a></p>
+  </div>
+</footer>
+</body>
+</html>

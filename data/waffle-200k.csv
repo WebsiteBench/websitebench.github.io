@@ -1,0 +1,631 @@
+task_id,task,model,context,passed,total,test_pass_rate,status
+1password-web,1Password Web,Claude Opus 5.5,1M,57,679,8.394698085419735,scored
+1password-web,1Password Web,Claude Opus 5,1M,30,679,4.418262150220913,scored
+1password-web,1Password Web,GPT 5.6 Luna,RECORDED,27,679,3.976435935198822,scored
+1password-web,1Password Web,Grok 4.6,RECORDED,28,679,4.123711340206185,scored
+1password-web,1Password Web,GLM 5.3 Flash,200K,12,679,1.7673048600883652,scored
+1password-web,1Password Web,Kimi K3,200K,21,679,3.0927835051546393,scored
+1password-web,1Password Web,DeepSeek V4.1 Flash,200K,,,,missing
+1password-web,1Password Web,Qwen 3.8 Max,200K,20,679,2.9455081001472756,scored
+1password-web,1Password Web,GPT 6.1 Sol,258K,31,679,4.565537555228277,scored
+33,Coursera,Claude Opus 5.5,1M,190,765,24.836601307189543,scored
+33,Coursera,Claude Opus 5,1M,27,765,3.5294117647058822,scored
+33,Coursera,GPT 5.6 Luna,RECORDED,28,765,3.6601307189542482,scored
+33,Coursera,Grok 4.6,RECORDED,48,765,6.2745098039215685,scored
+33,Coursera,GLM 5.3 Flash,200K,,,,missing
+33,Coursera,Kimi K3,200K,5,765,0.6535947712418301,scored
+33,Coursera,DeepSeek V4.1 Flash,200K,22,765,2.8758169934640523,scored
+33,Coursera,Qwen 3.8 Max,200K,11,765,1.4379084967320261,scored
+33,Coursera,GPT 6.1 Sol,258K,106,765,13.856209150326798,scored
+ace-hardware,Ace Hardware,Claude Opus 5.5,1M,131,433,30.254041570438797,scored
+ace-hardware,Ace Hardware,Claude Opus 5,1M,71,433,16.397228637413395,scored
+ace-hardware,Ace Hardware,GPT 5.6 Luna,RECORDED,11,433,2.540415704387991,scored
+ace-hardware,Ace Hardware,Grok 4.6,RECORDED,28,433,6.466512702078522,scored
+ace-hardware,Ace Hardware,GLM 5.3 Flash,200K,52,433,12.009237875288683,scored
+ace-hardware,Ace Hardware,Kimi K3,200K,61,433,14.087759815242494,scored
+ace-hardware,Ace Hardware,DeepSeek V4.1 Flash,200K,,,,missing
+ace-hardware,Ace Hardware,Qwen 3.8 Max,200K,56,433,12.933025404157044,scored
+ace-hardware,Ace Hardware,GPT 6.1 Sol,258K,85,433,19.630484988452658,scored
+airtable,Airtable,Claude Opus 5.5,1M,74,589,12.563667232597624,scored
+airtable,Airtable,Claude Opus 5,1M,36,589,6.112054329371817,scored
+airtable,Airtable,GPT 5.6 Luna,RECORDED,17,589,2.8862478777589136,scored
+airtable,Airtable,Grok 4.6,RECORDED,33,589,5.602716468590832,scored
+airtable,Airtable,GLM 5.3 Flash,200K,,,,missing
+airtable,Airtable,Kimi K3,200K,26,589,4.4142614601018675,scored
+airtable,Airtable,DeepSeek V4.1 Flash,200K,48,589,8.149405772495756,scored
+airtable,Airtable,Qwen 3.8 Max,200K,27,589,4.584040747028863,scored
+airtable,Airtable,GPT 6.1 Sol,258K,41,589,6.960950764006792,scored
+amazon,Amazon,Claude Opus 5.5,1M,582,1025,56.78048780487805,scored
+amazon,Amazon,Claude Opus 5,1M,429,1025,41.853658536585364,scored
+amazon,Amazon,GPT 5.6 Luna,RECORDED,197,1025,19.21951219512195,scored
+amazon,Amazon,Grok 4.6,RECORDED,313,1025,30.536585365853657,scored
+amazon,Amazon,GLM 5.3 Flash,200K,233,1025,22.73170731707317,scored
+amazon,Amazon,Kimi K3,200K,386,1025,37.65853658536585,scored
+amazon,Amazon,DeepSeek V4.1 Flash,200K,,,,missing
+amazon,Amazon,Qwen 3.8 Max,200K,402,1025,39.21951219512195,scored
+amazon,Amazon,GPT 6.1 Sol,258K,495,1025,48.292682926829265,scored
+amazon-home-services,Amazon Home Services,Claude Opus 5.5,1M,124,799,15.519399249061326,scored
+amazon-home-services,Amazon Home Services,Claude Opus 5,1M,42,799,5.256570713391739,scored
+amazon-home-services,Amazon Home Services,GPT 5.6 Luna,RECORDED,28,799,3.504380475594493,scored
+amazon-home-services,Amazon Home Services,Grok 4.6,RECORDED,87,799,10.888610763454318,scored
+amazon-home-services,Amazon Home Services,GLM 5.3 Flash,200K,,,,missing
+amazon-home-services,Amazon Home Services,Kimi K3,200K,28,799,3.504380475594493,scored
+amazon-home-services,Amazon Home Services,DeepSeek V4.1 Flash,200K,0,799,0.0,scored
+amazon-home-services,Amazon Home Services,Qwen 3.8 Max,200K,40,799,5.006257822277847,scored
+amazon-home-services,Amazon Home Services,GPT 6.1 Sol,258K,140,799,17.521902377972467,scored
+amc-theatres,AMC Theatres,Claude Opus 5.5,1M,82,369,22.22222222222222,scored
+amc-theatres,AMC Theatres,Claude Opus 5,1M,81,369,21.951219512195124,scored
+amc-theatres,AMC Theatres,GPT 5.6 Luna,RECORDED,42,369,11.382113821138212,scored
+amc-theatres,AMC Theatres,Grok 4.6,RECORDED,70,369,18.97018970189702,scored
+amc-theatres,AMC Theatres,GLM 5.3 Flash,200K,50,369,13.550135501355014,scored
+amc-theatres,AMC Theatres,Kimi K3,200K,57,369,15.447154471544716,scored
+amc-theatres,AMC Theatres,DeepSeek V4.1 Flash,200K,,,,missing
+amc-theatres,AMC Theatres,Qwen 3.8 Max,200K,61,369,16.531165311653115,scored
+amc-theatres,AMC Theatres,GPT 6.1 Sol,258K,81,369,21.951219512195124,scored
+angi,Angi,Claude Opus 5.5,1M,278,1000,27.8,scored
+angi,Angi,Claude Opus 5,1M,265,1000,26.5,scored
+angi,Angi,GPT 5.6 Luna,RECORDED,139,1000,13.9,scored
+angi,Angi,Grok 4.6,RECORDED,415,1000,41.5,scored
+angi,Angi,GLM 5.3 Flash,200K,359,1000,35.9,scored
+angi,Angi,Kimi K3,200K,153,1000,15.3,scored
+angi,Angi,DeepSeek V4.1 Flash,200K,,,,missing
+angi,Angi,Qwen 3.8 Max,200K,0,1000,0.0,scored
+angi,Angi,GPT 6.1 Sol,258K,289,1000,28.9,scored
+apple,Apple,Claude Opus 5.5,1M,304,700,43.42857142857143,scored
+apple,Apple,Claude Opus 5,1M,188,700,26.857142857142858,scored
+apple,Apple,GPT 5.6 Luna,RECORDED,45,700,6.428571428571429,scored
+apple,Apple,Grok 4.6,RECORDED,96,700,13.714285714285714,scored
+apple,Apple,GLM 5.3 Flash,200K,122,700,17.428571428571427,scored
+apple,Apple,Kimi K3,200K,,,,invalid
+apple,Apple,DeepSeek V4.1 Flash,200K,,,,missing
+apple,Apple,Qwen 3.8 Max,200K,,,,missing
+apple,Apple,GPT 6.1 Sol,258K,163,700,23.285714285714285,scored
+article,Article,Claude Opus 5.5,1M,46,794,5.793450881612091,scored
+article,Article,Claude Opus 5,1M,273,1759,15.520181921546333,scored
+article,Article,GPT 5.6 Luna,RECORDED,121,1759,6.878908470722001,scored
+article,Article,Grok 4.6,RECORDED,29,1759,1.648664013644116,scored
+article,Article,GLM 5.3 Flash,200K,40,1759,2.274019329164298,scored
+article,Article,Kimi K3,200K,125,1759,7.106310403638431,scored
+article,Article,DeepSeek V4.1 Flash,200K,207,1759,11.768050028425241,scored
+article,Article,Qwen 3.8 Max,200K,24,1759,1.3644115974985787,scored
+article,Article,GPT 6.1 Sol,258K,188,1759,10.6878908470722,scored
+asana,Asana,Claude Opus 5.5,1M,115,346,33.23699421965318,scored
+asana,Asana,Claude Opus 5,1M,85,346,24.566473988439306,scored
+asana,Asana,GPT 5.6 Luna,RECORDED,49,346,14.16184971098266,scored
+asana,Asana,Grok 4.6,RECORDED,21,346,6.069364161849711,scored
+asana,Asana,GLM 5.3 Flash,200K,40,346,11.560693641618498,scored
+asana,Asana,Kimi K3,200K,32,346,9.248554913294798,scored
+asana,Asana,DeepSeek V4.1 Flash,200K,,,,missing
+asana,Asana,Qwen 3.8 Max,200K,26,346,7.514450867052023,scored
+asana,Asana,GPT 6.1 Sol,258K,36,346,10.404624277456648,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,Claude Opus 5.5,1M,285,1019,27.968596663395484,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,Claude Opus 5,1M,202,1019,19.823356231599607,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,GPT 5.6 Luna,RECORDED,21,1019,2.060843964671246,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,Grok 4.6,RECORDED,89,1019,8.73405299313052,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,GLM 5.3 Flash,200K,69,1019,6.77134445534838,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,Kimi K3,200K,60,1019,5.888125613346418,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,DeepSeek V4.1 Flash,200K,,,,missing
+aspca-pet-insurance,ASPCA Pet Health Insurance,Qwen 3.8 Max,200K,66,1019,6.4769381746810595,scored
+aspca-pet-insurance,ASPCA Pet Health Insurance,GPT 6.1 Sol,258K,101,1019,9.911678115799804,scored
+autoslash,autoslash,Claude Opus 5.5,1M,54,353,15.297450424929178,scored
+autoslash,autoslash,Claude Opus 5,1M,9,353,2.54957507082153,scored
+autoslash,autoslash,GPT 5.6 Luna,RECORDED,14,353,3.9660056657223794,scored
+autoslash,autoslash,Grok 4.6,RECORDED,1,353,0.28328611898017,scored
+autoslash,autoslash,GLM 5.3 Flash,200K,0,353,0.0,scored
+autoslash,autoslash,Kimi K3,200K,7,353,1.9830028328611897,scored
+autoslash,autoslash,DeepSeek V4.1 Flash,200K,,,,missing
+autoslash,autoslash,Qwen 3.8 Max,200K,1,353,0.28328611898017,scored
+autoslash,autoslash,GPT 6.1 Sol,258K,43,353,12.181303116147308,scored
+autotrader,Autotrader,Claude Opus 5.5,1M,204,487,41.889117043121146,scored
+autotrader,Autotrader,Claude Opus 5,1M,274,487,56.26283367556468,scored
+autotrader,Autotrader,GPT 5.6 Luna,RECORDED,31,487,6.365503080082136,scored
+autotrader,Autotrader,Grok 4.6,RECORDED,88,487,18.069815195071868,scored
+autotrader,Autotrader,GLM 5.3 Flash,200K,121,487,24.84599589322382,scored
+autotrader,Autotrader,Kimi K3,200K,72,487,14.784394250513348,scored
+autotrader,Autotrader,DeepSeek V4.1 Flash,200K,,,,missing
+autotrader,Autotrader,Qwen 3.8 Max,200K,19,487,3.9014373716632442,scored
+autotrader,Autotrader,GPT 6.1 Sol,258K,227,487,46.61190965092403,scored
+backcountry,Backcountry,Claude Opus 5.5,1M,254,1317,19.286256643887622,scored
+backcountry,Backcountry,Claude Opus 5,1M,39,1317,2.9612756264236904,scored
+backcountry,Backcountry,GPT 5.6 Luna,RECORDED,128,1317,9.719058466211086,scored
+backcountry,Backcountry,Grok 4.6,RECORDED,158,1317,11.99696279422931,scored
+backcountry,Backcountry,GLM 5.3 Flash,200K,,,,missing
+backcountry,Backcountry,Kimi K3,200K,184,1317,13.971146545178437,scored
+backcountry,Backcountry,DeepSeek V4.1 Flash,200K,160,1317,12.148823082763858,scored
+backcountry,Backcountry,Qwen 3.8 Max,200K,12,1317,0.9111617312072893,scored
+backcountry,Backcountry,GPT 6.1 Sol,258K,250,1317,18.982536066818525,scored
+bean-box,Bean Box,Claude Opus 5.5,1M,322,987,32.6241134751773,scored
+bean-box,Bean Box,Claude Opus 5,1M,284,987,28.77406281661601,scored
+bean-box,Bean Box,GPT 5.6 Luna,RECORDED,156,987,15.80547112462006,scored
+bean-box,Bean Box,Grok 4.6,RECORDED,234,987,23.70820668693009,scored
+bean-box,Bean Box,GLM 5.3 Flash,200K,,,,missing
+bean-box,Bean Box,Kimi K3,200K,265,987,26.84903748733536,scored
+bean-box,Bean Box,DeepSeek V4.1 Flash,200K,170,987,17.223910840932117,scored
+bean-box,Bean Box,Qwen 3.8 Max,200K,40,987,4.052684903748734,scored
+bean-box,Bean Box,GPT 6.1 Sol,258K,9,987,0.9118541033434651,scored
+beeradvocate,BeerAdvocate,Claude Opus 5.5,1M,64,446,14.349775784753364,scored
+beeradvocate,BeerAdvocate,Claude Opus 5,1M,44,446,9.865470852017937,scored
+beeradvocate,BeerAdvocate,GPT 5.6 Luna,RECORDED,48,446,10.762331838565023,scored
+beeradvocate,BeerAdvocate,Grok 4.6,RECORDED,64,446,14.349775784753364,scored
+beeradvocate,BeerAdvocate,GLM 5.3 Flash,200K,78,446,17.48878923766816,scored
+beeradvocate,BeerAdvocate,Kimi K3,200K,47,446,10.538116591928251,scored
+beeradvocate,BeerAdvocate,DeepSeek V4.1 Flash,200K,,,,missing
+beeradvocate,BeerAdvocate,Qwen 3.8 Max,200K,48,446,10.762331838565023,scored
+beeradvocate,BeerAdvocate,GPT 6.1 Sol,258K,183,446,41.03139013452915,scored
+blinkist,Blinkist,Claude Opus 5.5,1M,120,437,27.45995423340961,scored
+blinkist,Blinkist,Claude Opus 5,1M,82,437,18.76430205949657,scored
+blinkist,Blinkist,GPT 5.6 Luna,RECORDED,47,437,10.755148741418765,scored
+blinkist,Blinkist,Grok 4.6,RECORDED,43,437,9.839816933638444,scored
+blinkist,Blinkist,GLM 5.3 Flash,200K,70,437,16.018306636155607,scored
+blinkist,Blinkist,Kimi K3,200K,88,437,20.137299771167047,scored
+blinkist,Blinkist,DeepSeek V4.1 Flash,200K,,,,missing
+blinkist,Blinkist,Qwen 3.8 Max,200K,68,437,15.560640732265446,scored
+blinkist,Blinkist,GPT 6.1 Sol,258K,101,437,23.112128146453088,scored
+blueapron,Blue Apron,Claude Opus 5.5,1M,89,410,21.70731707317073,scored
+blueapron,Blue Apron,Claude Opus 5,1M,49,410,11.951219512195122,scored
+blueapron,Blue Apron,GPT 5.6 Luna,RECORDED,27,410,6.585365853658536,scored
+blueapron,Blue Apron,Grok 4.6,RECORDED,58,410,14.146341463414634,scored
+blueapron,Blue Apron,GLM 5.3 Flash,200K,37,410,9.024390243902438,scored
+blueapron,Blue Apron,Kimi K3,200K,62,410,15.121951219512194,scored
+blueapron,Blue Apron,DeepSeek V4.1 Flash,200K,,,,missing
+blueapron,Blue Apron,Qwen 3.8 Max,200K,20,410,4.878048780487805,scored
+blueapron,Blue Apron,GPT 6.1 Sol,258K,41,410,10.0,scored
+bluemercury,bluemercury,Claude Opus 5.5,1M,402,694,57.92507204610951,scored
+bluemercury,bluemercury,Claude Opus 5,1M,392,694,56.48414985590778,scored
+bluemercury,bluemercury,GPT 5.6 Luna,RECORDED,208,694,29.971181556195965,scored
+bluemercury,bluemercury,Grok 4.6,RECORDED,401,694,57.78097982708934,scored
+bluemercury,bluemercury,GLM 5.3 Flash,200K,,,,missing
+bluemercury,bluemercury,Kimi K3,200K,53,694,7.636887608069165,scored
+bluemercury,bluemercury,DeepSeek V4.1 Flash,200K,,,,missing
+bluemercury,bluemercury,Qwen 3.8 Max,200K,25,694,3.602305475504323,scored
+bluemercury,bluemercury,GPT 6.1 Sol,258K,414,694,59.654178674351584,scored
+boardgamegeek,BoardGameGeek,Claude Opus 5.5,1M,142,1020,13.92156862745098,scored
+boardgamegeek,BoardGameGeek,Claude Opus 5,1M,67,1020,6.568627450980392,scored
+boardgamegeek,BoardGameGeek,GPT 5.6 Luna,RECORDED,10,1020,0.9803921568627451,scored
+boardgamegeek,BoardGameGeek,Grok 4.6,RECORDED,34,1020,3.3333333333333335,scored
+boardgamegeek,BoardGameGeek,GLM 5.3 Flash,200K,46,1020,4.509803921568627,scored
+boardgamegeek,BoardGameGeek,Kimi K3,200K,29,1020,2.843137254901961,scored
+boardgamegeek,BoardGameGeek,DeepSeek V4.1 Flash,200K,,,,missing
+boardgamegeek,BoardGameGeek,Qwen 3.8 Max,200K,9,1020,0.8823529411764706,scored
+boardgamegeek,BoardGameGeek,GPT 6.1 Sol,258K,127,1020,12.450980392156863,scored
+bookshop,Bookshop.org,Claude Opus 5.5,1M,48,632,7.594936708860759,scored
+bookshop,Bookshop.org,Claude Opus 5,1M,44,632,6.962025316455696,scored
+bookshop,Bookshop.org,GPT 5.6 Luna,RECORDED,10,632,1.5822784810126582,scored
+bookshop,Bookshop.org,Grok 4.6,RECORDED,10,632,1.5822784810126582,scored
+bookshop,Bookshop.org,GLM 5.3 Flash,200K,10,632,1.5822784810126582,scored
+bookshop,Bookshop.org,Kimi K3,200K,14,632,2.2151898734177213,scored
+bookshop,Bookshop.org,DeepSeek V4.1 Flash,200K,24,632,3.7974683544303796,scored
+bookshop,Bookshop.org,Qwen 3.8 Max,200K,0,632,0.0,scored
+bookshop,Bookshop.org,GPT 6.1 Sol,258K,17,632,2.689873417721519,scored
+breakoutgames-2,Breakout Games,Claude Opus 5.5,1M,40,387,10.335917312661499,scored
+breakoutgames-2,Breakout Games,Claude Opus 5,1M,40,387,10.335917312661499,scored
+breakoutgames-2,Breakout Games,GPT 5.6 Luna,RECORDED,12,387,3.10077519379845,scored
+breakoutgames-2,Breakout Games,Grok 4.6,RECORDED,26,387,6.718346253229974,scored
+breakoutgames-2,Breakout Games,GLM 5.3 Flash,200K,,,,missing
+breakoutgames-2,Breakout Games,Kimi K3,200K,24,387,6.2015503875969,scored
+breakoutgames-2,Breakout Games,DeepSeek V4.1 Flash,200K,24,387,6.2015503875969,scored
+breakoutgames-2,Breakout Games,Qwen 3.8 Max,200K,25,387,6.459948320413437,scored
+breakoutgames-2,Breakout Games,GPT 6.1 Sol,258K,33,387,8.527131782945736,scored
+brooklinen,Brooklinen,Claude Opus 5.5,1M,67,736,9.103260869565217,scored
+brooklinen,Brooklinen,Claude Opus 5,1M,41,736,5.570652173913044,scored
+brooklinen,Brooklinen,GPT 5.6 Luna,RECORDED,22,736,2.989130434782609,scored
+brooklinen,Brooklinen,Grok 4.6,RECORDED,13,736,1.766304347826087,scored
+brooklinen,Brooklinen,GLM 5.3 Flash,200K,20,736,2.717391304347826,scored
+brooklinen,Brooklinen,Kimi K3,200K,35,736,4.755434782608695,scored
+brooklinen,Brooklinen,DeepSeek V4.1 Flash,200K,43,736,5.842391304347826,scored
+brooklinen,Brooklinen,Qwen 3.8 Max,200K,17,736,2.3097826086956523,scored
+brooklinen,Brooklinen,GPT 6.1 Sol,258K,68,736,9.23913043478261,scored
+capterra,Capterra,Claude Opus 5.5,1M,241,632,38.13291139240506,scored
+capterra,Capterra,Claude Opus 5,1M,192,632,30.379746835443036,scored
+capterra,Capterra,GPT 5.6 Luna,RECORDED,113,632,17.879746835443036,scored
+capterra,Capterra,Grok 4.6,RECORDED,17,632,2.689873417721519,scored
+capterra,Capterra,GLM 5.3 Flash,200K,14,632,2.2151898734177213,scored
+capterra,Capterra,Kimi K3,200K,168,632,26.582278481012658,scored
+capterra,Capterra,DeepSeek V4.1 Flash,200K,21,632,3.3227848101265822,scored
+capterra,Capterra,Qwen 3.8 Max,200K,15,632,2.3734177215189876,scored
+capterra,Capterra,GPT 6.1 Sol,258K,198,632,31.329113924050635,scored
+change,Change.org,Claude Opus 5.5,1M,181,420,43.095238095238095,scored
+change,Change.org,Claude Opus 5,1M,115,420,27.38095238095238,scored
+change,Change.org,GPT 5.6 Luna,RECORDED,45,420,10.714285714285714,scored
+change,Change.org,Grok 4.6,RECORDED,109,420,25.952380952380953,scored
+change,Change.org,GLM 5.3 Flash,200K,117,420,27.857142857142858,scored
+change,Change.org,Kimi K3,200K,93,420,22.142857142857142,scored
+change,Change.org,DeepSeek V4.1 Flash,200K,,,,missing
+change,Change.org,Qwen 3.8 Max,200K,121,420,28.80952380952381,scored
+change,Change.org,GPT 6.1 Sol,258K,116,420,27.61904761904762,scored
+columbia,Columbia Sportswear,Claude Opus 5.5,1M,88,338,26.035502958579883,scored
+columbia,Columbia Sportswear,Claude Opus 5,1M,44,338,13.017751479289942,scored
+columbia,Columbia Sportswear,GPT 5.6 Luna,RECORDED,74,338,21.893491124260354,scored
+columbia,Columbia Sportswear,Grok 4.6,RECORDED,68,338,20.118343195266274,scored
+columbia,Columbia Sportswear,GLM 5.3 Flash,200K,,,,missing
+columbia,Columbia Sportswear,Kimi K3,200K,7,338,2.0710059171597632,scored
+columbia,Columbia Sportswear,DeepSeek V4.1 Flash,200K,72,338,21.301775147928993,scored
+columbia,Columbia Sportswear,Qwen 3.8 Max,200K,8,338,2.366863905325444,scored
+columbia,Columbia Sportswear,GPT 6.1 Sol,258K,73,338,21.597633136094675,scored
+crumbl-cookies,Crumbl Cookies,Claude Opus 5.5,1M,194,531,36.534839924670436,scored
+crumbl-cookies,Crumbl Cookies,Claude Opus 5,1M,180,531,33.898305084745765,scored
+crumbl-cookies,Crumbl Cookies,GPT 5.6 Luna,RECORDED,116,531,21.84557438794727,scored
+crumbl-cookies,Crumbl Cookies,Grok 4.6,RECORDED,34,531,6.4030131826742,scored
+crumbl-cookies,Crumbl Cookies,GLM 5.3 Flash,200K,32,531,6.0263653483992465,scored
+crumbl-cookies,Crumbl Cookies,Kimi K3,200K,137,531,25.800376647834273,scored
+crumbl-cookies,Crumbl Cookies,DeepSeek V4.1 Flash,200K,,,,missing
+crumbl-cookies,Crumbl Cookies,Qwen 3.8 Max,200K,0,531,0.0,scored
+crumbl-cookies,Crumbl Cookies,GPT 6.1 Sol,258K,144,531,27.11864406779661,scored
+crunchyroll,Crunchyroll,Claude Opus 5.5,1M,45,967,4.653567735263702,scored
+crunchyroll,Crunchyroll,Claude Opus 5,1M,231,681,33.92070484581498,scored
+crunchyroll,Crunchyroll,GPT 5.6 Luna,RECORDED,123,681,18.061674008810574,scored
+crunchyroll,Crunchyroll,Grok 4.6,RECORDED,230,681,33.773861967694565,scored
+crunchyroll,Crunchyroll,GLM 5.3 Flash,200K,,,,missing
+crunchyroll,Crunchyroll,Kimi K3,200K,0,681,0.0,scored
+crunchyroll,Crunchyroll,DeepSeek V4.1 Flash,200K,291,681,42.731277533039645,scored
+crunchyroll,Crunchyroll,Qwen 3.8 Max,200K,0,681,0.0,scored
+crunchyroll,Crunchyroll,GPT 6.1 Sol,258K,276,681,40.52863436123348,scored
+curology,Curology,Claude Opus 5.5,1M,102,539,18.923933209647494,scored
+curology,Curology,Claude Opus 5,1M,85,539,15.769944341372913,scored
+curology,Curology,GPT 5.6 Luna,RECORDED,58,539,10.760667903525047,scored
+curology,Curology,Grok 4.6,RECORDED,72,539,13.358070500927644,scored
+curology,Curology,GLM 5.3 Flash,200K,,,,missing
+curology,Curology,Kimi K3,200K,32,539,5.936920222634508,scored
+curology,Curology,DeepSeek V4.1 Flash,200K,76,539,14.100185528756958,scored
+curology,Curology,Qwen 3.8 Max,200K,0,539,0.0,scored
+curology,Curology,GPT 6.1 Sol,258K,82,539,15.213358070500927,scored
+dooney-bourke,Dooney & Bourke,Claude Opus 5.5,1M,185,754,24.53580901856764,scored
+dooney-bourke,Dooney & Bourke,Claude Opus 5,1M,130,754,17.24137931034483,scored
+dooney-bourke,Dooney & Bourke,GPT 5.6 Luna,RECORDED,64,754,8.488063660477454,scored
+dooney-bourke,Dooney & Bourke,Grok 4.6,RECORDED,114,754,15.119363395225465,scored
+dooney-bourke,Dooney & Bourke,GLM 5.3 Flash,200K,0,1000,0.0,scored
+dooney-bourke,Dooney & Bourke,Kimi K3,200K,108,754,14.323607427055704,scored
+dooney-bourke,Dooney & Bourke,DeepSeek V4.1 Flash,200K,120,754,15.915119363395226,scored
+dooney-bourke,Dooney & Bourke,Qwen 3.8 Max,200K,38,754,5.039787798408488,scored
+dooney-bourke,Dooney & Bourke,GPT 6.1 Sol,258K,136,754,18.03713527851459,scored
+eatthismuch,Eat This Much,Claude Opus 5.5,1M,282,668,42.21556886227545,scored
+eatthismuch,Eat This Much,Claude Opus 5,1M,157,668,23.50299401197605,scored
+eatthismuch,Eat This Much,GPT 5.6 Luna,RECORDED,127,668,19.01197604790419,scored
+eatthismuch,Eat This Much,Grok 4.6,RECORDED,122,668,18.263473053892216,scored
+eatthismuch,Eat This Much,GLM 5.3 Flash,200K,17,668,2.5449101796407185,scored
+eatthismuch,Eat This Much,Kimi K3,200K,28,668,4.191616766467066,scored
+eatthismuch,Eat This Much,DeepSeek V4.1 Flash,200K,,,,missing
+eatthismuch,Eat This Much,Qwen 3.8 Max,200K,19,668,2.844311377245509,scored
+eatthismuch,Eat This Much,GPT 6.1 Sol,258K,125,668,18.7125748502994,scored
+etsy,Etsy,Claude Opus 5.5,1M,136,347,39.19308357348703,scored
+etsy,Etsy,Claude Opus 5,1M,133,347,38.328530259366,scored
+etsy,Etsy,GPT 5.6 Luna,RECORDED,73,347,21.037463976945244,scored
+etsy,Etsy,Grok 4.6,RECORDED,91,347,26.22478386167147,scored
+etsy,Etsy,GLM 5.3 Flash,200K,,,,missing
+etsy,Etsy,Kimi K3,200K,82,347,23.631123919308358,scored
+etsy,Etsy,DeepSeek V4.1 Flash,200K,,,,missing
+etsy,Etsy,Qwen 3.8 Max,200K,0,347,0.0,scored
+etsy,Etsy,GPT 6.1 Sol,258K,138,347,39.76945244956772,scored
+eventbrite,Eventbrite,Claude Opus 5.5,1M,376,1655,22.719033232628398,scored
+eventbrite,Eventbrite,Claude Opus 5,1M,42,1655,2.5377643504531724,scored
+eventbrite,Eventbrite,GPT 5.6 Luna,RECORDED,71,1655,4.290030211480363,scored
+eventbrite,Eventbrite,Grok 4.6,RECORDED,47,1655,2.8398791540785497,scored
+eventbrite,Eventbrite,GLM 5.3 Flash,200K,43,1655,2.598187311178248,scored
+eventbrite,Eventbrite,Kimi K3,200K,39,1655,2.3564954682779455,scored
+eventbrite,Eventbrite,DeepSeek V4.1 Flash,200K,,,,missing
+eventbrite,Eventbrite,Qwen 3.8 Max,200K,41,1655,2.4773413897280965,scored
+eventbrite,Eventbrite,GPT 6.1 Sol,258K,145,1655,8.761329305135952,scored
+everydollar,EveryDollar,Claude Opus 5.5,1M,142,394,36.04060913705584,scored
+everydollar,EveryDollar,Claude Opus 5,1M,100,394,25.380710659898476,scored
+everydollar,EveryDollar,GPT 5.6 Luna,RECORDED,92,394,23.3502538071066,scored
+everydollar,EveryDollar,Grok 4.6,RECORDED,123,394,31.218274111675125,scored
+everydollar,EveryDollar,GLM 5.3 Flash,200K,93,394,23.604060913705585,scored
+everydollar,EveryDollar,Kimi K3,200K,91,394,23.096446700507613,scored
+everydollar,EveryDollar,DeepSeek V4.1 Flash,200K,,,,missing
+everydollar,EveryDollar,Qwen 3.8 Max,200K,96,394,24.365482233502537,scored
+everydollar,EveryDollar,GPT 6.1 Sol,258K,135,394,34.263959390862944,scored
+everyplate,EveryPlate,Claude Opus 5.5,1M,416,870,47.81609195402299,scored
+everyplate,EveryPlate,Claude Opus 5,1M,82,2016,4.067460317460317,scored
+everyplate,EveryPlate,GPT 5.6 Luna,RECORDED,56,2016,2.7777777777777777,scored
+everyplate,EveryPlate,Grok 4.6,RECORDED,62,2016,3.0753968253968256,scored
+everyplate,EveryPlate,GLM 5.3 Flash,200K,,,,missing
+everyplate,EveryPlate,Kimi K3,200K,41,2016,2.0337301587301586,scored
+everyplate,EveryPlate,DeepSeek V4.1 Flash,200K,422,2016,20.932539682539684,scored
+everyplate,EveryPlate,Qwen 3.8 Max,200K,13,2016,0.6448412698412699,scored
+everyplate,EveryPlate,GPT 6.1 Sol,258K,287,2016,14.23611111111111,scored
+fandango,Fandango,Claude Opus 5.5,1M,42,387,10.852713178294573,scored
+fandango,Fandango,Claude Opus 5,1M,33,387,8.527131782945736,scored
+fandango,Fandango,GPT 5.6 Luna,RECORDED,36,387,9.30232558139535,scored
+fandango,Fandango,Grok 4.6,RECORDED,9,387,2.3255813953488373,scored
+fandango,Fandango,GLM 5.3 Flash,200K,7,387,1.8087855297157622,scored
+fandango,Fandango,Kimi K3,200K,42,387,10.852713178294573,scored
+fandango,Fandango,DeepSeek V4.1 Flash,200K,,,,missing
+fandango,Fandango,Qwen 3.8 Max,200K,25,387,6.459948320413437,scored
+fandango,Fandango,GPT 6.1 Sol,258K,43,387,11.11111111111111,scored
+freshdirect,FreshDirect,Claude Opus 5.5,1M,292,990,29.494949494949495,scored
+freshdirect,FreshDirect,Claude Opus 5,1M,184,990,18.585858585858585,scored
+freshdirect,FreshDirect,GPT 5.6 Luna,RECORDED,136,990,13.737373737373737,scored
+freshdirect,FreshDirect,Grok 4.6,RECORDED,127,990,12.828282828282829,scored
+freshdirect,FreshDirect,GLM 5.3 Flash,200K,171,990,17.272727272727273,scored
+freshdirect,FreshDirect,Kimi K3,200K,153,990,15.454545454545455,scored
+freshdirect,FreshDirect,DeepSeek V4.1 Flash,200K,,,,missing
+freshdirect,FreshDirect,Qwen 3.8 Max,200K,130,990,13.131313131313131,scored
+freshdirect,FreshDirect,GPT 6.1 Sol,258K,246,990,24.848484848484848,scored
+hipcamp,Hipcamp,Claude Opus 5.5,1M,47,302,15.562913907284768,scored
+hipcamp,Hipcamp,Claude Opus 5,1M,91,302,30.132450331125828,scored
+hipcamp,Hipcamp,GPT 5.6 Luna,RECORDED,64,302,21.192052980132452,scored
+hipcamp,Hipcamp,Grok 4.6,RECORDED,38,302,12.582781456953642,scored
+hipcamp,Hipcamp,GLM 5.3 Flash,200K,66,302,21.85430463576159,scored
+hipcamp,Hipcamp,Kimi K3,200K,30,302,9.933774834437086,scored
+hipcamp,Hipcamp,DeepSeek V4.1 Flash,200K,85,302,28.14569536423841,scored
+hipcamp,Hipcamp,Qwen 3.8 Max,200K,31,302,10.264900662251655,scored
+hipcamp,Hipcamp,GPT 6.1 Sol,258K,101,302,33.443708609271525,scored
+hmart,H Mart,Claude Opus 5.5,1M,331,714,46.358543417366946,scored
+hmart,H Mart,Claude Opus 5,1M,250,714,35.0140056022409,scored
+hmart,H Mart,GPT 5.6 Luna,RECORDED,223,714,31.23249299719888,scored
+hmart,H Mart,Grok 4.6,RECORDED,237,714,33.19327731092437,scored
+hmart,H Mart,GLM 5.3 Flash,200K,224,714,31.372549019607842,scored
+hmart,H Mart,Kimi K3,200K,208,714,29.131652661064425,scored
+hmart,H Mart,DeepSeek V4.1 Flash,200K,,,,missing
+hmart,H Mart,Qwen 3.8 Max,200K,0,714,0.0,scored
+hmart,H Mart,GPT 6.1 Sol,258K,241,714,33.753501400560225,scored
+imdb,IMDb,Claude Opus 5.5,1M,83,509,16.30648330058939,scored
+imdb,IMDb,Claude Opus 5,1M,77,509,15.12770137524558,scored
+imdb,IMDb,GPT 5.6 Luna,RECORDED,69,509,13.555992141453832,scored
+imdb,IMDb,Grok 4.6,RECORDED,79,509,15.520628683693516,scored
+imdb,IMDb,GLM 5.3 Flash,200K,167,509,32.80943025540275,scored
+imdb,IMDb,Kimi K3,200K,183,509,35.952848722986246,scored
+imdb,IMDb,DeepSeek V4.1 Flash,200K,,,,missing
+imdb,IMDb,Qwen 3.8 Max,200K,182,509,35.75638506876228,scored
+imdb,IMDb,GPT 6.1 Sol,258K,79,509,15.520628683693516,scored
+insureon,Insureon,Claude Opus 5.5,1M,76,522,14.559386973180077,scored
+insureon,Insureon,Claude Opus 5,1M,57,522,10.919540229885058,scored
+insureon,Insureon,GPT 5.6 Luna,RECORDED,14,522,2.681992337164751,scored
+insureon,Insureon,Grok 4.6,RECORDED,12,522,2.2988505747126435,scored
+insureon,Insureon,GLM 5.3 Flash,200K,,,,missing
+insureon,Insureon,Kimi K3,200K,60,522,11.494252873563218,scored
+insureon,Insureon,DeepSeek V4.1 Flash,200K,37,522,7.088122605363985,scored
+insureon,Insureon,Qwen 3.8 Max,200K,0,522,0.0,scored
+insureon,Insureon,GPT 6.1 Sol,258K,51,522,9.770114942528735,scored
+insurify,Insurify,Claude Opus 5.5,1M,113,350,32.285714285714285,scored
+insurify,Insurify,Claude Opus 5,1M,88,350,25.142857142857142,scored
+insurify,Insurify,GPT 5.6 Luna,RECORDED,27,350,7.714285714285714,scored
+insurify,Insurify,Grok 4.6,RECORDED,38,350,10.857142857142858,scored
+insurify,Insurify,GLM 5.3 Flash,200K,93,350,26.571428571428573,scored
+insurify,Insurify,Kimi K3,200K,74,350,21.142857142857142,scored
+insurify,Insurify,DeepSeek V4.1 Flash,200K,,,,missing
+insurify,Insurify,Qwen 3.8 Max,200K,27,350,7.714285714285714,scored
+insurify,Insurify,GPT 6.1 Sol,258K,83,350,23.714285714285715,scored
+ioby,ioby,Claude Opus 5.5,1M,69,380,18.157894736842106,scored
+ioby,ioby,Claude Opus 5,1M,47,380,12.368421052631579,scored
+ioby,ioby,GPT 5.6 Luna,RECORDED,21,380,5.526315789473684,scored
+ioby,ioby,Grok 4.6,RECORDED,56,380,14.736842105263158,scored
+ioby,ioby,GLM 5.3 Flash,200K,,,,missing
+ioby,ioby,Kimi K3,200K,58,380,15.263157894736842,scored
+ioby,ioby,DeepSeek V4.1 Flash,200K,55,380,14.473684210526315,scored
+ioby,ioby,Qwen 3.8 Max,200K,0,380,0.0,scored
+ioby,ioby,GPT 6.1 Sol,258K,39,380,10.263157894736842,scored
+kanetix-ca,Kanetix / Rates.ca,Claude Opus 5.5,1M,401,809,49.567367119901114,scored
+kanetix-ca,Kanetix / Rates.ca,Claude Opus 5,1M,392,809,48.4548825710754,scored
+kanetix-ca,Kanetix / Rates.ca,GPT 5.6 Luna,RECORDED,183,809,22.62051915945612,scored
+kanetix-ca,Kanetix / Rates.ca,Grok 4.6,RECORDED,265,809,32.756489493201485,scored
+kanetix-ca,Kanetix / Rates.ca,GLM 5.3 Flash,200K,178,809,22.00247218788628,scored
+kanetix-ca,Kanetix / Rates.ca,Kimi K3,200K,201,809,24.84548825710754,scored
+kanetix-ca,Kanetix / Rates.ca,DeepSeek V4.1 Flash,200K,,,,missing
+kanetix-ca,Kanetix / Rates.ca,Qwen 3.8 Max,200K,230,809,28.43016069221261,scored
+kanetix-ca,Kanetix / Rates.ca,GPT 6.1 Sol,258K,350,809,43.263288009888754,scored
+leetcode,LeetCode,Claude Opus 5.5,1M,242,326,74.23312883435582,scored
+leetcode,LeetCode,Claude Opus 5,1M,62,326,19.01840490797546,scored
+leetcode,LeetCode,GPT 5.6 Luna,RECORDED,10,326,3.067484662576687,scored
+leetcode,LeetCode,Grok 4.6,RECORDED,26,326,7.975460122699387,scored
+leetcode,LeetCode,GLM 5.3 Flash,200K,45,326,13.803680981595091,scored
+leetcode,LeetCode,Kimi K3,200K,77,326,23.619631901840492,scored
+leetcode,LeetCode,DeepSeek V4.1 Flash,200K,,,,missing
+leetcode,LeetCode,Qwen 3.8 Max,200K,80,326,24.539877300613497,scored
+leetcode,LeetCode,GPT 6.1 Sol,258K,228,326,69.93865030674847,scored
+legalnature,LegalNature,Claude Opus 5.5,1M,134,389,34.447300771208226,scored
+legalnature,LegalNature,Claude Opus 5,1M,32,389,8.226221079691516,scored
+legalnature,LegalNature,GPT 5.6 Luna,RECORDED,132,389,33.933161953727506,scored
+legalnature,LegalNature,Grok 4.6,RECORDED,11,389,2.827763496143959,scored
+legalnature,LegalNature,GLM 5.3 Flash,200K,,,,missing
+legalnature,LegalNature,Kimi K3,200K,24,389,6.169665809768637,scored
+legalnature,LegalNature,DeepSeek V4.1 Flash,200K,0,389,0.0,scored
+legalnature,LegalNature,Qwen 3.8 Max,200K,23,389,5.912596401028278,scored
+legalnature,LegalNature,GPT 6.1 Sol,258K,144,389,37.01799485861183,scored
+linkedin,LinkedIn,Claude Opus 5.5,1M,102,565,18.053097345132745,scored
+linkedin,LinkedIn,Claude Opus 5,1M,130,565,23.008849557522122,scored
+linkedin,LinkedIn,GPT 5.6 Luna,RECORDED,113,565,20.0,scored
+linkedin,LinkedIn,Grok 4.6,RECORDED,76,565,13.451327433628318,scored
+linkedin,LinkedIn,GLM 5.3 Flash,200K,,,,missing
+linkedin,LinkedIn,Kimi K3,200K,103,565,18.23008849557522,scored
+linkedin,LinkedIn,DeepSeek V4.1 Flash,200K,100,565,17.699115044247787,scored
+linkedin,LinkedIn,Qwen 3.8 Max,200K,78,565,13.805309734513274,scored
+linkedin,LinkedIn,GPT 6.1 Sol,258K,126,565,22.300884955752213,scored
+llbean,L.L.Bean,Claude Opus 5.5,1M,164,423,38.77068557919622,scored
+llbean,L.L.Bean,Claude Opus 5,1M,81,423,19.148936170212767,scored
+llbean,L.L.Bean,GPT 5.6 Luna,RECORDED,56,423,13.238770685579196,scored
+llbean,L.L.Bean,Grok 4.6,RECORDED,58,423,13.711583924349881,scored
+llbean,L.L.Bean,GLM 5.3 Flash,200K,46,423,10.874704491725769,scored
+llbean,L.L.Bean,Kimi K3,200K,97,423,22.93144208037825,scored
+llbean,L.L.Bean,DeepSeek V4.1 Flash,200K,,,,missing
+llbean,L.L.Bean,Qwen 3.8 Max,200K,65,423,15.36643026004728,scored
+llbean,L.L.Bean,GPT 6.1 Sol,258K,129,423,30.49645390070922,scored
+lowes,Lowe’s,Claude Opus 5.5,1M,340,494,68.82591093117409,scored
+lowes,Lowe’s,Claude Opus 5,1M,144,494,29.149797570850204,scored
+lowes,Lowe’s,GPT 5.6 Luna,RECORDED,153,494,30.97165991902834,scored
+lowes,Lowe’s,Grok 4.6,RECORDED,196,494,39.67611336032389,scored
+lowes,Lowe’s,GLM 5.3 Flash,200K,,,,missing
+lowes,Lowe’s,Kimi K3,200K,0,494,0.0,scored
+lowes,Lowe’s,DeepSeek V4.1 Flash,200K,129,494,26.11336032388664,scored
+lowes,Lowe’s,Qwen 3.8 Max,200K,179,494,36.23481781376518,scored
+lowes,Lowe’s,GPT 6.1 Sol,258K,252,494,51.012145748987855,scored
+medium,Medium,Claude Opus 5.5,1M,81,650,12.461538461538462,scored
+medium,Medium,Claude Opus 5,1M,78,650,12.0,scored
+medium,Medium,GPT 5.6 Luna,RECORDED,64,650,9.846153846153847,scored
+medium,Medium,Grok 4.6,RECORDED,52,650,8.0,scored
+medium,Medium,GLM 5.3 Flash,200K,,,,missing
+medium,Medium,Kimi K3,200K,29,650,4.461538461538462,scored
+medium,Medium,DeepSeek V4.1 Flash,200K,0,650,0.0,scored
+medium,Medium,Qwen 3.8 Max,200K,56,650,8.615384615384615,scored
+medium,Medium,GPT 6.1 Sol,258K,81,650,12.461538461538462,scored
+meetup,Meetup,Claude Opus 5.5,1M,143,347,41.210374639769455,scored
+meetup,Meetup,Claude Opus 5,1M,105,347,30.259365994236312,scored
+meetup,Meetup,GPT 5.6 Luna,RECORDED,82,347,23.631123919308358,scored
+meetup,Meetup,Grok 4.6,RECORDED,59,347,17.002881844380404,scored
+meetup,Meetup,GLM 5.3 Flash,200K,81,347,23.34293948126801,scored
+meetup,Meetup,Kimi K3,200K,25,347,7.204610951008646,scored
+meetup,Meetup,DeepSeek V4.1 Flash,200K,,,,missing
+meetup,Meetup,Qwen 3.8 Max,200K,80,347,23.054755043227665,scored
+meetup,Meetup,GPT 6.1 Sol,258K,142,347,40.92219020172911,scored
+notion,Notion,Claude Opus 5.5,1M,192,393,48.85496183206107,scored
+notion,Notion,Claude Opus 5,1M,145,393,36.895674300254456,scored
+notion,Notion,GPT 5.6 Luna,RECORDED,86,393,21.88295165394402,scored
+notion,Notion,Grok 4.6,RECORDED,30,393,7.633587786259542,scored
+notion,Notion,GLM 5.3 Flash,200K,116,393,29.516539440203562,scored
+notion,Notion,Kimi K3,200K,55,393,13.994910941475826,scored
+notion,Notion,DeepSeek V4.1 Flash,200K,,,,missing
+notion,Notion,Qwen 3.8 Max,200K,46,393,11.704834605597965,scored
+notion,Notion,GPT 6.1 Sol,258K,180,393,45.80152671755725,scored
+ollie,Ollie,Claude Opus 5.5,1M,30,394,7.614213197969543,scored
+ollie,Ollie,Claude Opus 5,1M,30,394,7.614213197969543,scored
+ollie,Ollie,GPT 5.6 Luna,RECORDED,13,394,3.299492385786802,scored
+ollie,Ollie,Grok 4.6,RECORDED,23,394,5.83756345177665,scored
+ollie,Ollie,GLM 5.3 Flash,200K,3,394,0.7614213197969543,scored
+ollie,Ollie,Kimi K3,200K,16,394,4.060913705583756,scored
+ollie,Ollie,DeepSeek V4.1 Flash,200K,7,394,1.7766497461928934,scored
+ollie,Ollie,Qwen 3.8 Max,200K,0,394,0.0,scored
+ollie,Ollie,GPT 6.1 Sol,258K,28,394,7.106598984771574,scored
+ontario-parks,Ontario Parks Reservations,Claude Opus 5.5,1M,39,313,12.460063897763579,scored
+ontario-parks,Ontario Parks Reservations,Claude Opus 5,1M,32,313,10.223642172523961,scored
+ontario-parks,Ontario Parks Reservations,GPT 5.6 Luna,RECORDED,10,313,3.194888178913738,scored
+ontario-parks,Ontario Parks Reservations,Grok 4.6,RECORDED,30,313,9.584664536741213,scored
+ontario-parks,Ontario Parks Reservations,GLM 5.3 Flash,200K,7,313,2.236421725239617,scored
+ontario-parks,Ontario Parks Reservations,Kimi K3,200K,29,313,9.26517571884984,scored
+ontario-parks,Ontario Parks Reservations,DeepSeek V4.1 Flash,200K,,,,missing
+ontario-parks,Ontario Parks Reservations,Qwen 3.8 Max,200K,30,313,9.584664536741213,scored
+ontario-parks,Ontario Parks Reservations,GPT 6.1 Sol,258K,32,313,10.223642172523961,scored
+opentable,OpenTable,Claude Opus 5.5,1M,150,512,29.296875,scored
+opentable,OpenTable,Claude Opus 5,1M,94,512,18.359375,scored
+opentable,OpenTable,GPT 5.6 Luna,RECORDED,71,512,13.8671875,scored
+opentable,OpenTable,Grok 4.6,RECORDED,35,512,6.8359375,scored
+opentable,OpenTable,GLM 5.3 Flash,200K,77,512,15.0390625,scored
+opentable,OpenTable,Kimi K3,200K,81,512,15.8203125,scored
+opentable,OpenTable,DeepSeek V4.1 Flash,200K,86,512,16.796875,scored
+opentable,OpenTable,Qwen 3.8 Max,200K,0,512,0.0,scored
+opentable,OpenTable,GPT 6.1 Sol,258K,82,512,16.015625,scored
+petco,Petco,Claude Opus 5.5,1M,154,609,25.28735632183908,scored
+petco,Petco,Claude Opus 5,1M,124,609,20.361247947454842,scored
+petco,Petco,GPT 5.6 Luna,RECORDED,65,609,10.673234811165846,scored
+petco,Petco,Grok 4.6,RECORDED,115,609,18.88341543513957,scored
+petco,Petco,GLM 5.3 Flash,200K,114,609,18.7192118226601,scored
+petco,Petco,Kimi K3,200K,99,609,16.25615763546798,scored
+petco,Petco,DeepSeek V4.1 Flash,200K,,,,missing
+petco,Petco,Qwen 3.8 Max,200K,101,609,16.58456486042693,scored
+petco,Petco,GPT 6.1 Sol,258K,131,609,21.510673234811165,scored
+petfinder,Petfinder,Claude Opus 5.5,1M,648,1783,36.343241727425685,scored
+petfinder,Petfinder,Claude Opus 5,1M,180,1783,10.095344924284912,scored
+petfinder,Petfinder,GPT 5.6 Luna,RECORDED,142,1783,7.9641054402692095,scored
+petfinder,Petfinder,Grok 4.6,RECORDED,11,1783,0.6169377453729669,scored
+petfinder,Petfinder,GLM 5.3 Flash,200K,139,1783,7.795849691531127,scored
+petfinder,Petfinder,Kimi K3,200K,4,1783,0.2243409983174425,scored
+petfinder,Petfinder,DeepSeek V4.1 Flash,200K,24,1783,1.346045989904655,scored
+petfinder,Petfinder,Qwen 3.8 Max,200K,4,1783,0.2243409983174425,scored
+petfinder,Petfinder,GPT 6.1 Sol,258K,,,,missing
+petsmart,PetSmart,Claude Opus 5.5,1M,125,837,14.934289127837514,scored
+petsmart,PetSmart,Claude Opus 5,1M,124,837,14.814814814814815,scored
+petsmart,PetSmart,GPT 5.6 Luna,RECORDED,12,837,1.4336917562724014,scored
+petsmart,PetSmart,Grok 4.6,RECORDED,125,837,14.934289127837514,scored
+petsmart,PetSmart,GLM 5.3 Flash,200K,,,,missing
+petsmart,PetSmart,Kimi K3,200K,69,837,8.243727598566307,scored
+petsmart,PetSmart,DeepSeek V4.1 Flash,200K,143,837,17.084826762246117,scored
+petsmart,PetSmart,Qwen 3.8 Max,200K,21,837,2.5089605734767026,scored
+petsmart,PetSmart,GPT 6.1 Sol,258K,90,837,10.75268817204301,scored
+ratemyprofessors,Rate My Professors,Claude Opus 5.5,1M,64,721,8.876560332871012,scored
+ratemyprofessors,Rate My Professors,Claude Opus 5,1M,36,721,4.993065187239944,scored
+ratemyprofessors,Rate My Professors,GPT 5.6 Luna,RECORDED,13,721,1.8030513176144245,scored
+ratemyprofessors,Rate My Professors,Grok 4.6,RECORDED,26,721,3.606102635228849,scored
+ratemyprofessors,Rate My Professors,GLM 5.3 Flash,200K,19,721,2.635228848821082,scored
+ratemyprofessors,Rate My Professors,Kimi K3,200K,32,721,4.438280166435506,scored
+ratemyprofessors,Rate My Professors,DeepSeek V4.1 Flash,200K,,,,missing
+ratemyprofessors,Rate My Professors,Qwen 3.8 Max,200K,22,721,3.0513176144244105,scored
+ratemyprofessors,Rate My Professors,GPT 6.1 Sol,258K,29,721,4.0221914008321775,scored
+resy,Resy,Claude Opus 5.5,1M,24,519,4.624277456647399,scored
+resy,Resy,Claude Opus 5,1M,13,519,2.504816955684008,scored
+resy,Resy,GPT 5.6 Luna,RECORDED,12,519,2.3121387283236996,scored
+resy,Resy,Grok 4.6,RECORDED,10,519,1.9267822736030829,scored
+resy,Resy,GLM 5.3 Flash,200K,12,519,2.3121387283236996,scored
+resy,Resy,Kimi K3,200K,12,519,2.3121387283236996,scored
+resy,Resy,DeepSeek V4.1 Flash,200K,16,519,3.0828516377649327,scored
+resy,Resy,Qwen 3.8 Max,200K,12,519,2.3121387283236996,scored
+resy,Resy,GPT 6.1 Sol,258K,20,519,3.8535645472061657,scored
+simplify-jobs,Simplify Jobs,Claude Opus 5.5,1M,80,752,10.638297872340425,scored
+simplify-jobs,Simplify Jobs,Claude Opus 5,1M,25,752,3.324468085106383,scored
+simplify-jobs,Simplify Jobs,GPT 5.6 Luna,RECORDED,36,752,4.787234042553192,scored
+simplify-jobs,Simplify Jobs,Grok 4.6,RECORDED,22,752,2.925531914893617,scored
+simplify-jobs,Simplify Jobs,GLM 5.3 Flash,200K,,,,missing
+simplify-jobs,Simplify Jobs,Kimi K3,200K,21,752,2.7925531914893615,scored
+simplify-jobs,Simplify Jobs,DeepSeek V4.1 Flash,200K,35,752,4.654255319148936,scored
+simplify-jobs,Simplify Jobs,Qwen 3.8 Max,200K,0,752,0.0,scored
+simplify-jobs,Simplify Jobs,GPT 6.1 Sol,258K,60,752,7.9787234042553195,scored
+target,Target,Claude Opus 5.5,1M,117,537,21.787709497206706,scored
+target,Target,Claude Opus 5,1M,,,,missing
+target,Target,GPT 5.6 Luna,RECORDED,56,537,10.42830540037244,scored
+target,Target,Grok 4.6,RECORDED,75,537,13.966480446927374,scored
+target,Target,GLM 5.3 Flash,200K,46,537,8.56610800744879,scored
+target,Target,Kimi K3,200K,99,537,18.435754189944134,scored
+target,Target,DeepSeek V4.1 Flash,200K,,,,missing
+target,Target,Qwen 3.8 Max,200K,74,537,13.780260707635009,scored
+target,Target,GPT 6.1 Sol,258K,98,537,18.24953445065177,scored
+taskrabbit,TaskRabbit,Claude Opus 5.5,1M,237,871,27.210103329506314,scored
+taskrabbit,TaskRabbit,Claude Opus 5,1M,155,871,17.795637198622273,scored
+taskrabbit,TaskRabbit,GPT 5.6 Luna,RECORDED,135,871,15.499425947187142,scored
+taskrabbit,TaskRabbit,Grok 4.6,RECORDED,138,871,15.843857634902411,scored
+taskrabbit,TaskRabbit,GLM 5.3 Flash,200K,186,871,21.35476463834673,scored
+taskrabbit,TaskRabbit,Kimi K3,200K,,,,invalid
+taskrabbit,TaskRabbit,DeepSeek V4.1 Flash,200K,,,,missing
+taskrabbit,TaskRabbit,Qwen 3.8 Max,200K,194,871,22.273249138920782,scored
+taskrabbit,TaskRabbit,GPT 6.1 Sol,258K,168,871,19.288174512055107,scored
+tripadvisor,Tripadvisor,Claude Opus 5.5,1M,98,625,15.68,scored
+tripadvisor,Tripadvisor,Claude Opus 5,1M,80,625,12.8,scored
+tripadvisor,Tripadvisor,GPT 5.6 Luna,RECORDED,50,625,8.0,scored
+tripadvisor,Tripadvisor,Grok 4.6,RECORDED,41,625,6.56,scored
+tripadvisor,Tripadvisor,GLM 5.3 Flash,200K,31,625,4.96,scored
+tripadvisor,Tripadvisor,Kimi K3,200K,62,625,9.92,scored
+tripadvisor,Tripadvisor,DeepSeek V4.1 Flash,200K,,,,missing
+tripadvisor,Tripadvisor,Qwen 3.8 Max,200K,33,625,5.28,scored
+tripadvisor,Tripadvisor,GPT 6.1 Sol,258K,78,625,12.48,scored
+tripit,TripIt,Claude Opus 5.5,1M,43,478,8.99581589958159,scored
+tripit,TripIt,Claude Opus 5,1M,53,478,11.087866108786612,scored
+tripit,TripIt,GPT 5.6 Luna,RECORDED,18,478,3.7656903765690375,scored
+tripit,TripIt,Grok 4.6,RECORDED,53,478,11.087866108786612,scored
+tripit,TripIt,GLM 5.3 Flash,200K,,,,missing
+tripit,TripIt,Kimi K3,200K,53,478,11.087866108786612,scored
+tripit,TripIt,DeepSeek V4.1 Flash,200K,21,478,4.393305439330544,scored
+tripit,TripIt,Qwen 3.8 Max,200K,47,478,9.832635983263598,scored
+tripit,TripIt,GPT 6.1 Sol,258K,72,478,15.06276150627615,scored
+ubereats,Uber Eats,Claude Opus 5.5,1M,29,338,8.579881656804734,scored
+ubereats,Uber Eats,Claude Opus 5,1M,14,338,4.1420118343195265,scored
+ubereats,Uber Eats,GPT 5.6 Luna,RECORDED,14,338,4.1420118343195265,scored
+ubereats,Uber Eats,Grok 4.6,RECORDED,19,338,5.621301775147929,scored
+ubereats,Uber Eats,GLM 5.3 Flash,200K,42,338,12.42603550295858,scored
+ubereats,Uber Eats,Kimi K3,200K,52,338,15.384615384615385,scored
+ubereats,Uber Eats,DeepSeek V4.1 Flash,200K,,,,missing
+ubereats,Uber Eats,Qwen 3.8 Max,200K,39,338,11.538461538461538,scored
+ubereats,Uber Eats,GPT 6.1 Sol,258K,24,338,7.100591715976331,scored
+warbyparker,Warby Parker,Claude Opus 5.5,1M,292,992,29.43548387096774,scored
+warbyparker,Warby Parker,Claude Opus 5,1M,102,992,10.28225806451613,scored
+warbyparker,Warby Parker,GPT 5.6 Luna,RECORDED,110,992,11.088709677419354,scored
+warbyparker,Warby Parker,Grok 4.6,RECORDED,51,992,5.141129032258065,scored
+warbyparker,Warby Parker,GLM 5.3 Flash,200K,4,992,0.4032258064516129,scored
+warbyparker,Warby Parker,Kimi K3,200K,68,992,6.854838709677419,scored
+warbyparker,Warby Parker,DeepSeek V4.1 Flash,200K,,,,missing
+warbyparker,Warby Parker,Qwen 3.8 Max,200K,19,992,1.9153225806451613,scored
+warbyparker,Warby Parker,GPT 6.1 Sol,258K,161,992,16.22983870967742,scored
+wayfair,Wayfair,Claude Opus 5.5,1M,167,1163,14.359415305245056,scored
+wayfair,Wayfair,Claude Opus 5,1M,61,1163,5.2450558899398105,scored
+wayfair,Wayfair,GPT 5.6 Luna,RECORDED,36,1163,3.095442820292347,scored
+wayfair,Wayfair,Grok 4.6,RECORDED,65,1163,5.588993981083405,scored
+wayfair,Wayfair,GLM 5.3 Flash,200K,,,,missing
+wayfair,Wayfair,Kimi K3,200K,18,1163,1.5477214101461736,scored
+wayfair,Wayfair,DeepSeek V4.1 Flash,200K,53,1163,4.557179707652622,scored
+wayfair,Wayfair,Qwen 3.8 Max,200K,8,1163,0.6878761822871883,scored
+wayfair,Wayfair,GPT 6.1 Sol,258K,,,,missing
+zennioptical,Zenni Optical,Claude Opus 5.5,1M,201,558,36.02150537634409,scored
+zennioptical,Zenni Optical,Claude Opus 5,1M,226,558,40.50179211469534,scored
+zennioptical,Zenni Optical,GPT 5.6 Luna,RECORDED,137,558,24.551971326164875,scored
+zennioptical,Zenni Optical,Grok 4.6,RECORDED,15,558,2.6881720430107525,scored
+zennioptical,Zenni Optical,GLM 5.3 Flash,200K,,,,missing
+zennioptical,Zenni Optical,Kimi K3,200K,30,558,5.376344086021505,scored
+zennioptical,Zenni Optical,DeepSeek V4.1 Flash,200K,178,558,31.899641577060933,scored
+zennioptical,Zenni Optical,Qwen 3.8 Max,200K,168,558,30.107526881720432,scored
+zennioptical,Zenni Optical,GPT 6.1 Sol,258K,158,558,28.315412186379927,scored
