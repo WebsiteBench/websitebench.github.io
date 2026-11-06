@@ -122,9 +122,7 @@
 
     const shotAttrs = (p, side) => {
       const base = `${PREVIEWS}${p.id}-${side}`;
-      return p.phone
-        ? { src: `${base}-780.webp`, srcset: '', sizes: '' }
-        : { src: `${base}-1240.webp`, srcset: `${base}-1240.webp 1240w, ${base}-2480.webp 2480w`, sizes: '(max-width: 1320px) 100vw, 1240px' };
+      return { src: `${base}-1240.webp`, srcset: `${base}-1240.webp 1240w, ${base}-2480.webp 2480w`, sizes: '(max-width: 1320px) calc(100vw - 82px), 1238px' };
     };
     // Both sides swap together, once both are ready, so a comparison is never half old.
     const loaded = new Map();
@@ -133,12 +131,32 @@
       const ready = Promise.all(Object.keys(shots).map(side => new Promise(done => {
         const a = shotAttrs(p, side), im = new Image();
         im.onload = im.onerror = done;
-        if (a.srcset) { im.sizes = a.sizes; im.srcset = a.srcset; }
+        im.sizes = a.sizes;
+        im.srcset = a.srcset;
         im.src = a.src;
       })));
       loaded.set(p.id, ready);
       return ready;
     }
+
+    /* ---------- side by side, or one picture with a divider ---------- */
+    const modeButtons = $$('#demo-modes button');
+    const inDivider = () => stage.dataset.mode === 'divider';
+    function setMode(mode) {
+      stage.dataset.mode = mode;
+      modeButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+      hideTip();
+      if (mode === 'divider') { stopIntro(); setSplit(restSplit(current)); }
+    }
+    $('#demo-modes').addEventListener('click', e => {
+      const mode = e.target.closest('button')?.dataset.mode;
+      if (!mode || mode === stage.dataset.mode) return;
+      setMode(mode);
+      const url = new URL(location.href);
+      if (mode === 'divider') url.searchParams.set('mode', 'divider');
+      else url.searchParams.delete('mode');
+      history.replaceState(null, '', url);
+    });
 
     /* ---------- divider ---------- */
     let split = 62;
@@ -148,6 +166,7 @@
     function setSplit(v) {
       split = Math.max(0, Math.min(100, v));
       frame.style.setProperty('--split', split + '%');
+      frame.style.setProperty('--split-n', String(split));
       divider.setAttribute('aria-valuenow', String(Math.round(split)));
       divider.setAttribute('aria-valuetext', Math.round(split) + ' percent reference');
       // A side label stays only while it fits on its own side of the divider.
@@ -157,7 +176,7 @@
     }
     // The whole picture is the handle. A touch moves the divider only once it moves sideways, so a page can still scroll over it.
     frame.addEventListener('pointerdown', e => {
-      if (e.button || e.target.closest('.bug')) return;
+      if (!inDivider() || e.button || e.target.closest('.bug')) return;
       const x0 = e.clientX, y0 = e.clientY;
       let armed = false;
       const dragTo = ev => { const r = frame.getBoundingClientRect(); setSplit((ev.clientX - r.left) / r.width * 100); };
@@ -219,7 +238,6 @@
         if (token !== swapToken) return;
         current = p;
         stage.dataset.page = p.id;
-        stage.classList.toggle('is-phone', Boolean(p.phone));
         Object.keys(shots).forEach(side => {
           const a = shotAttrs(p, side), img = shots[side];
           img.loading = 'eager';
@@ -381,7 +399,7 @@
       stage.classList.add('show-bugs');
     }
     function intro() {
-      if (introDismissed) return;
+      if (introDismissed || !inDivider()) return;
       const to = restSplit(current);
       if (reduceMotion) { setSplit(to); stage.classList.add('show-bugs'); return; }
       const from = 97, delay = 700, dur = 1500;
@@ -393,7 +411,7 @@
         const t = Math.min(1, Math.max(0, (el - delay) / dur));
         const v = from + (to - from) * ease(t);
         setSplit(v);
-        cursor.style.left = v + '%';
+        cursor.style.transform = `translateX(${v}cqw)`;
         cursor.style.opacity = el < delay - 350 ? '0' : el < delay ? String((el - (delay - 350)) / 350) : (t < 1 ? '1' : '0');
         if (t < 1) { raf = requestAnimationFrame(tick); }
         else { raf = null; stage.classList.add('show-bugs'); }
@@ -402,6 +420,7 @@
     }
 
     renderMarks(current);
+    if (new URLSearchParams(location.search).get('mode') === 'divider') setMode('divider');
     const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); ready.then(intro); } }, { threshold: 0.35 });

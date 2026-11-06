@@ -2,6 +2,7 @@
 // Run after any change to data/ or CITATION.bib: node tools/prerender.js
 const fs = require('node:fs'), path = require('node:path');
 const {execFileSync} = require('node:child_process');
+const {createHash} = require('node:crypto');
 const {renderRows} = require('../assets/js/leaderboard-view.js');
 const tasksView = require('../assets/js/tasks-view.js');
 const root = path.join(__dirname, '..'), read = name => JSON.parse(fs.readFileSync(path.join(root, 'data', name), 'utf8'));
@@ -117,9 +118,21 @@ fs.writeFileSync(path.join(root, 'tasks.html'), sheet);
 
 const taskMain = fs.readFileSync(path.join(root, 'tools/task-main.html'), 'utf8');
 const NOJS_TASK = '#view-tabs,#compare-modes,.task-picker,.divider,.run-shot{display:none!important}.task-picker-label{background:none!important;padding-right:0!important}';
+const firstShot = task => task.runs.find(r => shot(task.views[0], r));
+// One share image per website: redrawn only when its screenshots, its model or the template changed.
+const ogTemplate = fs.readFileSync(path.join(root, 'tools/task-og.html'));
+const ogCards = new Map(taskPages.map(task => {
+  const view = task.views[0], run = firstShot(task), slug = taskPath(task.id).slice('/task/'.length);
+  const reference = view.reference.image.slice(1), rebuild = shot(view, run).slice(1), model = run.model.name;
+  const key = createHash('sha1').update(ogTemplate).update(fs.readFileSync(path.join(root, reference))).update(fs.readFileSync(path.join(root, rebuild))).update(model).digest('hex').slice(0, 8);
+  return [task.id, {slug, reference, rebuild, model, key}];
+}));
+const ogFresh = ({slug, key}) => fs.existsSync(path.join(root, 'assets/og', `${slug}.png`)) && fs.existsSync(path.join(root, 'task', `${slug}.html`)) && fs.readFileSync(path.join(root, 'task', `${slug}.html`), 'utf8').includes(`/assets/og/${slug}.png?v=${key}"`);
+const ogStale = [...ogCards.values()].filter(card => !ogFresh(card));
+if (ogStale.length) execFileSync(process.execPath, [path.join(root, 'tools/render-task-og.js'), JSON.stringify(ogStale)], {stdio: 'inherit'});
 fs.rmSync(path.join(root, 'task'), {recursive: true, force: true});
 fs.mkdirSync(path.join(root, 'task'));
-const fillHead = (shell, {title, description, url}) => shell
+const fillHead = (shell, {title, description, url, image, imageAlt}) => shell
   .replace(/<title>[^<]*<\/title>/, () => `<title>${escape(title)}</title>`)
   .replace(/<meta name="description" content="[^"]*">/, () => `<meta name="description" content="${escape(description)}">`)
   .replace(/<link rel="canonical" href="[^"]*">/, () => `<link rel="canonical" href="${url}">`)
@@ -127,10 +140,15 @@ const fillHead = (shell, {title, description, url}) => shell
   .replace(/<meta property="og:title" content="[^"]*">/, () => `<meta property="og:title" content="${escape(title)}">`)
   .replace(/<meta property="og:description" content="[^"]*">/, () => `<meta property="og:description" content="${escape(description)}">`)
   .replace(/<meta name="twitter:title" content="[^"]*">/, () => `<meta name="twitter:title" content="${escape(title)}">`)
-  .replace(/<meta name="twitter:description" content="[^"]*">/, () => `<meta name="twitter:description" content="${escape(description)}">`);
+  .replace(/<meta name="twitter:description" content="[^"]*">/, () => `<meta name="twitter:description" content="${escape(description)}">`)
+  .replace(/<meta property="og:image" content="[^"]*">/, () => `<meta property="og:image" content="${image}">`)
+  .replace(/<meta name="twitter:image" content="[^"]*">/, () => `<meta name="twitter:image" content="${image}">`)
+  .replace(/<meta property="og:image:alt" content="[^"]*">/, () => `<meta property="og:image:alt" content="${escape(imageAlt)}">`)
+  .replace(/<meta name="twitter:image:alt" content="[^"]*">/, () => `<meta name="twitter:image:alt" content="${escape(imageAlt)}">`);
 for (const [index, task] of taskPages.entries()) {
   const previous = taskPages[(index - 1 + taskPages.length) % taskPages.length], next = taskPages[(index + 1) % taskPages.length];
-  const view = task.views[0], run = task.runs.find(r => shot(view, r)), url = `${ORIGIN}${taskPath(task.id)}`;
+  const view = task.views[0], run = firstShot(task), url = `${ORIGIN}${taskPath(task.id)}`, card = ogCards.get(task.id);
+  const image = `${ORIGIN}/assets/og/${card.slug}.png?v=${card.key}`, imageAlt = `${task.name}: the reference beside the rebuild by ${run.model.name}`;
   const title = `${task.name}: AI agent rebuilds compared · WebsiteBench`;
   const description = `${task.name} on WebsiteBench: ${count(task.tests)} hidden tests. Best pass rate ${task.best.rate.toFixed(1)}%, by ${task.best.model.name}. Compare every model’s rebuild with the reference.`;
   const fields = {
@@ -143,7 +161,7 @@ for (const [index, task] of taskPages.entries()) {
   };
   const main = taskMain.replace(/\{\{([\w-]+)\}\}/g, (_, key) => { if (!(key in fields)) throw Error('Unknown field: ' + key); return fields[key]; });
   const graph = {'@context': 'https://schema.org', '@graph': [{'@type': 'WebPage', '@id': `${url}#page`, url, name: title, description, inLanguage: 'en', isPartOf: WEBSITE, about: DATASET, primaryImageOfPage: {'@type': 'ImageObject', contentUrl: `${ORIGIN}${view.reference.image}`, width: view.viewport.width, height: view.viewport.height}}, {'@type': 'BreadcrumbList', itemListElement: [{'@type': 'ListItem', position: 1, name: 'WebsiteBench', item: `${ORIGIN}/`}, {'@type': 'ListItem', position: 2, name: 'Tasks', item: `${ORIGIN}/tasks`}, {'@type': 'ListItem', position: 3, name: task.name, item: url}]}]};
-  const page = fillHead(sheet, {title, description, url})
+  const page = fillHead(sheet, {title, description, url, image, imageAlt})
     .replace(/<script>\(function\(\)\{var q=new URLSearchParams[\s\S]*?<\/script>\n/, '')
     .replace(/<noscript><style>[^<]*<\/style><\/noscript>/, () => `<noscript><style>${NOJS_TASK}</style></noscript>`)
     .replace(/<script type="application\/ld\+json" id="ld">[\s\S]*?<\/script>/, () => `<script type="application/ld+json">${jsonLd(graph)}</script>`)

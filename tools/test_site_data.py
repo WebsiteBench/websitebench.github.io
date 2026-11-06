@@ -1,4 +1,4 @@
-"""Check that the pages, data files and exports agree on the 70 released tasks."""
+"""Check that the pages, data files and exports agree on the 70 tasks."""
 from collections import Counter
 import csv
 import html
@@ -76,13 +76,13 @@ class SiteDataTests(unittest.TestCase):
         for model in self.board['models']:
             with self.subTest(model=model['id']):
                 self.assertFalse(banned & set(model))
-        self.assertEqual(list(rows('leaderboard-overview.csv')[0]), ['model', 'overall', 'request', 'browser', 'system', 'cost', 'tokens_millions', 'turns'])
+        self.assertEqual(list(rows('leaderboard.csv')[0]), ['model', 'overall', 'request', 'browser', 'system', 'cost', 'tokens_millions', 'turns'])
         self.assertNotIn('Coverage', self.board['aggregation'])
 
     def test_csv_exports_match_the_json(self):
         models = {m['name']: m for m in self.waffle['models']}
         tasks = {t['id']: t for t in self.waffle['tasks']}
-        board = rows('leaderboard-overview.csv')
+        board = rows('leaderboard.csv')
         self.assertEqual([r['model'] for r in board], [m['name'] for m in self.board['models']])
         for row, model in zip(board, self.board['models']):
             self.assertAlmostEqual(float(row['overall']), model['overall'])
@@ -94,7 +94,6 @@ class SiteDataTests(unittest.TestCase):
                 self.assertEqual(row['status'], e['status'])
                 if e['status'] == 'scored':
                     self.assertEqual((int(row['passed']), int(row['total'])), (e['passed'], e['total']))
-        self.assertEqual((DATA / 'leaderboard.csv').read_text(), (DATA / 'leaderboard-overview.csv').read_text())
 
     def test_waffle_cells_link_to_recorded_runs(self):
         runs = {(t['id'], model): {r['id'] for r in value['runs']}
@@ -110,7 +109,7 @@ class SiteDataTests(unittest.TestCase):
             self.assertIn(task, self.ids)
             for view in value['views']:
                 self.assertEqual({'id', 'label', 'route', 'viewport', 'reference', 'runs'}, set(view))
-                images = [view['reference']['image']] + [shot['image'] for shot in view['runs'].values() if 'image' in shot]
+                images = [view['reference']['image']] + [shot['image'] for shot in view['runs'].values()]
                 with self.subTest(task=task, view=view['id']):
                     self.assertLessEqual(set(view['runs']), runs[task])
                     for image in images:
@@ -154,6 +153,19 @@ class SiteDataTests(unittest.TestCase):
         card = (ROOT / 'tools/og.html').read_text(encoding='utf-8')
         self.assertIn(f'id="og-task-count">{len(self.ids)}<', card)
         self.assertIn(f'id="og-best-score">{best:.1f}%<', card)
+
+    def test_every_task_page_has_its_own_share_image(self):
+        pages = sorted((ROOT / 'task').glob('*.html'))
+        self.assertEqual(len(pages), len(self.ids))
+        for page in pages:
+            head = page.read_text(encoding='utf-8')
+            with self.subTest(page.stem):
+                path = re.search(r'<meta property="og:image" content="https://website-bench\.com(/assets/og/([^"?]+)\.png)\?v=[0-9a-f]{8}">', head)
+                self.assertEqual(path.group(2), page.stem)
+                self.assertIn(f'<meta name="twitter:image" content="https://website-bench.com{path.group(1)}?v=', head)
+                png = (ROOT / path.group(1).lstrip('/')).read_bytes()
+                self.assertEqual((int.from_bytes(png[16:20], 'big'), int.from_bytes(png[20:24], 'big')), (1200, 630))
+        self.assertEqual({p.stem for p in (ROOT / 'assets/og').glob('*.png')}, {p.stem for p in pages})
 
     def test_demo_shows_one_real_run_with_its_leaderboard_result(self):
         demo = load('demo-task.json')

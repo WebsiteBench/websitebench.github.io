@@ -95,14 +95,14 @@ aspca-pet-insurance,ASPCA Pet Health Insurance,Kimi K3,60,1019,5.888125613346418
 aspca-pet-insurance,ASPCA Pet Health Insurance,DeepSeek V4.1 Flash,,,,error
 aspca-pet-insurance,ASPCA Pet Health Insurance,Qwen 3.8 Max,66,1019,6.4769381746810595,scored
 aspca-pet-insurance,ASPCA Pet Health Insurance,GPT 6.1 Sol,101,1019,9.911678115799804,scored
-autoslash,autoslash,Claude Opus 5.5,54,353,15.297450424929178,scored
-autoslash,autoslash,Claude Opus 5,9,353,2.54957507082153,scored
-autoslash,autoslash,Grok 4.6,1,353,0.28328611898017,scored
-autoslash,autoslash,GLM 5.3 Flash,15,353,4.2492917847025495,scored
-autoslash,autoslash,Kimi K3,7,353,1.9830028328611897,scored
-autoslash,autoslash,DeepSeek V4.1 Flash,6,353,1.6997167138810199,scored
-autoslash,autoslash,Qwen 3.8 Max,1,353,0.28328611898017,scored
-autoslash,autoslash,GPT 6.1 Sol,43,353,12.181303116147308,scored
+autoslash,AutoSlash,Claude Opus 5.5,54,353,15.297450424929178,scored
+autoslash,AutoSlash,Claude Opus 5,9,353,2.54957507082153,scored
+autoslash,AutoSlash,Grok 4.6,1,353,0.28328611898017,scored
+autoslash,AutoSlash,GLM 5.3 Flash,15,353,4.2492917847025495,scored
+autoslash,AutoSlash,Kimi K3,7,353,1.9830028328611897,scored
+autoslash,AutoSlash,DeepSeek V4.1 Flash,6,353,1.6997167138810199,scored
+autoslash,AutoSlash,Qwen 3.8 Max,1,353,0.28328611898017,scored
+autoslash,AutoSlash,GPT 6.1 Sol,43,353,12.181303116147308,scored
 autotrader,Autotrader,Claude Opus 5.5,204,487,41.889117043121146,scored
 autotrader,Autotrader,Claude Opus 5,274,487,56.26283367556468,scored
 autotrader,Autotrader,Grok 4.6,88,487,18.069815195071868,scored
@@ -151,14 +151,14 @@ blueapron,Blue Apron,Kimi K3,62,410,15.121951219512194,scored
 blueapron,Blue Apron,DeepSeek V4.1 Flash,26,410,6.341463414634147,scored
 blueapron,Blue Apron,Qwen 3.8 Max,20,410,4.878048780487805,scored
 blueapron,Blue Apron,GPT 6.1 Sol,41,410,10.0,scored
-bluemercury,bluemercury,Claude Opus 5.5,402,694,57.92507204610951,scored
-bluemercury,bluemercury,Claude Opus 5,392,694,56.48414985590778,scored
-bluemercury,bluemercury,Grok 4.6,401,694,57.78097982708934,scored
-bluemercury,bluemercury,GLM 5.3 Flash,293,694,42.21902017291066,scored
-bluemercury,bluemercury,Kimi K3,53,694,7.636887608069165,scored
-bluemercury,bluemercury,DeepSeek V4.1 Flash,365,694,52.59365994236311,scored
-bluemercury,bluemercury,Qwen 3.8 Max,25,694,3.602305475504323,scored
-bluemercury,bluemercury,GPT 6.1 Sol,414,694,59.654178674351584,scored
+bluemercury,Bluemercury,Claude Opus 5.5,402,694,57.92507204610951,scored
+bluemercury,Bluemercury,Claude Opus 5,392,694,56.48414985590778,scored
+bluemercury,Bluemercury,Grok 4.6,401,694,57.78097982708934,scored
+bluemercury,Bluemercury,GLM 5.3 Flash,293,694,42.21902017291066,scored
+bluemercury,Bluemercury,Kimi K3,53,694,7.636887608069165,scored
+bluemercury,Bluemercury,DeepSeek V4.1 Flash,365,694,52.59365994236311,scored
+bluemercury,Bluemercury,Qwen 3.8 Max,25,694,3.602305475504323,scored
+bluemercury,Bluemercury,GPT 6.1 Sol,414,694,59.654178674351584,scored
 boardgamegeek,BoardGameGeek,Claude Opus 5.5,142,1020,13.92156862745098,scored
 boardgamegeek,BoardGameGeek,Claude Opus 5,67,1020,6.568627450980392,scored
 boardgamegeek,BoardGameGeek,Grok 4.6,34,1020,3.3333333333333335,scored

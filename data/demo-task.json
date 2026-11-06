@@ -90,7 +90,7 @@
       },
       "label": "drawn, not a photo",
       "title": "Photo replaced by a drawing",
-      "body": "The reference’s hero is a photograph of burgers, fries and a can on a wooden table. The rebuild draws them as flat shapes, using SVG art from its own script, tools/gen_images.py. The page’s test stops earlier, at a missing main.landing element, before any screenshot comparison.",
+      "body": "The reference’s hero is a photograph of burgers, fries and a can on a wooden table. The rebuild draws them as flat shapes.",
       "cite": "ubereats-t2-0001",
       "test": "ubereats-t2-0001"
     },
@@ -136,7 +136,7 @@
       },
       "label": "white, not green",
       "title": "White top bar, narrower banner",
-      "body": "The reference’s green top bar runs into a full-width banner. The rebuild’s bar is white, its logo is plain text with a green “Eats”, and the banner starts after the side menu. The page’s test stops earlier, at a missing main.feed-page element, before any screenshot comparison.",
+      "body": "The reference’s green top bar runs into a full-width banner. The rebuild’s bar is white, its logo is plain text with a green “Eats”, and the banner starts after the side menu.",
       "cite": "ubereats-t2-0040",
       "test": "ubereats-t2-0040"
     },
@@ -205,7 +205,7 @@
       },
       "label": "drawn plates",
       "title": "Drawn plates, taller images",
-      "body": "Each result shows a drawn plate where the reference has a food photograph. The images are 332 px tall, not 232 px, so the second row starts 94 px lower. The page’s test stops earlier, at a missing main.results-page element, before any screenshot comparison.",
+      "body": "Each result shows a drawn plate where the reference has a food photograph. The images are 332 px tall, not 232 px.",
       "cite": "ubereats-t2-0045",
       "test": "ubereats-t2-0045"
     },
@@ -240,7 +240,7 @@
       },
       "label": "drawn dish",
       "title": "Dish photo replaced by a drawing",
-      "body": "The reference shows a photograph of curry on a dark table. The rebuild shows a flat drawing, and so do the menu items below it. The store name and menu sit about 240 px further right. The page’s test stops earlier, at a missing main.store-page element, before any screenshot comparison.",
+      "body": "The reference shows a photograph of curry on a dark table. The rebuild shows a flat drawing, and so do the menu items below it. The store name and menu sit about 240 px further right.",
       "cite": "ubereats-t2-0049",
       "test": "ubereats-t2-0049"
     },
@@ -275,7 +275,7 @@
       "group": "Request",
       "text": "GET /?view=store answers like the reference",
       "functional": false,
-      "detail": "text similarity 0.6053, below 0.75"
+      "detail": "text similarity 0.6053"
     },
     {
       "id": "ubereats-t2-0001",

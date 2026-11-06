@@ -27,7 +27,7 @@
     for (const run of runs) if (run.total) totals.set(run.total, (totals.get(run.total) || 0) + 1);
     const tests = [...totals].sort((a, b) => b[1] - a[1])[0][0];
     const rootedViews = views.map(view => ({...view, reference: {...view.reference, image: rooted(view.reference.image)},
-      runs: Object.fromEntries(Object.entries(view.runs).map(([id, entry]) => [id, entry.image ? {...entry, image: rooted(entry.image)} : entry]))}));
+      runs: Object.fromEntries(Object.entries(view.runs).map(([id, entry]) => [id, {...entry, image: rooted(entry.image)}]))}));
     return {id: task.id, name: task.name, runs, tests, best: runs[0], views: rootedViews};
   }
 

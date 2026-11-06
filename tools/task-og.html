@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>WebsiteBench task preview</title><style>
+@font-face{font-family:'Martian Mono';font-weight:100 800;font-stretch:75% 112.5%;src:url('../assets/fonts/martian-mono-latin.woff2') format('woff2')}
+*{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;background:#FFFFFF}
+.half{position:absolute;top:0;width:600px;height:630px;overflow:hidden}
+.half img{position:absolute;top:0;width:1200px;height:750px}
+.ref{left:0}.ref img{left:0}
+.cand{left:600px}.cand img{left:-600px}
+.side{position:absolute;top:50%;padding:8px 16px;border-radius:10px;font:600 22px/1.3 'Martian Mono',monospace;font-stretch:88%;white-space:nowrap;transform:translateY(-50%)}
+.ref .side{right:64px;background:#1F2328;color:#FFFFFF}
+.cand .side{left:64px;background:#FFFFFF;color:#1F2328;box-shadow:inset 0 0 0 2px #5E6472}
+.line{position:absolute;top:0;bottom:0;left:598px;width:4px;background:#5E6472;box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+.grip{position:absolute;left:564px;top:279px;display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#5E6472;color:#FFFFFF;box-shadow:0 0 0 7px rgba(255,255,255,.92),0 10px 30px rgba(31,35,40,.35)}
+.grip svg{width:38px;height:38px}
+</style></head><body>
+<div class="half ref"><img id="reference" alt=""><span class="side">Reference</span></div>
+<div class="half cand"><img id="rebuild" alt=""><span class="side" id="model"></span></div>
+<div class="line"></div>
+<div class="grip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+</body></html>

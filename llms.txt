@@ -4,18 +4,16 @@
 
 ## Benchmark
 - A user workflow is a sequence of actions that completes a user goal and ends in an observable result, such as browsing products, adding an item to a cart, checking out and seeing an order confirmation.
-- A URL path such as /cart identifies a route. The page at that route can show different states, such as an empty or full cart.
 - An agent explores a locally hosted reference website through a browser: screenshots, interface state, navigation, clicks, typing and media downloads.
-- It never sees the reference's HTML, JavaScript, CSS, API responses or server code.
 - It builds a full-stack site that runs offline, within 16 hours, and may revisit the reference while coding and testing.
 - Hidden tests then compare rebuild and reference. Request (T1) tests check page responses and form submissions. Browser (T2) tests check interface behavior at three levels: immediate responses (L1), state changes read back (L2), and persistence, other users and recovery (L3). System (T3) tests check builds, restarts, process health and security.
 - A test scores 1 only if its functional checks pass and every visual checkpoint reaches the similarity threshold. Browser workflow tests repeat a sequence of user actions and check its result. Each must pass with two independent executors, Playwright and Browser Use.
 - The Eval page compares one run with its reference: Qwen 3.8 Max on the Uber Eats task, which passes 39 of 338 hidden tests.
 
 ## Results
-Table, Pareto and Waffle use the same results. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are per-task means.
+Table, Pareto and Waffle use the same results. Overall and Request/Browser/System scores are 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are per-task means.
 
-## Leaderboard (test-pooled percent of hidden tests passed: overall / Request / Browser / System)
+## Leaderboard (percent of hidden tests passed: overall / Request / Browser / System)
 - Claude Opus 5.5: 26.2 / 71.2 / 21.8 / 35.4
 - GPT 6.1 Sol: 20.2 / 64.3 / 16.9 / 36.8
 - Claude Opus 5: 17.1 / 58.8 / 12.9 / 28.8
@@ -27,7 +25,7 @@ Table, Pareto and Waffle use the same results. Overall and Request/Browser/Syste
 
 ## Findings
 - Underexploration: by their first code edit, agents had visited nearly every core page and started nearly every core workflow, but had followed only a few to their final result.
-- A human exploration trace, a log of browser actions without page content, raised scores.
+- A human trace, a log of browser actions without page content, raised scores.
 - Failure to implement observed behavior: almost none of the checked requirements that agents had observed were implemented the way the reference behaved. In an AMC Theatres run the agent opened /movies?tab=coming-soon, but its server ignores the tab query; in a PetSmart run the category cards keep their labels but show the wrong artwork.
 - Early stopping: most runs ended well before the 16-hour limit. With Claude Code's /goal hook reviewing each attempt to stop, a Kimi K3 run on Lowe's continued from 1.0 to 10.9 hours and its score rose from 0% to 31.3%.
 
@@ -63,14 +61,14 @@ Table, Pareto and Waffle use the same results. Overall and Request/Browser/Syste
 - [Article](https://website-bench.com/task/article): 1,759 hidden tests, best 15.5%
 - [Asana](https://website-bench.com/task/asana): 346 hidden tests, best 33.2%
 - [ASPCA Pet Health Insurance](https://website-bench.com/task/aspca-pet-insurance): 1,019 hidden tests, best 28.0%
-- [autoslash](https://website-bench.com/task/autoslash): 353 hidden tests, best 15.3%
+- [AutoSlash](https://website-bench.com/task/autoslash): 353 hidden tests, best 15.3%
 - [Autotrader](https://website-bench.com/task/autotrader): 487 hidden tests, best 56.3%
 - [Backcountry](https://website-bench.com/task/backcountry): 1,317 hidden tests, best 19.3%
 - [Bean Box](https://website-bench.com/task/bean-box): 987 hidden tests, best 32.6%
 - [BeerAdvocate](https://website-bench.com/task/beeradvocate): 446 hidden tests, best 41.0%
 - [Blinkist](https://website-bench.com/task/blinkist): 437 hidden tests, best 27.5%
 - [Blue Apron](https://website-bench.com/task/blueapron): 410 hidden tests, best 21.7%
-- [bluemercury](https://website-bench.com/task/bluemercury): 694 hidden tests, best 59.7%
+- [Bluemercury](https://website-bench.com/task/bluemercury): 694 hidden tests, best 59.7%
 - [BoardGameGeek](https://website-bench.com/task/boardgamegeek): 1,020 hidden tests, best 13.9%
 - [Bookshop.org](https://website-bench.com/task/bookshop): 632 hidden tests, best 7.6%
 - [Breakout Games](https://website-bench.com/task/breakout-games): 387 hidden tests, best 10.3%

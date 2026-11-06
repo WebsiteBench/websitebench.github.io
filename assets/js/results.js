@@ -276,7 +276,7 @@
       + `<rect x="${x - chipX / 2}" y="${floorY + 5}" width="${chipX}" height="20" rx="4"/><text x="${x}" y="${floorY + 19}" text-anchor="middle">${xText}</text>`;
     const rows = Object.keys(SCORES).map(key => `<div><dt>${SCORES[key]}</dt><dd>${decimal(m[key])}%</dd></div>`).join('')
       + Object.keys(RESOURCE_LABELS).map(key => `<div><dt>${RESOURCE_LABELS[key]}</dt><dd>${formatResource(m[key], key)}</dd></div>`).join('');
-    showTooltip(point, `<strong>${escape(m.name)}</strong><span>${escape(m.org)}</span><dl>${rows}</dl><span class="tooltip-status">${paretoView.frontierIDs.has(m.id) ? 'On the Pareto frontier' : 'Another model scores higher for less'}</span>`, event);
+    showTooltip(point, `<strong>${escape(m.name)}</strong><span>${escape(m.org)}</span><dl>${rows}</dl><span class="tooltip-status">${paretoView.frontierIDs.has(m.id) ? 'On the Pareto frontier' : 'Another model passes more for less'}</span>`, event);
   }
   function coolPoints() {
     const chart = $('#pareto-chart');
@@ -407,7 +407,7 @@
     const paint = scorePainter();
     $('#waffle-legend').innerHTML = `<span class="wf-legend-scale">${WAFFLE_STEPS.map(value => `<span class="wf-legend-step"><i style="background:${paint(value)}" aria-hidden="true"></i>${value}</span>`).join('')}</span><span class="wf-legend-item"><i class="wf-key-timeout" aria-hidden="true"></i>Timeout</span><span class="wf-legend-item"><i class="wf-key-error" aria-hidden="true"></i>Error</span><span class="wf-legend-note">each cell is one run</span>`;
     const select = $('#waffle-sort');
-    select.innerHTML = `<option value="difficulty">Easiest first</option><option value="name">Name</option>${data.models.map(m => `<option value="${escape(m.id)}">${escape(m.name)} score</option>`).join('')}`;
+    select.innerHTML = `<option value="difficulty">Easiest first</option><option value="name">Name</option>${data.models.map(m => `<option value="${escape(m.id)}">${escape(m.name)}</option>`).join('')}`;
     if (![...select.options].some(option => option.value === state.sort)) state.sort = 'difficulty';
     select.value = state.sort;
     const expand = $('#waffle-expand');
@@ -775,7 +775,7 @@ ${css}
     } else {
       const {models, rows} = waffleData();
       table = [`| Task | ${models.map(m => m.name).join(' | ')} |`, `|---|${models.map(() => '---:').join('|')}|`,
-        ...rows.map(row => `| ${row.name} | ${models.map(m => { const e = entryFor(row.task, m); return e.status === 'scored' ? `${e.passed}/${e.total}` : statusText(e); }).join(' | ')} |`)];
+        ...rows.map(row => `| ${row.name} | ${models.map(m => { const e = entryFor(row.task, m); return e.status === 'scored' ? `${e.passed.toLocaleString('en-US')} of ${e.total.toLocaleString('en-US')}` : statusText(e); }).join(' | ')} |`)];
     }
     return `**WebsiteBench: ${currentTitle()}**\n\n${table.join('\n')}\n\nSource: ${stateURL()}\n`;
   }
