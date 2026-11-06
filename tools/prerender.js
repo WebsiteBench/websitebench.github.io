@@ -37,15 +37,12 @@ const facts = {
   'best-overall': best.overall.toFixed(1) + '%',
   'best-turns': Number.isFinite(best.turns) ? Math.round(best.turns).toLocaleString('en-US') : '—',
   'one-in': words[oneIn] || String(oneIn),
-  'demo-threshold': String(demo.threshold),
   'demo-run-passed': demoCount(demo.run.passed),
   'demo-run-total': demoCount(demo.run.total),
   'demo-run-score': (100 * demo.run.passed / demo.run.total).toFixed(1) + '%',
   'demo-run-request': demo.run.groups.request.join('/'),
   'demo-run-browser': demo.run.groups.browser.join('/'),
   'demo-run-system': demo.run.groups.system.join('/'),
-  'demo-stored-threshold': String(demo.run.stored_threshold),
-  'demo-stored-passed': demoCount(demo.run.passed_at_stored_threshold),
   'demo-shown': String(demo.tests.length),
 };
 
@@ -86,7 +83,7 @@ const lines = overview.map(m => `- ${m.name}: ${pct(m.overall)} / ${pct(m.reques
 if (!/## Leaderboard[^\n]*\n[\s\S]*?\n(?=## )/.test(llms)) throw Error('llms.txt leaderboard block missing');
 llms = llms.replace(/(## Leaderboard[^\n]*\n)[\s\S]*?\n(?=## )/, `$1${lines}\n\n`);
 llms = llms.replace(/It has \d+ tasks with [\d,]+ hidden tests\./, `It has ${facts.tasks} tasks with ${facts.tests} hidden tests.`);
-llms = llms.replace(/which passes [\d,]+ of [\d,]+ hidden tests at a similarity threshold of [\d.]+\./, `which passes ${facts['demo-run-passed']} of ${facts['demo-run-total']} hidden tests at a similarity threshold of ${facts['demo-threshold']}.`);
+llms = llms.replace(/which passes [\d,]+ of [\d,]+ hidden tests[^.]*(?:\.\d+)?\./, `which passes ${facts['demo-run-passed']} of ${facts['demo-run-total']} hidden tests.`);
 llms = llms.replace(/The best overall score is [\d.]+% \([^)]*\)\./, `The best overall score is ${facts['best-overall']} (${best.name}).`);
 fs.writeFileSync(path.join(root, 'llms.txt'), llms);
 

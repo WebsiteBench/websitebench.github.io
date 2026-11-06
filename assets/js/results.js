@@ -21,7 +21,7 @@
     const option = document.createElement('option'); option.value = org; option.textContent = org; company.appendChild(option);
   });
   const visibleModels = () => models.filter(m => company.value === 'all' || m.org === company.value);
-  const format = (value, resource) => resource === 'cost' ? '$' + value.toLocaleString('en-US', {maximumFractionDigits: 2})
+  const format = (value, resource) => resource === 'cost' ? '$' + value.toLocaleString('en-US', {maximumFractionDigits: 1})
     : resource === 'tokens' ? value.toLocaleString('en-US', {maximumFractionDigits: 1}) + 'M'
     : value.toLocaleString('en-US', {maximumFractionDigits: 1});
 
@@ -108,7 +108,7 @@
     const resource = $('#pareto-resource').value, score = $('#pareto-score').value;
     const chart = $('#pareto-chart'), list = $('#pareto-list');
     const candidates = visibleModels();
-    const visible = candidates.flatMap(m => { const paired = m.pareto[resource][score]; return paired.count && ($('#pareto-scale').value !== 'log' || paired.resource_mean > 0) ? [{...m, [resource]: paired.resource_mean, [score]: paired.score_mean}] : []; });
+    const visible = candidates.filter(m => m[resource] !== null && m[score] !== null && ($('#pareto-scale').value !== 'log' || m[resource] > 0));
     if (!visible.length) { chart.innerHTML = '<p class="table-note">No model in this selection has both a score and a recorded resource.</p>'; list.innerHTML = ''; $('#pareto-summary').textContent = ''; return; }
     const narrow = chart.clientWidth < 600;
     chart.classList.toggle('is-narrow', narrow);

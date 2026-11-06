@@ -10,7 +10,7 @@
 - It builds a full-stack site that runs offline, within 16 hours, and may revisit the reference while coding and testing.
 - Hidden tests then compare candidate and reference. Request (T1) tests check page responses and form submissions. Browser (T2) tests check interface behavior at three levels: immediate responses (L1), state changes read back (L2), and persistence, other users and recovery (L3). System (T3) tests check builds, restarts, process health and security.
 - A test scores 1 only if its functional checks pass and every visual checkpoint reaches the baseline-normalized SSIM threshold: 0.99 in the released tasks, 0.75 in the runs behind the published scores. Browser workflow tests repeat a sequence of user actions and check its result. Each must pass with two independent executors, Playwright and Browser Use.
-- The homepage compares one run with its reference: Claude Opus 5.5 with a 1M context window on the Amazon task, which passes 545 of 1,025 hidden tests at a similarity threshold of 0.99.
+- The homepage compares one run with its reference: Claude Opus 5.5 with a 1M context window on the Amazon task, which passes 582 of 1,025 hidden tests.
 
 ## Results
 Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). A task without a score is left out of that model's average instead of counting as zero, and each metric shows its coverage. Cost, tokens and turns are means over the tasks with recorded values; Pareto uses the same task subset on both axes.

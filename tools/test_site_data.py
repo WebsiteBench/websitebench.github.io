@@ -145,10 +145,10 @@ class SiteDataTests(unittest.TestCase):
         self.assertIn(f'id="og-task-count">{len(self.ids)}<', card)
         self.assertIn(f'id="og-best-score">{best:.1f}%<', card)
 
-    def test_demo_shows_one_real_run_under_the_released_rule(self):
+    def test_demo_shows_one_real_run_with_its_leaderboard_result(self):
         demo = load('demo-task.json')
         self.assertIn(demo['task'], self.ids)
-        self.assertEqual(demo['threshold'], 0.99)
+        self.assertEqual(demo['threshold'], 0.75)
         run = demo['run']
         self.assertEqual(sum(g[0] for g in run['groups'].values()), run['passed'])
         self.assertEqual(sum(g[1] for g in run['groups'].values()), run['total'])
@@ -156,7 +156,7 @@ class SiteDataTests(unittest.TestCase):
         task = next(t for t in self.waffle['tasks'] if t['id'] == demo['task'])
         published = task['results'][model['id']]['contexts']['recorded']
         self.assertEqual(published['total'], run['total'])
-        self.assertIn(published['passed'], (run['passed'], run['passed_at_stored_threshold']))
+        self.assertEqual(published['passed'], run['passed'])
 
         pages = {p['id']: p for p in demo['pages']}
         markers = {m['test']: m for m in demo['markers'] if 'test' in m}
