@@ -1,6 +1,6 @@
 # WebsiteBench
 
-> WebsiteBench evaluates the generation of visual artifacts at full-website scale: AI agents explore a reference website in a browser, then rebuild it without its source code. It has 70 tasks with 46,916 hidden tests. Nine models were evaluated, each with a 16-hour time limit per run. The best overall score is 26.2% (Claude Opus 5.5).
+> WebsiteBench asks whether AI agents can rebuild websites through browser exploration. Given a production-level website they can explore through a browser, agents must reverse-engineer a full-stack version that matches its appearance and behavior as closely as possible. It has 70 tasks with 46,916 hidden tests. Eight models were evaluated, each with a 16-hour time limit per run. The best overall score is 26.2% (Claude Opus 5.5).
 
 ## Task
 - A user workflow is a sequence of actions that completes a user goal and ends in an observable result, such as browsing products, adding an item to a cart, checking out and seeing an order confirmation.
