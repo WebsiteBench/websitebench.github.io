@@ -16,14 +16,12 @@
     return value.toLocaleString('en-US', oneDecimal);
   }
   function title(m, key) {
-    const count = m.coverage[key];
-    if (!finite(m[key])) return 'No recorded values';
+    if (!finite(m[key])) return '';
     if (SCORES.includes(key)) {
       const tests = m.score_counts[key];
-      return `${count}/${m.total_tasks} tasks scored · ${tests.passed.toLocaleString('en-US')} of ${tests.total.toLocaleString('en-US')} tests passed`;
+      return `${tests.passed.toLocaleString('en-US')} of ${tests.total.toLocaleString('en-US')} tests passed`;
     }
-    const name = key === 'cost' ? 'cost (USD)' : key === 'tokens' ? 'tokens (millions)' : 'agent turns';
-    return `Mean ${name} over the ${count} of ${m.total_tasks} tasks with recorded values`;
+    return '';
   }
   function renderRows(models) {
     const best = Object.fromEntries(SCORES.map(k => [k, Math.max(...models.map(m => finite(m[k]) ? m[k] : -Infinity))]));

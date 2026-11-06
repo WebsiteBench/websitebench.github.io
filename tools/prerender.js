@@ -82,7 +82,7 @@ fs.writeFileSync(path.join(root, 'index.html'), html);
 // llms.txt: the leaderboard block and the headline sentence follow the data.
 let llms = fs.readFileSync(path.join(root, 'llms.txt'), 'utf8');
 const pct = value => (typeof value === 'number' && Number.isFinite(value) ? value.toFixed(1) : '—');
-const lines = overview.map(m => `- ${m.name}: ${pct(m.overall)} / ${pct(m.request)} / ${pct(m.browser)} / ${pct(m.system)}${m.coverage.overall < ids.length ? ` (${m.coverage.overall} of ${ids.length} tasks scored)` : ''}`).join('\n');
+const lines = overview.map(m => `- ${m.name}: ${pct(m.overall)} / ${pct(m.request)} / ${pct(m.browser)} / ${pct(m.system)}`).join('\n');
 if (!/## Leaderboard[^\n]*\n[\s\S]*?\n(?=## )/.test(llms)) throw Error('llms.txt leaderboard block missing');
 llms = llms.replace(/(## Leaderboard[^\n]*\n)[\s\S]*?\n(?=## )/, `$1${lines}\n\n`);
 llms = llms.replace(/It has \d+ tasks with [\d,]+ hidden tests\./, `It has ${facts.tasks} tasks with ${facts.tests} hidden tests.`);

@@ -108,7 +108,7 @@
     const resource = $('#pareto-resource').value, score = $('#pareto-score').value;
     const chart = $('#pareto-chart'), list = $('#pareto-list');
     const candidates = visibleModels();
-    const visible = candidates.flatMap(m => { const paired = m.pareto[resource][score]; return paired.count && ($('#pareto-scale').value !== 'log' || paired.resource_mean > 0) ? [{...m, [resource]: paired.resource_mean, [score]: paired.score_mean, pairedCount: paired.count}] : []; });
+    const visible = candidates.flatMap(m => { const paired = m.pareto[resource][score]; return paired.count && ($('#pareto-scale').value !== 'log' || paired.resource_mean > 0) ? [{...m, [resource]: paired.resource_mean, [score]: paired.score_mean}] : []; });
     if (!visible.length) { chart.innerHTML = '<p class="table-note">No model in this selection has both a score and a recorded resource.</p>'; list.innerHTML = ''; $('#pareto-summary').textContent = ''; return; }
     const narrow = chart.clientWidth < 600;
     chart.classList.toggle('is-narrow', narrow);
@@ -166,11 +166,10 @@
     chart.innerHTML = svg;
     chart.querySelectorAll('.plot-point').forEach(point => {
       const m = visible.find(model => model.id === point.dataset.model);
-      bindTooltip(point, modelTooltip(m) + `<dl><div><dt>${scoreNames[score]} pass rate</dt><dd>${m[score].toFixed(1)}%</dd></div><div><dt>Mean ${resourceNames[resource]} / task</dt><dd>${format(m[resource], resource)}</dd></div><div><dt>Tasks with both</dt><dd>${m.pairedCount}/${boardData.total_tasks}</dd></div></dl><span class="tooltip-status">${frontierIDs.has(m.id) ? 'On the Pareto frontier' : 'Another model scores higher for less'}</span>`);
+      bindTooltip(point, modelTooltip(m) + `<dl><div><dt>${scoreNames[score]} pass rate</dt><dd>${m[score].toFixed(1)}%</dd></div><div><dt>Mean ${resourceNames[resource]} / task</dt><dd>${format(m[resource], resource)}</dd></div></dl><span class="tooltip-status">${frontierIDs.has(m.id) ? 'On the Pareto frontier' : 'Another model scores higher for less'}</span>`);
     });
     list.innerHTML = narrow ? visible.slice().sort((a, b) => b[score] - a[score]).map(m => `<li><img class="model-logo" src="${escape(m.logo)}" alt="" width="18" height="18"><b>${escape(m.short)}${frontierIDs.has(m.id) ? '<small>frontier</small>' : ''}</b><span>${m[score].toFixed(1)}% · ${format(m[resource], resource)}</span></li>`).join('') : '';
     $('#pareto-summary').textContent = `${visible.length} of ${candidates.length} models · ${frontier.length} on the frontier`;
-    $('#pareto-note').textContent = `Each point uses only the tasks with both a score and a recorded ${{cost: 'cost', tokens: 'token count', turns: 'turn count'}[resource]}, so its score can differ from the table.`;
   }
 
   const tasks = taskData.tasks;
@@ -228,12 +227,12 @@
       visible.forEach(model => {
         const labels = [...new Set(tasks.map(task => entryFor(task, model).label).filter(Boolean))];
         const context = labels.filter(label => !/recorded/i.test(label)).map(label => label.replace(/k/ig, 'K')).sort().join(' / ');
-        const meanLabel = model.mean === null ? 'No scored tasks' : `Test-pooled pass rate: ${model.mean.toFixed(1)}% · ${model.count}/${tasks.length} tasks scored`;
+        const meanLabel = model.mean === null ? 'No scored tasks' : `Test-pooled pass rate: ${model.mean.toFixed(1)}%`;
         html += `<th scope="col" class="task-model-column" data-model="${escape(model.id)}" title="${escape(model.name)}${context ? ' · ' + escape(context) : ''}\n${escape(meanLabel)}"><span class="task-model-heading"><span>${escape(model.short)}</span>${context ? `<small class="task-model-context">${escape(context)}</small>` : ''}</span><img class="model-logo" src="${escape(model.logo)}" alt="${escape(model.org)}" width="9" height="9"></th>`;
       });
       html += '</tr></thead><tbody>';
       chunk.forEach(({task, mean, count}) => {
-        const difficulty = mean === null ? 'No scored models' : `Mean pass rate: ${mean.toFixed(1)}% · ${count}/${visible.length} models scored`;
+        const difficulty = mean === null ? 'No scored models' : `Mean pass rate: ${mean.toFixed(1)}%`;
         html += `<tr data-task="${escape(task.id)}"><th scope="row" class="task-name"><a href="tasks.html?task=${encodeURIComponent(task.id)}" title="${escape(task.name)}\n${escape(difficulty)}">${escape(task.name)}</a></th>`;
         visible.forEach(model => {
           const entry = entryFor(task, model), score = trialScore(entry);
@@ -263,8 +262,6 @@
       point.addEventListener('pointerenter', () => point.closest('tr').classList.add('is-highlighted'));
       point.addEventListener('pointerleave', () => point.closest('tr').classList.remove('is-highlighted'));
     });
-    const missing = kind => tasks.reduce((n, task) => n + visible.filter(model => { const e = entryFor(task, model); return e.status !== 'scored' && (kind === 'none' ? !['error', 'timeout'].includes(e.failure_kind) : e.failure_kind === kind); }).length, 0);
-    $('#waffle-coverage').textContent = `${scored}/${tasks.length * waffleModels.length}\u00a0scored` + [['error', 'error'], ['timeout', 'timeout'], ['none', 'no\u00a0result']].map(([kind, label]) => { const count = missing(kind); return count ? ` · ${count}\u00a0${label}` : ''; }).join('');
     $('#waffle-legend').innerHTML = `<span class="waffle-simple-legend"><span>Test pass rate</span>${[0, 10, 25, 50, 100].map(value => `<span class="legend-item"><i style="background:${scoreColor(value)}" aria-hidden="true"></i>${value}%</span>`).join('')}<span class="legend-item"><i class="legend-error" aria-hidden="true"></i>Error</span><span class="legend-item"><i class="legend-timeout" aria-hidden="true"></i>Timeout</span><span class="legend-item"><i class="legend-unscored" aria-hidden="true"></i>No result</span></span>`;
     $('#waffle-note').textContent = 'Models are ordered by test-pooled pass rate, tasks from easiest to hardest. Cells without a result are not counted.';
   }
