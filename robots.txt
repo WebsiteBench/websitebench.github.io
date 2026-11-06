@@ -1,4 +1,5 @@
 User-agent: *
 Disallow: /tools/
+Disallow: /README.md
 
 Sitemap: https://website-bench.com/sitemap.xml

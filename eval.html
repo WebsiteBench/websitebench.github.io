@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if(location.hostname==='websitebench.github.io')location.replace('https://website-bench.com'+location.pathname+location.search+location.hash)</script>
 <!-- Google tag (gtag.js) -->
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,46 +19,48 @@
 
   function gtag_report_conversion(url, event) {
     var modified = event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0);
+    var label = 'AW-18557798739/g6CwCM2c0rIdENOShpFF';
+    if (!url || modified || !window.google_tag_manager) { gtag('event', 'conversion', {send_to: label}); return true; }
     var navigated = false;
-    function followLink() {
-      if (url && !modified && !navigated) {
-        navigated = true;
-        window.location.assign(url);
-      }
-    }
-    gtag('event', 'conversion', {
-      send_to: 'AW-18557798739/g6CwCM2c0rIdENOShpFF',
-      event_callback: followLink,
-      event_timeout: 1000
-    });
-    if (url && !modified) window.setTimeout(followLink, 1000);
-    return modified;
+    function followLink() { if (!navigated) { navigated = true; window.location.assign(url); } }
+    gtag('event', 'conversion', {send_to: label, event_callback: followLink, event_timeout: 300});
+    window.setTimeout(followLink, 300);
+    return false;
   }
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
-<title>Eval · WebsiteBench</title>
+<script>addEventListener('load',function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=AW-18557798739';document.head.appendChild(s)})</script>
+<title>Eval: how a rebuilt website is tested · WebsiteBench</title>
 <meta name="description" content="How WebsiteBench evaluates a rebuilt website: a browser-only agent, a real run to compare, and hidden tests.">
+<meta name="robots" content="max-image-preview:large">
 <link rel="canonical" href="https://website-bench.com/eval">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WebsiteBench">
+<meta property="og:locale" content="en_US">
 <meta property="og:url" content="https://website-bench.com/eval">
-<meta property="og:title" content="Eval · WebsiteBench">
+<meta property="og:title" content="Eval: how a rebuilt website is tested · WebsiteBench">
 <meta property="og:description" content="A browser-only agent, a real run to compare, and hidden tests.">
 <meta property="og:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, eight models, 16 hours per run.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Eval · WebsiteBench">
+<meta name="twitter:title" content="Eval: how a rebuilt website is tested · WebsiteBench">
 <meta name="twitter:description" content="A browser-only agent, a real run to compare, and hidden tests.">
+<meta name="twitter:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta name="twitter:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, eight models, 16 hours per run.">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
-<link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=ctx9-20261106">
+<meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/brand/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="assets/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://website-bench.com/eval#page","url":"https://website-bench.com/eval","name":"Eval: how a rebuilt website is tested · WebsiteBench","description":"How WebsiteBench evaluates a rebuilt website: a browser-only agent, a real run to compare, and hidden tests.","inLanguage":"en","isPartOf":{"@id":"https://website-bench.com/#website"},"about":{"@id":"https://website-bench.com/#dataset"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebsiteBench","item":"https://website-bench.com/"},{"@type":"ListItem","position":2,"name":"Eval","item":"https://website-bench.com/eval"}]}]}</script>
+<link rel="stylesheet" href="assets/css/site.css?v=r9i-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=ctx9-20261106" defer></script>
+<script src="assets/js/site.js?v=r9i-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -94,35 +97,34 @@
       <span class="demo-id"><b>Uber Eats</b><span>Qwen 3.8 Max</span><span>scored <span data-fact="demo-run-score">11.5%</span></span></span>
       <span class="demo-run">
         <span class="dt-score" id="dt-score" aria-live="polite"><b>4</b> of 10 shown tests passed</span><!--/dt-score-->
-        <button class="dt-btn dt-btn-primary" id="run-tests" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>Replay tests</button>
+        <button class="dt-btn dt-btn-quiet" id="run-tests" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay tests</button>
       </span>
     </div>
     <div class="demo-nav">
       <div class="tabs demo-tabs" id="demo-tabs" role="tablist" aria-label="Pages in this comparison"><button class="tab" type="button" role="tab" id="demo-tab-home" data-page="home" aria-controls="stage" aria-selected="true">Home</button><button class="tab" type="button" role="tab" id="demo-tab-feed" data-page="feed" aria-controls="stage" aria-selected="false" tabindex="-1"><span class="tab-long">Restaurant feed</span><span class="tab-short">Feed</span></button><button class="tab" type="button" role="tab" id="demo-tab-search" data-page="search" aria-controls="stage" aria-selected="false" tabindex="-1"><span class="tab-long">Search results</span><span class="tab-short">Search</span></button><button class="tab" type="button" role="tab" id="demo-tab-store" data-page="store" aria-controls="stage" aria-selected="false" tabindex="-1"><span class="tab-long">Restaurant page</span><span class="tab-short">Store</span></button></div><!--/demo-tabs-->
-      <span class="demo-note" id="demo-note">1,440 px window</span>
     </div>
     <div class="stage-wrap" id="stage-wrap">
       <div class="stage" id="stage" role="tabpanel" aria-labelledby="demo-tab-home" data-page="home">
         <div class="frame" id="frame" style="--split:40%">
           <div class="layer is-ref">
             <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="navs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="url"><span class="host">reference.local</span><span class="path" data-path>/</span></span></div>
-            <img class="shot" id="shot-reference" src="assets/previews/ubereats/home-reference-1240.webp" srcset="assets/previews/ubereats/home-reference-1240.webp 1240w, assets/previews/ubereats/home-reference-2480.webp 2480w" sizes="(max-width: 1320px) 100vw, 1240px" width="1440" height="793" loading="lazy" decoding="async" alt="Reference: the local copy of Uber Eats, Home">
+            <img class="shot" id="shot-reference" draggable="false" src="assets/previews/ubereats/home-reference-1240.webp" srcset="assets/previews/ubereats/home-reference-1240.webp 1240w, assets/previews/ubereats/home-reference-2480.webp 2480w" sizes="(max-width: 1320px) 100vw, 1240px" width="1440" height="793" fetchpriority="high" decoding="async" alt="Reference, Home">
           </div>
           <div class="layer is-cand">
             <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="navs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="url"><span class="host">rebuild.local</span><span class="path" data-path>/</span></span></div>
-            <img class="shot" id="shot-rebuild" src="assets/previews/ubereats/home-rebuild-1240.webp" srcset="assets/previews/ubereats/home-rebuild-1240.webp 1240w, assets/previews/ubereats/home-rebuild-2480.webp 2480w" sizes="(max-width: 1320px) 100vw, 1240px" width="1440" height="793" loading="lazy" decoding="async" alt="Rebuild by Qwen 3.8 Max, Home">
+            <img class="shot" id="shot-rebuild" draggable="false" src="assets/previews/ubereats/home-rebuild-1240.webp" srcset="assets/previews/ubereats/home-rebuild-1240.webp 1240w, assets/previews/ubereats/home-rebuild-2480.webp 2480w" sizes="(max-width: 1320px) 100vw, 1240px" width="1440" height="793" decoding="async" alt="Qwen 3.8 Max, Home">
             <div class="boxes" id="boxes" aria-hidden="true"></div>
           </div>
           <div class="marks" id="marks"></div>
           <div class="divider" id="divider" role="slider" tabindex="0" aria-label="Divider between the Uber Eats reference and the Qwen 3.8 Max rebuild" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" aria-valuetext="40 percent reference">
-            <span class="side side-ref" aria-hidden="true">Reference: Uber Eats (local copy)</span>
-            <span class="side side-cand" aria-hidden="true">Rebuild: Qwen 3.8 Max</span>
+            <span class="side side-ref" aria-hidden="true">Reference</span>
+            <span class="side side-cand" aria-hidden="true">Qwen 3.8 Max</span>
             <span class="grip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
           <div class="demo-cursor" id="demo-cursor" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#1F2328" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
         </div>
-        <span class="side-beside is-ref" aria-hidden="true">Reference: Uber Eats (local copy)</span>
-        <span class="side-beside is-cand" aria-hidden="true">Rebuild: Qwen 3.8 Max</span>
+        <span class="side-beside is-ref" aria-hidden="true">Reference</span>
+        <span class="side-beside is-cand" aria-hidden="true">Qwen 3.8 Max</span>
         <noscript><p class="noscript">Dragging and switching pages need JavaScript. The hidden tests below list what this run did.</p></noscript>
       </div>
       <div class="tip" id="tip" role="tooltip" hidden></div>
@@ -140,7 +142,7 @@
 
   <div class="access">
     <div class="access-col">
-      <h3><span class="access-ico ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>What the agent can use</h3>
+      <h2><span class="access-ico ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>What the agent can use</h2>
       <ul>
         <li>Screenshots and interface state of the reference</li>
         <li>Navigation, clicks, typing, scrolling and form submissions</li>
@@ -151,7 +153,7 @@
       </ul>
     </div>
     <div class="access-col hidden-col">
-      <h3><span class="access-ico lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>What the agent never sees</h3>
+      <h2><span class="access-ico lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>What the agent never sees</h2>
       <ul>
         <li>The reference’s HTML, JavaScript and CSS</li>
         <li>API responses and arbitrary scripts run in the page</li>
@@ -169,16 +171,11 @@
   </header>
   <div class="corpus">
     <div class="corpus-text">
-      <h3>Each site reproduces a widely used service</h3>
       <p>One expert builds each reference. Another reviews it and writes the hidden tests. Each task has <span data-fact="tests-min">302</span> to <span data-fact="tests-max">2,016</span> tests.</p>
-    </div>
-    <div>
-      <p class="named">The <span data-fact="tasks">70</span> released websites reproduce features of</p>
-      <ul class="chips" id="site-list" aria-label="The released websites"><li><a href="/tasks?task=1password-web">1Password Web</a></li><li><a href="/tasks?task=ace-hardware">Ace Hardware</a></li><li><a href="/tasks?task=airtable">Airtable</a></li><li><a href="/tasks?task=amazon">Amazon</a></li><li><a href="/tasks?task=amazon-home-services">Amazon Home Services</a></li><li><a href="/tasks?task=amc-theatres">AMC Theatres</a></li><li><a href="/tasks?task=angi">Angi</a></li><li><a href="/tasks?task=apple">Apple</a></li><li><a href="/tasks?task=article">Article</a></li><li><a href="/tasks?task=asana">Asana</a></li><li><a href="/tasks?task=aspca-pet-insurance">ASPCA Pet Health Insurance</a></li><li><a href="/tasks?task=autoslash">autoslash</a></li><li><a href="/tasks?task=autotrader">Autotrader</a></li><li><a href="/tasks?task=backcountry">Backcountry</a></li><li><a href="/tasks?task=bean-box">Bean Box</a></li><li><a href="/tasks?task=beeradvocate">BeerAdvocate</a></li><li><a href="/tasks?task=blinkist">Blinkist</a></li><li><a href="/tasks?task=blueapron">Blue Apron</a></li><li><a href="/tasks?task=bluemercury">bluemercury</a></li><li><a href="/tasks?task=boardgamegeek">BoardGameGeek</a></li><li><a href="/tasks?task=bookshop">Bookshop.org</a></li><li><a href="/tasks?task=breakoutgames-2">Breakout Games</a></li><li><a href="/tasks?task=brooklinen">Brooklinen</a></li><li><a href="/tasks?task=capterra">Capterra</a></li><li><a href="/tasks?task=change">Change.org</a></li><li><a href="/tasks?task=columbia">Columbia Sportswear</a></li><li><a href="/tasks?task=33">Coursera</a></li><li><a href="/tasks?task=crumbl-cookies">Crumbl Cookies</a></li><li><a href="/tasks?task=crunchyroll">Crunchyroll</a></li><li><a href="/tasks?task=curology">Curology</a></li><li><a href="/tasks?task=dooney-bourke">Dooney &amp; Bourke</a></li><li><a href="/tasks?task=eatthismuch">Eat This Much</a></li><li><a href="/tasks?task=etsy">Etsy</a></li><li><a href="/tasks?task=eventbrite">Eventbrite</a></li><li><a href="/tasks?task=everydollar">EveryDollar</a></li><li><a href="/tasks?task=everyplate">EveryPlate</a></li><li><a href="/tasks?task=fandango">Fandango</a></li><li><a href="/tasks?task=freshdirect">FreshDirect</a></li><li><a href="/tasks?task=hmart">H Mart</a></li><li><a href="/tasks?task=hipcamp">Hipcamp</a></li><li><a href="/tasks?task=imdb">IMDb</a></li><li><a href="/tasks?task=insureon">Insureon</a></li><li><a href="/tasks?task=insurify">Insurify</a></li><li><a href="/tasks?task=ioby">ioby</a></li><li><a href="/tasks?task=kanetix-ca">Kanetix / Rates.ca</a></li><li><a href="/tasks?task=llbean">L.L.Bean</a></li><li><a href="/tasks?task=leetcode">LeetCode</a></li><li><a href="/tasks?task=legalnature">LegalNature</a></li><li><a href="/tasks?task=linkedin">LinkedIn</a></li><li><a href="/tasks?task=lowes">Lowe’s</a></li><li><a href="/tasks?task=medium">Medium</a></li><li><a href="/tasks?task=meetup">Meetup</a></li><li><a href="/tasks?task=notion">Notion</a></li><li><a href="/tasks?task=ollie">Ollie</a></li><li><a href="/tasks?task=ontario-parks">Ontario Parks Reservations</a></li><li><a href="/tasks?task=opentable">OpenTable</a></li><li><a href="/tasks?task=petco">Petco</a></li><li><a href="/tasks?task=petfinder">Petfinder</a></li><li><a href="/tasks?task=petsmart">PetSmart</a></li><li><a href="/tasks?task=ratemyprofessors">Rate My Professors</a></li><li><a href="/tasks?task=resy">Resy</a></li><li><a href="/tasks?task=simplify-jobs">Simplify Jobs</a></li><li><a href="/tasks?task=target">Target</a></li><li><a href="/tasks?task=taskrabbit">TaskRabbit</a></li><li><a href="/tasks?task=tripadvisor">Tripadvisor</a></li><li><a href="/tasks?task=tripit">TripIt</a></li><li><a href="/tasks?task=ubereats">Uber Eats</a></li><li><a href="/tasks?task=warbyparker">Warby Parker</a></li><li><a href="/tasks?task=wayfair">Wayfair</a></li><li><a href="/tasks?task=zennioptical">Zenni Optical</a></li></ul><!--/site-list-->
     </div>
   </div>
 
-  <div class="groups">
+  <div class="groups" id="tests">
     <h3>Three groups of hidden tests</h3>
     <div class="groups-grid">
       <div class="grp">
@@ -213,6 +210,10 @@
     </ul>
   </div>
 </section>
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged figure">
+  <button class="lb-close" type="button" id="lb-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <img id="lb-img" alt="">
+</dialog>
 </main>
 <footer class="footer">
   <div class="wrap footer-in">

@@ -9,7 +9,6 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data'
-VIEWS = ('overview',)
 
 
 def load(name):
@@ -21,14 +20,13 @@ def rows(name):
         return list(csv.DictReader(handle))
 
 
-def entry(task, model, view):
-    return task['results'][model['id']]['contexts'][view]
+def entry(task, model):
+    return task['results'][model['id']]
 
 
 def case_count(task):
     """A task's hidden test count: the total used by most of its scored results."""
-    totals = Counter(e['total'] for result in task['results'].values()
-                     for e in result['contexts'].values() if e['status'] == 'scored')
+    totals = Counter(e['total'] for e in task['results'].values() if e['status'] == 'scored')
     return totals.most_common(1)[0][0]
 
 
@@ -56,8 +54,8 @@ class SiteDataTests(unittest.TestCase):
             'task materials': [t['id'] for t in self.materials['tasks']],
             'evaluated tasks': load('evaluated-tasks.json'),
             'task catalog': [t['id'] for t in load('task-catalog.json')['tasks']],
+            'waffle-overview.csv': sorted({r['task_id'] for r in rows('waffle-overview.csv')}),
         }
-        sources.update({f'waffle-{view}.csv': sorted({r['task_id'] for r in rows(f'waffle-{view}.csv')}) for view in VIEWS})
         for name, ids in sources.items():
             with self.subTest(name):
                 self.assertEqual(sorted(ids), expected)
@@ -65,50 +63,46 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual({m['id'] for m in self.waffle['models']}, {m['id'] for m in self.cohort['models']})
 
     def test_leaderboard_pools_the_per_task_test_counts(self):
-        for view in VIEWS:
-            for model in self.board['views'][view]:
-                scored = [e for t in self.waffle['tasks'] for e in [entry(t, model, view)] if e['status'] == 'scored']
-                passed, total = sum(e['passed'] for e in scored), sum(e['total'] for e in scored)
-                with self.subTest(view=view, model=model['id']):
-                    self.assertEqual(model['score_counts']['overall'], {'passed': passed, 'total': total})
-                    self.assertAlmostEqual(model['overall'], 100 * passed / total)
-        self.assertEqual(load('leaderboard.json'), self.board['views']['overview'])
+        for model in self.board['models']:
+            scored = [e for t in self.waffle['tasks'] for e in [entry(t, model)] if e['status'] == 'scored']
+            passed, total = sum(e['passed'] for e in scored), sum(e['total'] for e in scored)
+            with self.subTest(model=model['id']):
+                self.assertEqual(model['score_counts']['overall'], {'passed': passed, 'total': total})
+                self.assertAlmostEqual(model['overall'], 100 * passed / total)
+        self.assertEqual(load('leaderboard.json'), self.board['models'])
 
     def test_public_data_has_no_coverage_counts(self):
         banned = {'coverage', 'pareto', 'costStr', 'total_tasks'}
-        for view in VIEWS:
-            for model in self.board['views'][view]:
-                with self.subTest(view=view, model=model['id']):
-                    self.assertFalse(banned & set(model))
-            self.assertEqual(list(rows(f'leaderboard-{view}.csv')[0]), ['model', 'overall', 'request', 'browser', 'system', 'cost', 'tokens', 'turns'])
+        for model in self.board['models']:
+            with self.subTest(model=model['id']):
+                self.assertFalse(banned & set(model))
+        self.assertEqual(list(rows('leaderboard-overview.csv')[0]), ['model', 'overall', 'request', 'browser', 'system', 'cost', 'tokens_millions', 'turns'])
         self.assertNotIn('Coverage', self.board['aggregation'])
 
     def test_csv_exports_match_the_json(self):
         models = {m['name']: m for m in self.waffle['models']}
         tasks = {t['id']: t for t in self.waffle['tasks']}
-        for view in VIEWS:
-            board = rows(f'leaderboard-{view}.csv')
-            self.assertEqual([r['model'] for r in board], [m['name'] for m in self.board['views'][view]])
-            for row, model in zip(board, self.board['views'][view]):
-                self.assertAlmostEqual(float(row['overall']), model['overall'])
-            per_task = rows(f'waffle-{view}.csv')
-            self.assertEqual(len(per_task), len(tasks) * len(models))
-            for row in per_task:
-                e = entry(tasks[row['task_id']], models[row['model']], view)
-                with self.subTest(view=view, task=row['task_id'], model=row['model']):
-                    self.assertEqual(row['status'], e['status'])
-                    if e['status'] == 'scored':
-                        self.assertEqual((int(row['passed']), int(row['total'])), (e['passed'], e['total']))
+        board = rows('leaderboard-overview.csv')
+        self.assertEqual([r['model'] for r in board], [m['name'] for m in self.board['models']])
+        for row, model in zip(board, self.board['models']):
+            self.assertAlmostEqual(float(row['overall']), model['overall'])
+        per_task = rows('waffle-overview.csv')
+        self.assertEqual(len(per_task), len(tasks) * len(models))
+        for row in per_task:
+            e = entry(tasks[row['task_id']], models[row['model']])
+            with self.subTest(task=row['task_id'], model=row['model']):
+                self.assertEqual(row['status'], e['status'])
+                if e['status'] == 'scored':
+                    self.assertEqual((int(row['passed']), int(row['total'])), (e['passed'], e['total']))
         self.assertEqual((DATA / 'leaderboard.csv').read_text(), (DATA / 'leaderboard-overview.csv').read_text())
 
     def test_waffle_cells_link_to_recorded_runs(self):
         runs = {(t['id'], model): {r['id'] for r in value['runs']}
                 for t in self.materials['tasks'] for model, value in t['models'].items()}
         for task in self.waffle['tasks']:
-            for model, result in task['results'].items():
-                for e in result['contexts'].values():
-                    if e.get('run'):
-                        self.assertIn(e['run'], runs[(task['id'], model)])
+            for model, e in task['results'].items():
+                if e.get('run'):
+                    self.assertIn(e['run'], runs[(task['id'], model)])
 
     def test_previews_show_recorded_runs_and_existing_images(self):
         runs = {t['id']: {r['id'] for value in t['models'].values() for r in value['runs']} for t in self.materials['tasks']}
@@ -125,9 +119,8 @@ class SiteDataTests(unittest.TestCase):
     def test_records_carry_only_published_fields(self):
         self.assertEqual(set(self.cohort), {'tasks', 'models', 'cohort_id'})
         for task in self.waffle['tasks']:
-            for result in task['results'].values():
-                for e in result['contexts'].values():
-                    self.assertLessEqual(set(e), {'status', 'passed', 'total', 'value', 'run', 'failure_kind'})
+            for e in task['results'].values():
+                self.assertLessEqual(set(e), {'status', 'passed', 'total', 'value', 'run', 'failure_kind'})
         for task in self.materials['tasks']:
             for value in task['models'].values():
                 for run in value['runs']:
@@ -140,15 +133,15 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual(inline_json('index.html', 'leaderboard-data'), self.board)
         bibtex = (ROOT / 'CITATION.bib').read_text(encoding='utf-8').strip()
         page_text = (ROOT / 'index.html').read_text(encoding='utf-8')
-        eval_text = (ROOT / 'eval.html').read_text(encoding='utf-8')
+        sheet = (ROOT / 'tasks.html').read_text(encoding='utf-8')
         code = re.search(r'<pre[^>]*id="bibtex"[^>]*><code>(.*?)</code></pre>', page_text, re.S).group(1)
         self.assertEqual(html.unescape(code), bibtex)
-        names = re.findall(r'<li><a href="/tasks\?task=[^"]+">([^<]+)</a></li>', eval_text)
+        names = re.findall(r'<span class="task-card-name" title="[^"]*">([^<]+)</span>', sheet)
         self.assertEqual(sorted(html.unescape(n) for n in names), sorted(t['name'] for t in self.cohort['tasks']))
 
     def test_headline_numbers_match_the_data(self):
         tests = sum(case_count(t) for t in self.waffle['tasks'])
-        best = max(m['overall'] for m in self.board['views']['overview'])
+        best = max(m['overall'] for m in self.board['models'])
         for name in ('CITATION.cff', 'llms.txt'):
             text = (ROOT / name).read_text(encoding='utf-8')
             with self.subTest(name):
@@ -174,13 +167,9 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual((demo['task'], demo['model']), ('ubereats', 'Qwen 3.8 Max'))
         self.assertEqual((run['recording'], run['passed'], run['total']), ('a1f93a9dd1349a75ab750e80', 39, 338))
         self.assertEqual(run['groups'], {'request': [9, 50], 'browser': [17, 209], 'system': [13, 79]})
-        contexts = task['results'][model['id']]['contexts']
-        # The Overview column shows this cell, so the demo, the Waffle and the leaderboard all read the same result.
-        for key in ('overview',):
-            with self.subTest(context=key):
-                self.assertEqual(contexts[key]['run'], run['recording'])
-                self.assertEqual(contexts[key]['total'], run['total'])
-                self.assertEqual(contexts[key]['passed'], run['passed'])
+        # The demo, the Waffle and the leaderboard all read this one result.
+        result = entry(task, model)
+        self.assertEqual((result['run'], result['total'], result['passed']), (run['recording'], run['total'], run['passed']))
         materials = next(t for t in load('task-materials.json')['tasks'] if t['id'] == demo['task'])
         row = next(r for r in materials['models'][model['id']]['runs'] if r['id'] == run['recording'])
         self.assertEqual(row['scores'][0]['value'], f"{run['passed']}/{run['total']}")
@@ -216,9 +205,9 @@ class SiteDataTests(unittest.TestCase):
                 if test['id'] in markers:
                     self.assertEqual(markers[test['id']]['page'], test['page'])
         self.assertEqual(inline_json('eval.html', 'demo-data'), demo)
-        for stale in ('Amazon (local copy)', '1M context', 'demo-data">{"task":"amazon"'):
+        for stale in ('Amazon (local copy)', 'demo-data">{"task":"amazon"'):
             self.assertNotIn(stale, manifest)
-        for text in (f"<b>{demo['site']}</b><span>{demo['model']}</span>", f"Rebuild: {demo['model']}", f"Reference: {demo['site']} (local copy)"):
+        for text in (f"<b>{demo['site']}</b><span>{demo['model']}</span>", f'<span class="side side-cand" aria-hidden="true">{demo["model"]}</span>', '<span class="side side-ref" aria-hidden="true">Reference</span>'):
             self.assertIn(text, manifest)
 
         for name in ('index.html', 'eval.html', 'assets/js/site.js', 'assets/css/site.css', 'llms.txt', 'README.md'):
@@ -226,6 +215,49 @@ class SiteDataTests(unittest.TestCase):
             with self.subTest(name):
                 self.assertNotIn('illustrative', text)
                 self.assertNotIn('mock', text)
+
+
+class VisibilityTests(unittest.TestCase):
+    ORIGIN = 'https://website-bench.com'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.names = sorted(p.name for p in (ROOT / 'task').glob('*.html'))
+        cls.sitemap = re.findall(r'<loc>([^<]+)</loc>', (ROOT / 'sitemap.xml').read_text(encoding='utf-8'))
+        cls.llms = (ROOT / 'llms.txt').read_text(encoding='utf-8')
+
+    def test_every_task_has_a_static_page_in_the_sitemap(self):
+        self.assertEqual(len(self.names), 70)
+        self.assertEqual(len(self.sitemap), 75)
+        for name in self.names:
+            with self.subTest(name):
+                slug = name[:-5]
+                text = (ROOT / 'task' / name).read_text(encoding='utf-8')
+                self.assertIn(f'<link rel="canonical" href="{self.ORIGIN}/task/{slug}">', text)
+                self.assertIn(f'{self.ORIGIN}/task/{slug}', self.sitemap)
+                self.assertEqual(len(re.findall(r'<h1\b', text)), 1)
+                self.assertNotIn('<option', re.search(r'<h1\b.*?</h1>', text, re.S).group(0))
+                self.assertNotIn('No result', text)
+
+    def test_no_served_data_has_a_context_field(self):
+        for path in ROOT.rglob('*.csv'):
+            with self.subTest(path.name), path.open(newline='', encoding='utf-8') as handle:
+                self.assertFalse([column for column in next(csv.reader(handle)) if 'context' in column.lower()])
+        for path in DATA.glob('*.json'):
+            with self.subTest(path.name):
+                self.assertNotRegex(path.read_text(encoding='utf-8'), r'"(contexts?|records|default_view)"')
+
+    def test_no_context_or_hidden_files_are_published(self):
+        self.assertFalse((ROOT / 'hidden-contexts').exists())
+        self.assertIn('Eight models', self.llms)
+        self.assertNotRegex(self.llms, r'Nine models|\.html|visual artifacts')
+        for page in ('index.html', 'run.html', 'tasks.html', 'eval.html', 'analysis.html'):
+            with self.subTest(page):
+                text = (ROOT / page).read_text(encoding='utf-8')
+                self.assertIn('application/ld+json', text)
+                self.assertIn('twitter:image', text)
+                self.assertNotIn('#0D1015', text)
+                self.assertNotIn('#22252E', text)
 
 
 if __name__ == '__main__':

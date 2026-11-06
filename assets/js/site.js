@@ -13,7 +13,7 @@
   const followMovedSection = () => {
     if (location.pathname !== '/') return false;
     const moved = location.hash.slice(1);
-    const page = moved === 'run' ? '/run' : ['task', 'benchmark', 'tests'].includes(moved) ? `/eval#${moved}` : (moved === 'why' || moved === 'findings' || /^f\d/.test(moved)) ? `/analysis#${moved}` : '';
+    const page = moved === 'run' ? '/run' : ['task', 'demo', 'benchmark', 'tests'].includes(moved) ? `/eval#${moved}` : (moved === 'why' || moved === 'findings' || /^f\d/.test(moved)) ? `/analysis#${moved}` : '';
     if (page) location.replace(page);
     return Boolean(page);
   };
@@ -27,16 +27,29 @@
   const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : darkMQ.matches);
   const syncTheme = () => {
     if (themeBtn) themeBtn.setAttribute('aria-label', isDark() ? 'Switch to light theme' : 'Switch to dark theme');
-    if (root.dataset.theme) $$('meta[name="theme-color"]').forEach(m => m.setAttribute('content', isDark() ? '#0D1015' : '#FFFFFF'));
+    if (root.dataset.theme) $$('meta[name="theme-color"]').forEach(m => m.setAttribute('content', isDark() ? '#0D1117' : '#FFFFFF'));
+  };
+  // Everything repaints at once, so a theme change never ripples through the page.
+  const switchTheme = apply => {
+    root.classList.add('theme-switching');
+    apply();
+    syncTheme();
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
   };
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
       const next = isDark() ? 'light' : 'dark';
-      root.dataset.theme = next;
+      switchTheme(() => { root.dataset.theme = next; });
       try { localStorage.setItem('wb-theme', next); } catch (e) { /* storage unavailable */ }
-      syncTheme();
     });
   }
+  const applyStored = () => {
+    let stored = null;
+    try { stored = localStorage.getItem('wb-theme'); } catch (e) { /* storage unavailable */ }
+    switchTheme(() => { if (stored) root.dataset.theme = stored; else delete root.dataset.theme; });
+  };
+  addEventListener('pageshow', e => { if (e.persisted) applyStored(); });
+  addEventListener('storage', e => { if (e.key === 'wb-theme') applyStored(); });
   if (darkMQ.addEventListener) darkMQ.addEventListener('change', syncTheme);
   syncTheme();
 
@@ -45,7 +58,13 @@
   const toc = $('#toc');
   if (menuBtn && toc) {
     const setMenu = open => { toc.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', String(open)); };
-    menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(!toc.classList.contains('is-open')); });
+    menuBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = !toc.classList.contains('is-open');
+      setMenu(open);
+      if (open) $('a', toc).focus({ preventScroll: true });
+    });
+    addEventListener('scroll', () => { if (toc.classList.contains('is-open')) setMenu(false); }, { passive: true });
     toc.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
     document.addEventListener('click', e => { if (!toc.contains(e.target) && e.target !== menuBtn) setMenu(false); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && toc.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); } });
@@ -61,10 +80,13 @@
   const tocMarks = (location.pathname === '/' ? $$('.toc a[href^="/#"]').map(a => [a, $(a.getAttribute('href').slice(1))]) : []).filter(([, section]) => section);
   if (tocMarks.length) {
     const follow = () => {
-      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
-      let current = atEnd ? tocMarks[tocMarks.length - 1][0] : null;
+      const atEnd = scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      let current = atEnd ? tocMarks[tocMarks.length - 1][0] : tocMarks[0][0];
       if (!atEnd) tocMarks.forEach(([a, section]) => { if (section.getBoundingClientRect().top <= innerHeight * .4) current = a; });
-      tocMarks.forEach(([a]) => a.classList.toggle('is-active', a === current));
+      tocMarks.forEach(([a], i) => {
+        a.classList.toggle('is-active', a === current);
+        if (a === current) a.setAttribute('aria-current', i ? 'location' : 'page'); else a.removeAttribute('aria-current');
+      });
     };
     addEventListener('scroll', follow, { passive: true });
     addEventListener('resize', follow);
@@ -91,13 +113,12 @@
     const list = $('#dt-list');
     const score = $('#dt-score');
     const runBtn = $('#run-tests');
-    const note = $('#demo-note');
     const tabs = $$('#demo-tabs [role="tab"]');
     const shots = { reference: $('#shot-reference'), rebuild: $('#shot-rebuild') };
     const paths = { reference: $('.layer.is-ref [data-path]', frame), rebuild: $('.layer.is-cand [data-path]', frame) };
     const sideRef = $('.side-ref', divider);
     const sideCand = $('.side-cand', divider);
-    const SIDE_NAME = { reference: `Reference: the local copy of ${D.site}`, rebuild: `Rebuild by ${D.model}` };
+    const SIDE_NAME = { reference: 'Reference', rebuild: D.model };
 
     const shotAttrs = (p, side) => {
       const base = `${PREVIEWS}${p.id}-${side}`;
@@ -134,23 +155,32 @@
       sideRef.classList.toggle('is-off', x < sideRef.offsetWidth + 44);
       sideCand.classList.toggle('is-off', w - x < sideCand.offsetWidth + 44);
     }
-    divider.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      stopIntro();
-      touched = true;
-      divider.setPointerCapture(e.pointerId);
-      divider.classList.add('is-dragging');
-      hideTip();
-      const move = ev => { const r = frame.getBoundingClientRect(); setSplit((ev.clientX - r.left) / r.width * 100); };
+    // The whole picture is the handle. A touch moves the divider only once it moves sideways, so a page can still scroll over it.
+    frame.addEventListener('pointerdown', e => {
+      if (e.button || e.target.closest('.bug')) return;
+      const x0 = e.clientX, y0 = e.clientY;
+      let armed = false;
+      const dragTo = ev => { const r = frame.getBoundingClientRect(); setSplit((ev.clientX - r.left) / r.width * 100); };
+      const begin = () => { armed = true; stopIntro(); touched = true; divider.classList.add('is-dragging'); hideTip(); };
+      if (e.pointerType === 'mouse') { e.preventDefault(); begin(); dragTo(e); }
+      frame.setPointerCapture(e.pointerId);
+      const move = ev => {
+        if (!armed) {
+          const dx = Math.abs(ev.clientX - x0), dy = Math.abs(ev.clientY - y0);
+          if (dx < 8 || dy > dx) return;
+          begin();
+        }
+        dragTo(ev);
+      };
       const up = () => {
         divider.classList.remove('is-dragging');
-        divider.removeEventListener('pointermove', move);
-        divider.removeEventListener('pointerup', up);
-        divider.removeEventListener('pointercancel', up);
+        frame.removeEventListener('pointermove', move);
+        frame.removeEventListener('pointerup', up);
+        frame.removeEventListener('pointercancel', up);
       };
-      divider.addEventListener('pointermove', move);
-      divider.addEventListener('pointerup', up);
-      divider.addEventListener('pointercancel', up);
+      frame.addEventListener('pointermove', move);
+      frame.addEventListener('pointerup', up);
+      frame.addEventListener('pointercancel', up);
     });
     divider.addEventListener('keydown', e => {
       const step = e.shiftKey ? 10 : 2;
@@ -201,7 +231,6 @@
           img.alt = `${SIDE_NAME[side]}, ${p.label}`;
           paths[side].textContent = p.urls[side];
         });
-        note.textContent = p.note;
         renderMarks(p);
         setSplit(restSplit(p));
         if (after) after();
@@ -229,7 +258,7 @@
     function showTip(el) {
       const m = markerByN(el.dataset.bug);
       if (!m) return;
-      tip.innerHTML = `<b>${esc(m.title)}</b>${esc(m.body)}<small>${esc(m.cite)}</small>`;
+      tip.innerHTML = `<b>${esc(m.title)}</b><span class="tip-body">${esc(m.body)}</span><small>${esc(m.cite)}</small>`;
       tip.hidden = false;
       const wr = wrap.getBoundingClientRect();
       const r = el.getBoundingClientRect();
@@ -237,7 +266,7 @@
       let left = r.left - wr.left + r.width / 2 - tw / 2;
       left = Math.max(8, Math.min(wr.width - tw - 8, left));
       let top = r.bottom - wr.top + 10;
-      if (top + th > wr.height - 8 && r.top - wr.top - th - 10 >= 0) top = r.top - wr.top - th - 10;
+      if (top + th > Math.min(wr.height, innerHeight - wr.top) - 8 && r.top - wr.top - th - 10 >= 0) top = r.top - wr.top - th - 10;
       tip.style.left = left + 'px';
       tip.style.top = top + 'px';
       hot(D.tests.find(t => t.id === m.test), true);
@@ -284,7 +313,10 @@
         const el = m && $(`[data-bug="${m.n}"]`, marks);
         if (!el) return;
         const top = stage.getBoundingClientRect().top;
-        if (top < 0 || top > window.innerHeight * 0.6) stage.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        if (top < $('#topbar').offsetHeight || top > window.innerHeight * 0.6) {
+          stage.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+          addEventListener('scrollend', () => { if (!tip.hidden) showTip(el); }, { once: true });
+        }
         showTip(el);
       });
     });
@@ -297,7 +329,7 @@
     function runTests(walk) {
       if (running) return;
       running = true;
-      runBtn.disabled = true;
+      runBtn.setAttribute('aria-disabled', 'true');
       hideTip();
       touched = false;
       let passed = 0;
@@ -306,7 +338,7 @@
       rows.forEach(r => { r.classList.remove('is-done', 'is-running'); r.classList.add('is-pending'); });
       const walking = walk && !reduceMotion && stage.clientWidth >= 600;
       if (walking) D.tests.forEach(t => { if (t.page) preload(pageById(t.page)); });
-      const finish = () => { hot(null); running = false; runBtn.disabled = false; };
+      const finish = () => { hot(null); running = false; runBtn.removeAttribute('aria-disabled'); };
       const step = i => {
         if (i === D.tests.length) { setTimeout(finish, reduceMotion ? 0 : 700); return; }
         const t = D.tests[i], row = rows[i];
@@ -322,7 +354,7 @@
           if (isPassed(t)) passed += 1;
           setScore(passed);
           setTimeout(() => step(i + 1), reduceMotion ? 0 : (showsPage ? 1000 : 140));
-        }, reduceMotion ? 0 : 380);
+        }, reduceMotion ? 140 : 380);
       };
       step(0);
     }
@@ -375,7 +407,7 @@
       const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); ready.then(intro); } }, { threshold: 0.35 });
       io.observe(stage);
     } else ready.then(intro);
-    setSplit(restSplit(current));
+    setSplit(reduceMotion ? restSplit(current) : 97);
     let rt = null;
     window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { hideTip(); setSplit(split); }, 80); });
   }
@@ -399,6 +431,7 @@
     const curveH = (a, b) => { const dx = Math.max(24, (b.x - (a.x + a.w)) / 2); return `M${a.x + a.w} ${a.cy} C ${a.x + a.w + dx} ${a.cy}, ${b.x - dx} ${b.cy}, ${b.x} ${b.cy}`; };
 
     function build() {
+      tree.classList.add('is-measuring');
       const gr = grid.getBoundingClientRect();
       svg.setAttribute('width', gr.width);
       svg.setAttribute('height', gr.height);
@@ -431,6 +464,7 @@
         const stubs = cats.map(c => { const cr = rel(c.el, gr); return `M${x} ${cr.cy} H${cr.x}`; }).join(' ');
         add(rootNode, `M${x} ${first.cy} V${r.cy} H${r.x} ${stubs}`, 'to-root');
       }
+      tree.classList.remove('is-measuring');
     }
     const nodes = () => $$('.leaf, .cat-node, .root-node', grid);
     const target = big.textContent.trim();
@@ -461,24 +495,24 @@
       arm();
       const at = (ms, fn) => timers.push(setTimeout(fn, ms));
       const wide = isWide();
-      let t = 250;
+      let t = 120;
       cats.forEach(c => {
         c.leaves.forEach(leaf => {
           at(t, () => leaf.classList.add('is-on'));
-          if (wide) at(t + 40, () => draw(leaf));
-          t += 110;
+          if (wide) at(t + 20, () => draw(leaf));
+          t += 40;
         });
         if (!wide) at(t, () => draw(c.group));
-        t += 230;
+        t += 90;
         at(t, () => c.el.classList.add('is-on'));
-        t += 150;
+        t += 60;
       });
-      t += 150;
+      t += 60;
       cats.forEach(c => at(t, () => draw(c.el)));
       if (!wide) at(t, () => draw(rootNode));
-      t += 520;
-      at(t, () => { rootNode.classList.add('is-on'); if (Number.isFinite(targetValue) && targetValue > 0) countUp(big, targetValue, 800); });
-      at(t + 800 + 350, () => { rootNode.classList.add('is-punch'); done = true; });
+      t += 200;
+      at(t, () => { rootNode.classList.add('is-on'); if (Number.isFinite(targetValue) && targetValue > 0) countUp(big, targetValue, 400); });
+      at(t + 400 + 150, () => { rootNode.classList.add('is-punch'); done = true; });
     }
     function countUp(el, to, ms) {
       const start = performance.now();
@@ -498,7 +532,11 @@
       new ResizeObserver(() => {
         if (grid.clientWidth === lastW) return;
         lastW = grid.clientWidth;
-        if (done) { build(); showAll(); }
+        timers.forEach(clearTimeout);
+        timers = [];
+        done = true;
+        build();
+        showAll();
       }).observe(grid);
     }
   }
@@ -535,11 +573,16 @@
   const lb = $('#lightbox');
   const lbImg = $('#lb-img');
   if (lb && lbImg) {
-    $$('[data-zoom]').forEach(b => b.addEventListener('click', () => {
-      lbImg.src = b.dataset.zoom;
-      lbImg.alt = b.dataset.alt || '';
-      if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
-    }));
+    $$('[data-zoom]').forEach(b => {
+      const preload = () => { new Image().src = b.dataset.zoom; };
+      b.addEventListener('pointerenter', preload, { once: true });
+      b.addEventListener('focus', preload, { once: true });
+      b.addEventListener('click', () => {
+        lbImg.src = b.dataset.zoom;
+        lbImg.alt = b.dataset.alt || '';
+        lb.showModal();
+      });
+    });
     $('#lb-close').addEventListener('click', () => lb.close());
     lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
   }
@@ -557,7 +600,7 @@
       const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
-      done('Selected, press Ctrl+C');
+      done('Selected');
     };
     try { navigator.clipboard.writeText(text).then(() => done('Copied'), fallback); } catch (e) { fallback(); }
   }

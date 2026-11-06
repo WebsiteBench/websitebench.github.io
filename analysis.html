@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if(location.hostname==='websitebench.github.io')location.replace('https://website-bench.com'+location.pathname+location.search+location.hash)</script>
 <!-- Google tag (gtag.js) -->
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,46 +19,48 @@
 
   function gtag_report_conversion(url, event) {
     var modified = event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0);
+    var label = 'AW-18557798739/g6CwCM2c0rIdENOShpFF';
+    if (!url || modified || !window.google_tag_manager) { gtag('event', 'conversion', {send_to: label}); return true; }
     var navigated = false;
-    function followLink() {
-      if (url && !modified && !navigated) {
-        navigated = true;
-        window.location.assign(url);
-      }
-    }
-    gtag('event', 'conversion', {
-      send_to: 'AW-18557798739/g6CwCM2c0rIdENOShpFF',
-      event_callback: followLink,
-      event_timeout: 1000
-    });
-    if (url && !modified) window.setTimeout(followLink, 1000);
-    return modified;
+    function followLink() { if (!navigated) { navigated = true; window.location.assign(url); } }
+    gtag('event', 'conversion', {send_to: label, event_callback: followLink, event_timeout: 300});
+    window.setTimeout(followLink, 300);
+    return false;
   }
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
-<title>Analysis · WebsiteBench</title>
+<script>addEventListener('load',function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=AW-18557798739';document.head.appendChild(s)})</script>
+<title>Analysis: why AI agents fall short · WebsiteBench</title>
 <meta name="description" content="Why agents fall short on WebsiteBench: human exploration traces, the gap between exploration and implementation, and early stopping.">
+<meta name="robots" content="max-image-preview:large">
 <link rel="canonical" href="https://website-bench.com/analysis">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WebsiteBench">
+<meta property="og:locale" content="en_US">
 <meta property="og:url" content="https://website-bench.com/analysis">
-<meta property="og:title" content="Analysis · WebsiteBench">
+<meta property="og:title" content="Analysis: why AI agents fall short · WebsiteBench">
 <meta property="og:description" content="Human exploration traces, exploration versus implementation, and early stopping.">
 <meta property="og:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, eight models, 16 hours per run.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Analysis · WebsiteBench">
+<meta name="twitter:title" content="Analysis: why AI agents fall short · WebsiteBench">
 <meta name="twitter:description" content="Human exploration traces, exploration versus implementation, and early stopping.">
+<meta name="twitter:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
+<meta name="twitter:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, eight models, 16 hours per run.">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
-<link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=ctx9-20261106">
+<meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/brand/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="assets/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://website-bench.com/analysis#page","url":"https://website-bench.com/analysis","name":"Analysis: why AI agents fall short · WebsiteBench","description":"Why agents fall short on WebsiteBench: human exploration traces, the gap between exploration and implementation, and early stopping.","inLanguage":"en","isPartOf":{"@id":"https://website-bench.com/#website"},"about":{"@id":"https://website-bench.com/#dataset"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebsiteBench","item":"https://website-bench.com/"},{"@type":"ListItem","position":2,"name":"Analysis","item":"https://website-bench.com/analysis"}]}]}</script>
+<link rel="stylesheet" href="assets/css/site.css?v=r9i-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=ctx9-20261106" defer></script>
+<script src="assets/js/site.js?v=r9i-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -93,7 +96,7 @@
     <h2 id="why-h">Why even the best agent passes only about one test in <span data-fact="one-in">four</span></h2>
   </header>
   <p class="intro">A <strong>user workflow</strong> ends in an observable result, such as an order confirmation.</p>
-  <figure class="tree is-armed" id="tree" aria-labelledby="tree-cap">
+  <figure class="tree is-armed" id="tree" aria-label="Three failure modes">
     <div class="tree-grid" id="tree-grid">
       <div class="group" data-cat="1">
         <span class="leaf" style="grid-row:1"><i>1</i>Stops before the result</span>
@@ -113,7 +116,6 @@
       </div>
       <a class="cat-node" data-cat="3" href="#f3-h" style="grid-row:7 / 9"><b><i>3</i>Early stopping</b><span>Most runs end <strong>well before</strong> the 16-hour limit</span></a>
       <div class="root-node" id="root-node" style="grid-row:1 / 9">
-        <span class="root-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg>WebsiteBench</span>
         <b class="root-big" data-fact="best-turns">2,234.8</b>
         <span class="root-l1">agent turns per task, on average, for the best model</span>
         <span class="root-l2">and it still passes only <em data-fact="best-overall">26.2%</em> of hidden tests</span>
@@ -121,7 +123,6 @@
     </div>
     <svg class="tree-lines" id="tree-lines" aria-hidden="true"></svg>
     <div class="tree-foot">
-      <figcaption id="tree-cap">The three failure modes the paper identifies, with examples drawn from its case studies.</figcaption>
       <button class="dt-btn dt-btn-quiet" id="tree-replay" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</button>
     </div>
   </figure>
@@ -130,8 +131,7 @@
   <header class="sec-head">
     <h2 id="findings-h">Three ways the rebuilds go wrong</h2>
   </header>
-  <p class="intro">Grok 4.6 runs, traced from what the agent saw to the code it wrote to the tests it failed.</p>
-  <article class="finding" aria-labelledby="f1-h">
+  <article class="finding" id="f1" aria-labelledby="f1-h">
     <div class="finding-text">
       <p class="finding-tag"><span>1</span>Underexploration</p>
       <h3 id="f1-h">Agents visit the pages but seldom follow a workflow to its end</h3>
@@ -149,7 +149,7 @@
       <div class="flow-notes" aria-hidden="true"><span class="flow-stop">The agent stops here</span><span class="flow-check">Hidden tests check this result</span></div>
     </div>
   </article>
-  <article class="finding" aria-labelledby="f2-h">
+  <article class="finding" id="f2" aria-labelledby="f2-h">
     <div class="finding-text">
       <p class="finding-tag"><span>2</span>Failure to implement observed behavior</p>
       <h3 id="f2-h">What agents observe rarely reaches their code</h3>
@@ -172,7 +172,7 @@
       </div>
     </div>
   </article>
-  <article class="finding" aria-labelledby="f3-h">
+  <article class="finding" id="f3" aria-labelledby="f3-h">
     <div class="finding-text">
       <p class="finding-tag"><span>3</span>Early stopping</p>
       <h3 id="f3-h">Agents stop with most of the clock left</h3>
@@ -187,10 +187,9 @@
         <div class="run run-axis" aria-hidden="true"><span></span><span class="run-ticks"><em style="left:0">0 h</em><em style="left:25%">4 h</em><em style="left:50%">8 h</em><em style="left:75%">12 h</em><em style="left:100%">16 h</em></span></div>
       </div>
       <dl class="deltas">
-        <div><dt>Hours</dt><dd>1.0 <span>→</span> 10.9</dd></div>
-        <div><dt>Steps</dt><dd>130 <span>→</span> 879</dd></div>
-        <div><dt>Tokens</dt><dd>10.6M <span>→</span> 87.9M</dd></div>
-        <div><dt>Score</dt><dd>0% <span>→</span> 31.3%</dd></div>
+        <div><dt>Hours</dt><dd>1.0 <span><svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only">to</span></span> 10.9</dd></div>
+        <div><dt>Tokens</dt><dd>10.6M <span><svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only">to</span></span> 87.9M</dd></div>
+        <div><dt>Score</dt><dd>0% <span><svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only">to</span></span> 31.3%</dd></div>
       </dl>
     </div>
   </article>

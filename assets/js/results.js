@@ -15,7 +15,7 @@
   const boardData = JSON.parse($('#leaderboard-data').textContent);
   const taskData = JSON.parse($('#waffle-data').textContent);
   const tasks = taskData.tasks, waffleModels = taskData.models;
-  const allModels = boardData.views.overview;
+  const allModels = boardData.models;
 
   const params = new URLSearchParams(location.search);
   const pick = (key, allowed, fallback) => allowed.includes(params.get(key)) ? params.get(key) : fallback;
@@ -36,6 +36,11 @@
     sortKey: 'overall',
     descending: true,
   };
+  {
+    const key = pick('by', Object.keys(COLUMNS), 'overall');
+    if (state.columns.has(key)) { state.sortKey = key; state.descending = pick('dir', ['asc', 'desc'], key in SCORES ? 'desc' : 'asc') === 'desc'; }
+  }
+  const STANDING = WebsiteBenchLeaderboard.standing(allModels);
   const visibleModels = () => allModels.filter(m => state.models.has(m.id));
 
   /* ---------------------------------------------------------------- address */
@@ -43,6 +48,7 @@
     const url = new URL('/', location.origin);
     const set = (key, value, fallback) => { if (value !== fallback) url.searchParams.set(key, value); };
     set('view', state.view, 'table');
+    if (state.view === 'table' && !(state.sortKey === 'overall' && state.descending)) { url.searchParams.set('by', state.sortKey); url.searchParams.set('dir', state.descending ? 'desc' : 'asc'); }
     if (state.models.size !== allModels.length) url.searchParams.set('models', allModels.map(m => m.id).filter(id => state.models.has(id)).join(','));
     if (state.columns.size !== Object.keys(COLUMNS).length) url.searchParams.set('cols', Object.keys(COLUMNS).filter(key => state.columns.has(key)).join(','));
     if (state.view === 'pareto') { set('score', state.score, 'overall'); set('resource', state.resource, 'cost'); set('scale', state.scale, 'log'); set('y', state.range, 'focused'); }
@@ -70,7 +76,7 @@
     tooltip.style.left = clamp(left, 8, innerWidth - width - 8) + 'px';
     tooltip.style.top = clamp(top, 8, innerHeight - height - 8) + 'px';
   }
-  window.addEventListener('scroll', () => { if (tooltipSource !== document.activeElement) hideTooltip(); }, {capture: true, passive: true});
+  window.addEventListener('scroll', () => { if (matchMedia('(hover: none)').matches || tooltipSource !== document.activeElement) { hideTooltip(); armedCell = null; } }, {capture: true, passive: true});
 
   /* ---------------------------------------------------------------- colour */
   const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -78,6 +84,7 @@
   const toHex = rgb => '#' + rgb.map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
   // Calibrated shades keep low scores apart without normalizing to the maximum.
   const SHADE_STOPS = [[0, 0], [5, .107], [10, .254], [25, .607], [50, .869], [100, 1]];
+  const WAFFLE_STEPS = SHADE_STOPS.map(([value]) => value);
   function scorePainter() {
     const ramp = ['--ramp-0', '--ramp-1', '--ramp-2'].map(name => toRGB(token(name)));
     return score => {
@@ -104,7 +111,7 @@
     return (a[key] - b[key]) * (state.descending ? -1 : 1) || b.overall - a.overall;
   });
   function renderTable() {
-    $('#board-body').innerHTML = WebsiteBenchLeaderboard.renderRows(tableModels());
+    $('#board-body').innerHTML = WebsiteBenchLeaderboard.renderRows(tableModels(), STANDING);
     $$('#board thead th').forEach(th => th.removeAttribute('aria-sort'));
     const active = $(`#board [data-sort="${state.sortKey}"]`);
     if (active) active.parentElement.setAttribute('aria-sort', state.descending ? 'descending' : 'ascending');
@@ -114,8 +121,20 @@
     const button = event.target.closest('[data-sort]'); if (!button) return;
     const key = button.dataset.sort;
     state.descending = key === state.sortKey ? !state.descending : Object.keys(SCORES).includes(key);
-    state.sortKey = key; renderTable();
+    state.sortKey = key; renderTable(); syncURL();
   });
+  // Score cells share the charts' tooltip: hover with a mouse, tap on a touch screen.
+  {
+    const body = $('#board-body');
+    const showCell = (cell, event) => {
+      const m = allModels.find(model => model.id === cell.parentElement.dataset.model);
+      showTooltip(cell, `<strong>${escape(m.name)}</strong><span>${COLUMNS[cell.dataset.col]}</span><span class="tooltip-score">${cell.dataset.tip}</span>`, event);
+    };
+    const tipCell = target => target && target.closest && target.closest('td[data-tip]');
+    body.addEventListener('pointerover', event => { const cell = tipCell(event.target); if (cell && event.pointerType !== 'touch') showCell(cell, event); });
+    body.addEventListener('pointerout', event => { if (event.pointerType !== 'touch' && !tipCell(event.relatedTarget)) hideTooltip(); });
+    body.addEventListener('click', event => { const cell = tipCell(event.target); if (cell && matchMedia('(hover: none)').matches) showCell(cell); });
+  }
 
   /* ---------------------------------------------------------------- Pareto */
   const intersects = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -141,7 +160,17 @@
     const values = shown.map(m => m[resource]), scores = shown.map(m => m[score]);
     const maxValue = Math.max(0.000001, ...values), minValue = Math.min(...values);
     const linearStep = niceStep(maxValue * 1.12 / (compact ? 4 : 6));
-    const xMin = log ? minValue * .68 : 0, xMax = log ? maxValue * 1.32 : Math.ceil(maxValue * 1.12 / linearStep) * linearStep;
+    let xMin = log ? minValue * .68 : 0, xMax = log ? maxValue * 1.32 : Math.ceil(maxValue * 1.12 / linearStep) * linearStep;
+    const logTicks = (low, high) => {
+      const ticks = [];
+      for (let p = Math.floor(Math.log10(low)) - 1; p <= Math.ceil(Math.log10(high)) + 1; p++) for (const base of compact ? [1, 3] : [1, 2, 5]) ticks.push(base * 10 ** p);
+      return ticks;
+    };
+    if (log && logTicks(xMin, xMax).filter(tick => tick >= xMin && tick <= xMax).length < 2) {
+      const around = logTicks(xMin, xMax);
+      xMin = around.filter(tick => tick <= xMin).pop();
+      xMax = around.find(tick => tick >= xMax);
+    }
     const span = Math.max(...scores) - Math.min(...scores);
     const yMin = full ? 0 : Math.max(0, Math.floor((Math.min(...scores) - Math.max(1, span * .08)) / 5) * 5);
     const yMax = full ? 100 : Math.min(100, Math.max(yMin + 10, Math.ceil((Math.max(...scores) + Math.max(1.5, span * .12)) / 5) * 5));
@@ -150,47 +179,43 @@
     const Y = value => top + (1 - (value - yMin) / (yMax - yMin)) * plotH;
     const floorY = top + plotH, endX = left + plotW;
     const xTicks = [];
-    if (log) {
-      for (let p = Math.floor(Math.log10(xMin)); p <= Math.ceil(Math.log10(xMax)); p++) for (const base of compact ? [1, 3] : [1, 2, 5]) {
-        const tick = base * 10 ** p; if (tick >= xMin && tick <= xMax) xTicks.push(tick);
-      }
-    } else for (let tick = 0; tick <= xMax + 1e-9; tick += linearStep) xTicks.push(tick);
+    if (log) xTicks.push(...logTicks(xMin, xMax).filter(tick => tick >= xMin && tick <= xMax));
+    else for (let tick = 0; tick <= xMax + 1e-9; tick += linearStep) xTicks.push(tick);
 
     let body = '';
-    if (frontier.length) {
-      const line = frontier.map(m => `${X(m[resource]).toFixed(1)},${Y(m[score]).toFixed(1)}`);
-      const first = frontier[0], last = frontier[frontier.length - 1];
-      body += `<polygon class="plot-reach" points="${left},${top} ${endX},${top} ${endX},${Y(last[score]).toFixed(1)} ${line.slice().reverse().join(' ')} ${X(first[resource]).toFixed(1)},${floorY} ${left},${floorY}"/>`;
-    }
-    for (let tick = yMin; tick <= yMax + 1e-9; tick += yStep) body += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${endX}" y2="${Y(tick)}"/><text class="plot-tick" x="${left - 9}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
-    xTicks.forEach(tick => { body += `<line class="plot-grid" x1="${X(tick)}" y1="${top}" x2="${X(tick)}" y2="${floorY}"/><text class="plot-tick" x="${X(tick)}" y="${floorY + 19}" text-anchor="middle">${formatTick(tick, resource)}</text>`; });
+    for (let tick = yMin; tick <= yMax + 1e-9; tick += yStep) body += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${endX}" y2="${Y(tick)}"/><text class="plot-tick plot-tick-y" x="${left - 9}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
+    xTicks.forEach(tick => { body += `<line class="plot-grid" x1="${X(tick)}" y1="${top}" x2="${X(tick)}" y2="${floorY}"/><text class="plot-tick plot-tick-x" x="${X(tick)}" y="${floorY + 19}" text-anchor="middle">${formatTick(tick, resource)}</text>`; });
     body += `<line class="plot-axis" x1="${left}" y1="${top}" x2="${left}" y2="${floorY}"/><line class="plot-axis" x1="${left}" y1="${floorY}" x2="${endX}" y2="${floorY}"/>`;
     if (frontier.length > 1) body += `<polyline class="frontier-line" points="${frontier.map(m => `${X(m[resource]).toFixed(1)},${Y(m[score]).toFixed(1)}`).join(' ')}"/>`;
     body += `<text class="axis-title" x="${left + plotW / 2}" y="${height - 8}" text-anchor="middle">Mean ${RESOURCES[resource]} per task${compact ? '' : log ? ' · log scale' : ' · linear scale'}</text><text class="axis-title" transform="translate(${compact ? 11 : 14} ${top + plotH / 2}) rotate(-90)" text-anchor="middle">${SCORES[score]} pass rate</text>`;
-    if (!compact) body += `<text class="plot-hint" x="${left + 12}" y="${top + 19}">↖ Better: higher score, lower ${RESOURCE_LABELS[resource].toLowerCase()}</text>`;
 
     const r = compact ? 11 : 13, logo = compact ? 12 : 15;
     const points = shown.map(m => ({model: m, x: X(m[resource]), y: Y(m[score]), on: frontierIDs.has(m.id)}));
     let labels = '';
     if (!compact) {
-      const hint = {x: left + 8, y: top + 6, w: 280, h: 20};
-      const boxes = [hint];
+      const boxes = [], leaders = [];
       const segments = frontier.slice(1).map((m, i) => [{x: X(frontier[i][resource]), y: Y(frontier[i][score])}, {x: X(m[resource]), y: Y(m[score])}]);
       const ordered = [...points].sort((a, b) => Number(b.on) - Number(a.on) || a.y - b.y);
       ordered.forEach(point => {
         const m = point.model, value = `${decimal(m[score])}% · ${formatResource(m[resource], resource)}`;
-        const w = Math.max(m.short.length * 7, value.length * 6.5) + 6, h = 32, g = r + 5;
+        const w = Math.max(m.name.length * 7, value.length * 7.2) + 6, h = 32, g = r + 5;
         const spots = [[g, 3], [-w - g, -h - 3], [g, -h / 2], [-w - g, -h / 2], [g, -h - 3], [-w - g, 3], [-w / 2, g], [-w / 2, -h - g], [g + 12, 22], [-w - g - 12, -h - 22], [g + 12, -h - 22], [-w - g - 12, 22]];
         const fits = box => box.x >= left + 3 && box.x + box.w <= endX - 2 && box.y >= top + 2 && box.y + box.h <= floorY - 2;
         const clear = box => fits(box) && !boxes.some(other => intersects(box, other))
           && !points.some(other => other !== point && intersects(box, {x: other.x - r - 2, y: other.y - r - 2, w: 2 * r + 4, h: 2 * r + 4}))
           && !segments.some(([a, b]) => segmentHitsBox(a, b, box));
-        const candidates = spots.map(([dx, dy]) => ({x: point.x + dx, y: point.y + dy, w, h}));
-        const box = candidates.find(clear) || candidates.find(fits) || {x: clamp(point.x + g, left + 3, endX - w - 2), y: clamp(point.y + 3, top + 2, floorY - h - 2), w, h};
+        const nearEnd = box => ({x: clamp(point.x, box.x, box.x + box.w), y: clamp(point.y, box.y, box.y + box.h)});
+        const untangled = box => !leaders.some(([a, b]) => segmentHitsBox(a, b, box)) && !boxes.some(other => segmentHitsBox(point, nearEnd(box), other));
+        const far = [];
+        for (const d of [24, 44, 64, 88, 116, 150, 190, 240, 300, 360, 430]) for (const sy of [-1, -.5, 0, .5, 1]) for (const sx of [1, -1]) far.push([sx > 0 ? g + d : -w - g - d, sy * d - h / 2]);
+        for (const d of [48, 72, 100, 140, 190, 240]) far.push([-w / 2, -h - g - d], [-w / 2, g + d]);
+        const candidates = [...spots, ...far].map(([dx, dy]) => ({x: point.x + dx, y: point.y + dy, w, h}));
+        const box = candidates.find(c => clear(c) && untangled(c)) || candidates.find(clear) || candidates.find(fits) || {x: clamp(point.x + g, left + 3, endX - w - 2), y: clamp(point.y + 3, top + 2, floorY - h - 2), w, h};
         boxes.push(box);
+        leaders.push([point, nearEnd(box)]);
         const nearX = clamp(point.x, box.x, box.x + box.w), nearY = clamp(point.y, box.y, box.y + box.h);
         const leader = Math.hypot(nearX - point.x, nearY - point.y) > r + 12 ? `<line x1="${point.x.toFixed(1)}" y1="${point.y.toFixed(1)}" x2="${nearX.toFixed(1)}" y2="${nearY.toFixed(1)}"/>` : '';
-        labels += `<g class="plot-label${point.on ? ' on-frontier' : ''}" data-model="${escape(m.id)}">${leader}<text class="plot-name" x="${box.x.toFixed(1)}" y="${(box.y + 12).toFixed(1)}">${escape(m.short)}</text><text class="plot-value" x="${box.x.toFixed(1)}" y="${(box.y + 27).toFixed(1)}">${escape(value)}</text></g>`;
+        labels += `<g class="plot-label${point.on ? ' on-frontier' : ''}" data-model="${escape(m.id)}">${leader}<rect class="plot-label-hit" x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${w.toFixed(1)}" height="${h}" fill="transparent"/><text class="plot-name" x="${box.x.toFixed(1)}" y="${(box.y + 12).toFixed(1)}">${escape(m.name)}</text><text class="plot-value" x="${box.x.toFixed(1)}" y="${(box.y + 27).toFixed(1)}">${escape(value)}</text></g>`;
       });
     }
     body += `<g class="plot-guides"></g>` + labels;
@@ -210,7 +235,7 @@
     chart.classList.toggle('is-narrow', compact);
     const footer = $('#result-pareto .chart-footer').offsetHeight || 44;
     const room = innerHeight - (chart.getBoundingClientRect().top + scrollY) - footer - 20;
-    const height = compact ? Math.round(clamp(padded * .86, 280, 400)) : Math.round(clamp(room, 300, Math.min(600, padded * .5)));
+    const height = compact ? Math.round(clamp(padded * .86, 280, 400)) : Math.round(clamp(room, innerHeight < 560 ? 300 : 250, Math.min(600, padded * .5)));
     const view = paretoMarkup({width: padded, height, compact, models});
     if (!view.shown.length) {
       chart.innerHTML = '<p class="chart-empty">Choose at least one model with this score and resource.</p>';
@@ -218,7 +243,7 @@
     }
     chart.innerHTML = `<svg viewBox="0 0 ${padded} ${height}" width="${padded}" height="${height}" role="group" aria-labelledby="pareto-title" aria-describedby="pareto-description"><title id="pareto-title">${SCORES[state.score]} pass rate versus mean ${RESOURCES[state.resource]} per task</title><desc id="pareto-description">${view.shown.length} models, ${view.frontier.length} on the Pareto frontier. Lower resource use and a higher pass rate are better. ${state.scale === 'log' ? 'Logarithmic' : 'Linear'} horizontal axis.</desc>${view.body}</svg>`;
     paretoView = view;
-    list.innerHTML = compact ? view.shown.slice().sort((a, b) => b[state.score] - a[state.score]).map(m => `<li><img class="model-logo" src="${escape(m.logo)}" alt="" width="18" height="18"><b>${escape(m.short)}${view.frontierIDs.has(m.id) ? '<small>frontier</small>' : ''}</b><span>${decimal(m[state.score])}% · ${formatResource(m[state.resource], state.resource)}</span></li>`).join('') : '';
+    list.innerHTML = compact ? view.shown.slice().sort((a, b) => b[state.score] - a[state.score]).map(m => `<li${view.frontierIDs.has(m.id) ? ' class="on-frontier"' : ''} data-model="${escape(m.id)}"><i class="pareto-ring"><img class="model-logo" src="${escape(m.logo)}" alt="" width="14" height="14"></i><b>${escape(m.name)}</b><span>${decimal(m[state.score])}% · ${formatResource(m[state.resource], state.resource)}</span></li>`).join('') : '';
     $('#pareto-summary').textContent = `${view.shown.length} of ${allModels.length} models · ${view.frontier.length} on the frontier`;
     // Points glide from where they were when an axis changes.
     if (lastPositions && lastPositions.width === padded && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -244,6 +269,8 @@
     const label = chart.querySelector(`.plot-label[data-model="${CSS.escape(m.id)}"]`); if (label) label.classList.add('is-hot');
     const x = X(m[resource]), y = Y(m[score]), xText = formatResource(m[resource], resource), yText = decimal(m[score]) + '%';
     const chipY = yText.length * 6.8 + 12, chipX = xText.length * 6.8 + 12;
+    chart.querySelectorAll('.plot-tick-x').forEach(tick => tick.classList.toggle('is-under', Math.abs(Number(tick.getAttribute('x')) - x) < chipX / 2 + tick.getComputedTextLength() / 2 + 2));
+    chart.querySelectorAll('.plot-tick-y').forEach(tick => tick.classList.toggle('is-under', Math.abs(Number(tick.getAttribute('y')) - 4 - y) < 16));
     chart.querySelector('.plot-guides').innerHTML = `<line x1="${left}" y1="${y}" x2="${x}" y2="${y}"/><line x1="${x}" y1="${y}" x2="${x}" y2="${floorY}"/>`
       + `<rect x="${left - chipY - 4}" y="${y - 10}" width="${chipY}" height="20" rx="4"/><text x="${left - 4 - chipY / 2}" y="${y + 4}" text-anchor="middle">${yText}</text>`
       + `<rect x="${x - chipX / 2}" y="${floorY + 5}" width="${chipX}" height="20" rx="4"/><text x="${x}" y="${floorY + 19}" text-anchor="middle">${xText}</text>`;
@@ -255,19 +282,26 @@
     const chart = $('#pareto-chart');
     chart.classList.remove('has-hot');
     chart.querySelectorAll('.is-hot').forEach(el => el.classList.remove('is-hot'));
+    chart.querySelectorAll('.is-under').forEach(el => el.classList.remove('is-under'));
     const guides = chart.querySelector('.plot-guides'); if (guides) guides.innerHTML = '';
     hideTooltip();
   }
   {
     const chart = $('#pareto-chart');
-    chart.addEventListener('pointerover', event => { const point = event.target.closest('.plot-point'); if (point) heatPoint(point, event); });
-    chart.addEventListener('pointerout', event => { if (event.target.closest('.plot-point') && !(event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest('.plot-point'))) coolPoints(); });
+    chart.addEventListener('pointerover', event => {
+      const point = event.target.closest('.plot-point'); if (!point) return;
+      if (point !== document.activeElement && point !== point.parentNode.lastElementChild) point.parentNode.appendChild(point);
+      heatPoint(point, event);
+    });
+    chart.addEventListener('pointerout', event => { if (event.pointerType !== 'touch' && event.target.closest('.plot-point') && !(event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest('.plot-point'))) coolPoints(); });
     chart.addEventListener('focusin', event => { const point = event.target.closest('.plot-point'); if (point) heatPoint(point); });
     chart.addEventListener('focusout', coolPoints);
+    chart.addEventListener('click', event => { const label = event.target.closest('.plot-label'); if (label) { const point = chart.querySelector(`.plot-point[data-model="${CSS.escape(label.dataset.model)}"]`); if (point) point.focus({preventScroll: true}); } });
+    $('#pareto-list').addEventListener('click', event => { const row = event.target.closest('li'); if (row) heatPoint(chart.querySelector(`.plot-point[data-model="${CSS.escape(row.dataset.model)}"]`)); });
   }
 
   /* ---------------------------------------------------------------- Waffle */
-  const entryFor = (task, model) => task.results[model.id].contexts.overview;
+  const entryFor = (task, model) => task.results[model.id];
   const trialScore = entry => entry.status === 'scored' ? 100 * entry.passed / entry.total : null;
   const statusText = entry => entry.status === 'timeout' ? 'Timeout' : 'Error';
   const byMeanDescending = (a, b) => a.mean === null || b.mean === null
@@ -291,7 +325,7 @@
     }
     return {models, rows};
   }
-  const taskHref = (task, model, entry) => `/tasks?task=${encodeURIComponent(task.id)}${model ? `&model=${encodeURIComponent(model.id)}` : ''}${entry && entry.run ? `&run=${encodeURIComponent(entry.run)}` : ''}`;
+  const taskHref = (task, model, entry) => { const query = new URLSearchParams({...(model && {model: model.id}), ...(entry && entry.run && {run: entry.run})}).toString(); return `/task/${encodeURIComponent({33: 'coursera', 'breakoutgames-2': 'breakout-games'}[task.id] || task.id)}${query ? `?${query}` : ''}`; };
   const clip = (text, limit) => text.length > limit ? text.slice(0, limit - 1).trimEnd() + '…' : text;
 
   function waffleMarkup({width, data, exporting}) {
@@ -311,10 +345,10 @@
       return `<a class="wf-link" href="${taskHref(task, model, entry)}" tabindex="${r === 0 && c === 0 ? 0 : -1}" data-r="${r}" data-c="${c}" aria-label="${escape(task.name)}, ${escape(model.name)}: ${escape(description)}">${rect}</a>`;
     };
     if (horizontal) {
-      const labelW = 194, longest = Math.min(18, Math.max(...rows.map(row => row.name.length)));
+      const labelW = 200, longest = Math.min(26, Math.max(...rows.map(row => row.name.length)));
       const headH = Math.ceil(longest * 5.5 * Math.sin(angle)) + 8, rightPad = 36;
       const pitch = state.large && !exporting ? 21 : clamp(Math.floor((width - labelW - rightPad) / n), 9, 21);
-      const cellSize = pitch - 2, rowPitch = Math.max(pitch, 22), cellH = rowPitch - 2;
+      const cellSize = pitch - 2, rowPitch = Math.max(pitch, innerHeight < 800 && !exporting ? 20 : 22), cellH = rowPitch - 2;
       height = headH + m * rowPitch + 4;
       const gridW = n * pitch;
       const total = labelW + gridW + rightPad;
@@ -322,20 +356,20 @@
       if (!exporting) body += `<rect class="wf-band wf-band-r" x="0" y="0" width="${labelW + gridW - 2}" height="${rowPitch}" rx="4"/><rect class="wf-band wf-band-c" x="0" y="0" width="${pitch}" height="${height - 4}" rx="4"/>`;
       rows.forEach((row, c) => {
         const x = labelW + c * pitch + cellSize / 2 + 3, y = headH - 6;
-        body += link(`class="wf-task" href="${taskHref(row.task)}" tabindex="-1" data-c="${c}"`, `<text transform="translate(${x} ${y}) rotate(-58)">${escape(clip(row.name, 18))}</text>`);
+        body += link(`class="wf-task" href="${taskHref(row.task)}" tabindex="-1" data-c="${c}"`, `<text transform="translate(${x} ${y}) rotate(-58)">${escape(clip(row.name, 26))}</text>`);
       });
       models.forEach((model, r) => {
         const y = headH + r * rowPitch + cellH / 2;
         const logo = 14;
-        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><rect class="wf-model-hit" x="0" y="${headH + r * rowPitch - 1}" width="${labelW - 6}" height="${rowPitch}" fill="transparent"/><image class="plot-logo" href="${escape(model.logo)}" x="0" y="${y - logo / 2}" width="${logo}" height="${logo}"/><text class="wf-model-name" x="20" y="${y + 4}">${escape(clip(model.short, 19))}</text><text class="wf-model-score" x="${labelW - 12}" y="${y + 3.5}" text-anchor="end">${model.mean === null ? '' : decimal(model.mean)}</text></g>`;
+        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><rect class="wf-model-hit" x="0" y="${headH + r * rowPitch - 1}" width="${labelW - 6}" height="${rowPitch}" fill="transparent"/><image class="plot-logo" href="${escape(model.logo)}" x="0" y="${y - logo / 2}" width="${logo}" height="${logo}"/><text class="wf-model-name" x="20" y="${y + 4}">${escape(clip(model.name, 19))}</text><text class="wf-model-score" x="${labelW - 10}" y="${y + 3.5}" text-anchor="end">${model.mean === null ? '' : `${decimal(model.mean)}%`}</text></g>`;
         rows.forEach((row, c) => { body += cell(r, c, cellAt(r, c)); });
       });
       return {body, width: Math.max(total, width), height, contentWidth: total, cellAt, horizontal, labelW, headH, gridW, pitch, rowsTop: headH};
     }
     // Narrow screens: tasks down the side, models across the top, in one or two blocks.
-    const blocks = width >= 700 ? 2 : 1, gutter = 24;
+    const blocks = width >= 640 ? 2 : 1, gutter = 24;
     const blockW = (width - gutter * (blocks - 1)) / blocks;
-    const labelW = blocks === 2 ? 138 : 120, longest = Math.min(19, Math.max(...models.map(model => model.short.length)));
+    const labelW = 148, longest = Math.min(19, Math.max(...models.map(model => model.name.length)));
     const headH = Math.ceil(longest * 5.6 * Math.sin(angle)) + 12, rightPad = Math.ceil(longest * 5.6 * Math.cos(angle)) - 8;
     const colPitch = clamp(Math.floor((blockW - labelW - rightPad) / m), 14, 26), rowPitch = state.large ? 20 : 15;
     const perBlock = Math.ceil(n / blocks);
@@ -348,12 +382,12 @@
       const offset = block * (blockW + gutter);
       models.forEach((model, r) => {
         const x = offset + labelW + r * colPitch + colPitch / 2 + 2;
-        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.short, 19))}</text></g>`;
+        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.name, 19))}</text></g>`;
       });
     }
     rows.forEach((row, c) => {
       const box = cellAt(0, c);
-      body += link(`class="wf-task" href="${taskHref(row.task)}" tabindex="-1" data-c="${c}"`, `<text x="${box.x - 8}" y="${box.y + box.h - 2.5}" text-anchor="end">${escape(clip(row.name, blocks === 2 ? 22 : 19))}</text>`);
+      body += link(`class="wf-task" href="${taskHref(row.task)}" tabindex="-1" data-c="${c}"`, `<text x="${box.x - 8}" y="${box.y + box.h - 2.5}" text-anchor="end">${escape(row.name)}</text>`);
       models.forEach((model, r) => { body += cell(r, c, cellAt(r, c)); });
     });
     return {body, width, height, contentWidth: width, cellAt, horizontal, labelW, headH};
@@ -371,9 +405,9 @@
     chart.innerHTML = `<svg viewBox="0 0 ${view.contentWidth} ${view.height}" width="${view.contentWidth}" height="${view.height}" role="group" aria-label="Tests passed by task and model">${view.body}<rect class="wf-focus" x="0" y="0" width="0" height="0" rx="3"/></svg>`;
     chart.style.justifyContent = view.contentWidth < width ? 'center' : 'flex-start';
     const paint = scorePainter();
-    $('#waffle-legend').innerHTML = `<span class="wf-legend-scale"><span>0%</span>${[0, 5, 10, 25, 50, 100].map(value => `<i style="background:${paint(value)}" aria-hidden="true"></i>`).join('')}<span>100%</span></span><span class="wf-legend-item"><i class="wf-key-timeout" aria-hidden="true"></i>Timeout</span><span class="wf-legend-item"><i class="wf-key-error" aria-hidden="true"></i>Error</span><span class="wf-legend-note">each cell is one run</span>`;
+    $('#waffle-legend').innerHTML = `<span class="wf-legend-scale">${WAFFLE_STEPS.map(value => `<span class="wf-legend-step"><i style="background:${paint(value)}" aria-hidden="true"></i>${value}</span>`).join('')}</span><span class="wf-legend-item"><i class="wf-key-timeout" aria-hidden="true"></i>Timeout</span><span class="wf-legend-item"><i class="wf-key-error" aria-hidden="true"></i>Error</span><span class="wf-legend-note">each cell is one run</span>`;
     const select = $('#waffle-sort');
-    select.innerHTML = `<option value="difficulty">Easiest first</option><option value="name">Name</option>${data.models.map(m => `<option value="${escape(m.id)}">${escape(m.short)} score</option>`).join('')}`;
+    select.innerHTML = `<option value="difficulty">Easiest first</option><option value="name">Name</option>${data.models.map(m => `<option value="${escape(m.id)}">${escape(m.name)} score</option>`).join('')}`;
     if (![...select.options].some(option => option.value === state.sort)) state.sort = 'difficulty';
     select.value = state.sort;
     const expand = $('#waffle-expand');
@@ -398,9 +432,11 @@
     }
     const focus = chart.querySelector('.wf-focus');
     focus.setAttribute('x', box.x - .5); focus.setAttribute('y', box.y - .5); focus.setAttribute('width', box.w + 1); focus.setAttribute('height', box.h + 1); focus.classList.add('is-on');
+    focus.classList.toggle('is-key', link.matches(':focus-visible'));
     let details = `<strong>${escape(task.name)}</strong><span>${escape(model.name)}</span>`;
     details += score !== null ? `<span class="tooltip-score">${entry.passed.toLocaleString('en-US')} of ${entry.total.toLocaleString('en-US')} tests · ${decimal(score)}%</span>` : `<span class="tooltip-score">${statusText(entry)}</span>`;
-    details += '<span class="tooltip-status">Open the task →</span>';
+    const open = 'Open the task <svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    details += matchMedia('(hover: none)').matches ? `<a class="tooltip-status" href="${link.getAttribute('href')}">${open}</a>` : `<span class="tooltip-status">${open}</span>`;
     showTooltip(link, details, event);
     waffleCurrent = link;
   }
@@ -415,24 +451,32 @@
     chart.addEventListener('pointerover', event => {
       const link = event.target.closest('.wf-link');
       if (link) { if (event.pointerType !== 'touch') heatCell(link, event); return; }
-      const task = event.target.closest('.wf-task');
+      const task = event.target.closest('.wf-task'), model = event.target.closest('.wf-model');
+      if (task || model) coolCells();
       if (task) {
-        chart.querySelectorAll('.is-hot').forEach(el => el.classList.remove('is-hot')); task.classList.add('is-hot');
+        task.classList.add('is-hot');
         const band = chart.querySelector('.wf-band-c');
         if (band) { band.setAttribute('x', waffleView.cellAt(0, Number(task.dataset.c)).x - 1); band.classList.add('is-on'); }
       }
-      const model = event.target.closest('.wf-model');
       if (model) {
         const band = chart.querySelector('.wf-band-r');
         if (band) { band.setAttribute('y', waffleView.cellAt(Number(model.dataset.r), 0).y - 1); band.classList.add('is-on'); }
       }
     });
-    chart.addEventListener('pointerleave', () => { if (document.activeElement && chart.contains(document.activeElement)) return; coolCells(); });
+    chart.addEventListener('pointerleave', event => { if (event.pointerType === 'touch' || (document.activeElement && chart.contains(document.activeElement))) return; coolCells(); });
     chart.addEventListener('pointerout', event => {
+      if (event.pointerType === 'touch') return;
       if (!event.relatedTarget || !event.relatedTarget.closest || !event.relatedTarget.closest('.wf-link, .wf-task, .wf-model')) coolCells();
     });
     chart.addEventListener('focusin', event => { const link = event.target.closest('.wf-link'); if (link) heatCell(link); });
-    chart.addEventListener('focusout', coolCells);
+    chart.addEventListener('focusout', event => { if (tooltip.contains(event.relatedTarget)) return; coolCells(); });
+    // Touch screens never send pointerout, so a tap outside closes the current view's tooltip.
+    document.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'touch' || event.target.closest('#result-tooltip')) return;
+      if (state.view === 'waffle' && !event.target.closest('.wf-link')) coolCells();
+      if (state.view === 'pareto' && !event.target.closest('.plot-point, .pareto-list li')) coolPoints();
+      if (state.view === 'table' && !event.target.closest('td[data-tip]')) hideTooltip();
+    });
     chart.addEventListener('click', event => {
       const model = event.target.closest('.wf-model');
       if (model) { state.sort = state.sort === model.dataset.model ? 'difficulty' : model.dataset.model; renderWaffle(); syncURL(); return; }
@@ -474,9 +518,8 @@
     tabs.forEach(tab => { const selected = tab.dataset.view === state.view; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
     panels.forEach(panel => { panel.hidden = panel.id !== `result-${state.view}`; });
     $('#columns-btn').disabled = state.view !== 'table';
-    $('#board-csv').href = state.view === 'waffle' ? 'data/waffle-overview.csv' : 'data/leaderboard-overview.csv';
     renderCurrent();
-    if (updateURL) syncURL();
+    if (updateURL) { try { history.replaceState(null, '', stateURL()); } catch (_) { /* optional */ } }
   }
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => showView(tab.dataset.view));
@@ -513,6 +556,10 @@
     });
   });
   document.addEventListener('click', event => { if (!event.target.closest('.tool-pop')) closeMenus(); });
+  menuButtons.forEach(button => {
+    const pop = $('#' + button.getAttribute('aria-controls'));
+    pop.addEventListener('focusout', event => { const next = event.relatedTarget; if (next && next !== button && !pop.contains(next)) closeMenus(); });
+  });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') { closeMenus(true); hideTooltip(); return; }
     const menu = event.target.closest && event.target.closest('[role="menu"]');
@@ -550,7 +597,7 @@
     const headline = `WebsiteBench: ${TITLE}`;
     const links = {
       x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`WebsiteBench\n${TITLE}\n${SHARE_SHORT}\n\n${shareLines(url)}`)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      linkedin: `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(`WebsiteBench\n${TITLE}\n\n${SHARE_SENTENCE}\n\n${shareLines(url)}`)}`,
       reddit: `https://www.reddit.com/submit?title=${encodeURIComponent(headline)}&text=${encodeURIComponent(`${SHARE_SENTENCE}\n\n${shareLines(url)}`)}`,
       hn: `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(url)}&t=${encodeURIComponent(headline)}`,
     };
@@ -559,8 +606,10 @@
   $('#share-menu').addEventListener('click', event => { if (event.target.closest('a')) closeMenus(); });
   $('#share-copy').addEventListener('click', async () => {
     closeMenus();
-    await navigator.clipboard.writeText(`WebsiteBench\n${TITLE}\n\n${SHARE_SENTENCE}\n\n${shareLines(stateURL())}`);
-    announce('Text copied', $('#share-btn'));
+    try {
+      await navigator.clipboard.writeText(`WebsiteBench\n${TITLE}\n\n${SHARE_SENTENCE}\n\n${shareLines(stateURL())}`);
+      announce('Text copied', $('#share-btn'));
+    } catch (_) { announce('Copy failed'); }
   });
 
   /* ---------------------------------------------------------------- filter and columns */
@@ -569,7 +618,7 @@
     if (!list.childElementCount) {
       list.innerHTML = allModels.map(m => `<li><label><input type="checkbox" data-model="${escape(m.id)}"><img class="model-logo" src="${escape(m.logo)}" alt="" width="16" height="16"><span>${escape(m.name)}</span></label></li>`).join('');
     }
-    $$('input', list).forEach(input => { input.checked = state.models.has(input.dataset.model); });
+    $$('input', list).forEach(input => { input.checked = state.models.has(input.dataset.model); input.disabled = input.checked && state.models.size === 1; });
     const openIDs = allModels.filter(m => m.group === 'open').map(m => m.id), closedIDs = allModels.filter(m => m.group !== 'open').map(m => m.id);
     const same = ids => ids.length === state.models.size && ids.every(id => state.models.has(id));
     const active = same(allModels.map(m => m.id)) ? 'all' : same(closedIDs) ? 'proprietary' : same(openIDs) ? 'open' : '';
@@ -581,7 +630,6 @@
   }
   $('#filter-list').addEventListener('change', event => {
     const id = event.target.dataset.model; if (!id) return;
-    if (!event.target.checked && state.models.size === 1) { event.target.checked = true; return; }
     if (event.target.checked) state.models.add(id); else state.models.delete(id);
     renderFilter(); renderCurrent(); syncURL();
   });
@@ -593,15 +641,15 @@
   function renderColumns() {
     const list = $('#columns-list');
     if (!list.childElementCount) list.innerHTML = Object.entries(COLUMNS).map(([key, label]) => `<li><label><input type="checkbox" data-col="${key}"><span>${label}</span></label></li>`).join('');
-    $$('input', list).forEach(input => { input.checked = state.columns.has(input.dataset.col); });
+    $$('input', list).forEach(input => { input.checked = state.columns.has(input.dataset.col); input.disabled = input.checked && state.columns.size === 1; });
     const hidden = Object.keys(COLUMNS).length - state.columns.size;
     $('#columns-btn').classList.toggle('is-active', hidden > 0);
     const count = $('#columns-count'); count.hidden = !hidden; count.textContent = state.columns.size;
   }
   $('#columns-list').addEventListener('change', event => {
     const key = event.target.dataset.col; if (!key) return;
-    if (!event.target.checked && state.columns.size === 1) { event.target.checked = true; return; }
     if (event.target.checked) state.columns.add(key); else state.columns.delete(key);
+    if (!state.columns.has(state.sortKey)) { state.sortKey = 'overall'; state.descending = true; }
     renderColumns(); renderTable(); syncURL();
   });
 
@@ -626,34 +674,36 @@
     const faces = await Promise.all([
       ['Schibsted Grotesk', 'schibsted-grotesk-latin', '400 900', ''],
       ['Martian Mono', 'martian-mono-latin', '100 800', 'font-stretch:75% 112.5%;'],
-      ['EB Garamond', 'eb-garamond-latin', '400 800', ''],
     ].map(async ([family, file, weight, extra]) => `@font-face{font-family:'${family}';font-weight:${weight};${extra}src:url(${await dataURI(`/assets/fonts/${file}.woff2`, 'font/woff2')}) format('woff2');}`));
     return faces.join('\n') + '\n' + rules;
   }
   function tableMarkup(width, models) {
     const columns = Object.keys(COLUMNS).filter(key => state.columns.has(key));
     const fmt = (key, value) => value === null || value === undefined ? '—' : WebsiteBenchLeaderboard.format(key, value);
-    const rowH = 38, headH = 34;
-    const rankW = 34, modelW = 228, numW = 92;
+    const rowH = 40, headH = 36, radius = 16, inset = 16;
+    const rankW = 50, modelW = 220, numW = 92, gap = 8;
     const others = columns.filter(key => key !== 'overall');
-    const overallW = columns.includes('overall') ? Math.max(200, width - rankW - modelW - others.length * numW) : 0;
-    const best = Object.fromEntries(Object.keys(SCORES).map(key => [key, Math.max(...models.map(m => m[key] === null ? -Infinity : m[key]))]));
-    let x = rankW + modelW, heads = `<text class="xt-head" x="4" y="22">#</text><text class="xt-head" x="${rankW}" y="22">Model</text>`, positions = {};
-    if (overallW) { positions.overall = x + overallW; heads += `<text class="xt-head" x="${positions.overall - 8}" y="22" text-anchor="end">Overall</text>`; x += overallW; }
-    others.forEach(key => { x += numW; positions[key] = x; heads += `<text class="xt-head" x="${x - 8}" y="22" text-anchor="end">${COLUMNS[key]}</text>`; });
-    let body = `<line class="plot-axis" x1="0" y1="${headH}" x2="${width}" y2="${headH}"/>` + heads;
+    const numbersStart = width - inset + gap - others.length * numW;
+    const overallW = columns.includes('overall') ? Math.max(200, numbersStart - rankW - modelW) : 0;
+    const headY = headH / 2 + 4.5;
+    let x = overallW ? rankW + modelW : numbersStart, heads = `<text class="xt-head" x="${inset}" y="${headY}">#</text><text class="xt-head" x="${rankW}" y="${headY}">Model</text>`, positions = {};
+    if (overallW) { positions.overall = x + overallW; heads += `<text class="xt-head" x="${positions.overall - gap}" y="${headY}" text-anchor="end">Overall</text>`; x += overallW; }
+    others.forEach(key => { x += numW; positions[key] = x; heads += `<text class="xt-head" x="${x - gap}" y="${headY}" text-anchor="end">${COLUMNS[key]}</text>`; });
+    let body = `<path class="xt-band" d="M0 ${headH}V${radius}A${radius} ${radius} 0 0 1 ${radius} 0H${width - radius}A${radius} ${radius} 0 0 1 ${width} ${radius}V${headH}Z"/><line class="plot-axis" x1="0" y1="${headH}" x2="${width}" y2="${headH}"/>` + heads;
     models.forEach((m, index) => {
       const y = headH + index * rowH, mid = y + rowH / 2;
-      body += `<text class="xt-rank" x="4" y="${mid + 4}">${index + 1}</text><image class="plot-logo" href="${escape(m.logo)}" x="${rankW}" y="${mid - 8}" width="16" height="16"/><text class="xt-name" x="${rankW + 24}" y="${mid + 4.5}">${escape(m.name)}</text>`;
+      body += `<text class="xt-rank" x="${inset}" y="${mid + 4}">${STANDING.rank[m.id]}</text><image class="plot-logo" href="${escape(m.logo)}" x="${rankW}" y="${mid - 8}" width="16" height="16"/><text class="xt-name" x="${rankW + 24}" y="${mid + 4.5}">${escape(m.name)}</text>`;
       if (overallW) {
         const barW = overallW - 80;
-        body += `<rect class="xt-track" x="${rankW + modelW}" y="${mid - 5}" width="${barW}" height="10" rx="5"/><rect class="${m.group === 'open' ? 'xt-open' : 'xt-proprietary'}" x="${rankW + modelW}" y="${mid - 5}" width="${(barW * (m.overall || 0) / 100).toFixed(1)}" height="10" rx="5"/>`;
-        body += `<text class="xt-cell${m.overall === best.overall ? ' xt-best' : ''}" x="${positions.overall - 8}" y="${mid + 4.5}" text-anchor="end">${fmt('overall', m.overall)}</text>`;
+        body += `<rect class="xt-track" x="${rankW + modelW}" y="${mid - 5}" width="${barW}" height="10" rx="5"/><rect class="${m.group === 'open' ? 'xt-open' : 'xt-proprietary'}" x="${rankW + modelW}" y="${mid - 5}" width="${(barW * (m.overall || 0) / 100).toFixed(1)}" height="10" rx="5"/><rect class="xt-tick" x="${(rankW + modelW + barW * .25 - 1).toFixed(1)}" y="${mid - 8}" width="2" height="16" rx="1"/>`;
+        body += `<text class="xt-cell${STANDING.isBest(m, 'overall') ? ' xt-best' : ''}" x="${positions.overall - gap}" y="${mid + 4.5}" text-anchor="end">${fmt('overall', m.overall)}</text>`;
       }
-      others.forEach(key => { body += `<text class="xt-cell${SCORES[key] && m[key] === best[key] ? ' xt-best' : ''}" x="${positions[key] - 8}" y="${mid + 4.5}" text-anchor="end">${fmt(key, m[key])}</text>`; });
-      body += `<line class="plot-grid" x1="0" y1="${y + rowH}" x2="${width}" y2="${y + rowH}"/>`;
+      others.forEach(key => { body += `<text class="xt-cell${STANDING.isBest(m, key) ? ' xt-best' : ''}" x="${positions[key] - gap}" y="${mid + 4.5}" text-anchor="end">${fmt(key, m[key])}</text>`; });
+      if (index < models.length - 1) body += `<line class="plot-grid" x1="0" y1="${y + rowH}" x2="${width}" y2="${y + rowH}"/>`;
     });
-    const height = headH + models.length * rowH + 30;
+    const cardH = headH + models.length * rowH;
+    body += `<rect class="xt-card" x=".5" y=".5" width="${width - 1}" height="${cardH - 1}" rx="${radius}"/>`;
+    const height = cardH + 34;
     body += `<rect class="xt-proprietary" x="0" y="${height - 15}" width="18" height="8" rx="4"/><text class="xt-note" x="24" y="${height - 7}">Proprietary model</text><rect class="xt-open" x="150" y="${height - 15}" width="18" height="8" rx="4"/><text class="xt-note" x="174" y="${height - 7}">Open-source model</text>`;
     return {body, height};
   }
@@ -675,10 +725,12 @@
     } else {
       const data = waffleData(), view = waffleMarkup({width: inner, data, exporting: true}), paint = scorePainter();
       const legendY = view.height + 22;
-      let legend = `<text class="xt-note" x="${view.labelW}" y="${legendY + 9}">0%</text>`;
-      [0, 5, 10, 25, 50, 100].forEach((value, i) => { legend += `<rect class="wf-cell" x="${view.labelW + 26 + i * 15}" y="${legendY}" width="12" height="12" rx="2" fill="${paint(value)}"/>`; });
-      const after = view.labelW + 26 + 6 * 15 + 4;
-      legend += `<text class="xt-note" x="${after}" y="${legendY + 9}">100%</text><rect class="wf-cell is-timeout" x="${after + 52}" y="${legendY}" width="12" height="12" rx="2"/><text class="xt-note" x="${after + 70}" y="${legendY + 9}">Timeout</text><rect class="wf-cell is-error" x="${after + 134}" y="${legendY}" width="12" height="12" rx="2"/><text class="xt-note" x="${after + 152}" y="${legendY + 9}">Error</text><text class="xt-note" x="${after + 206}" y="${legendY + 9}">each cell is one run</text>`;
+      let legend = '', x = view.labelW;
+      WAFFLE_STEPS.forEach(value => {
+        legend += `<rect class="wf-cell" x="${x}" y="${legendY}" width="12" height="12" rx="2" fill="${paint(value)}"/><text class="xt-step" x="${x + 16}" y="${legendY + 9.5}">${value}</text>`;
+        x += 16 + String(value).length * 6.5 + 8;
+      });
+      legend += `<rect class="wf-cell is-timeout" x="${x + 10}" y="${legendY}" width="12" height="12" rx="2"/><text class="xt-note" x="${x + 28}" y="${legendY + 9}">Timeout</text><rect class="wf-cell is-error" x="${x + 92}" y="${legendY}" width="12" height="12" rx="2"/><text class="xt-note" x="${x + 110}" y="${legendY + 9}">Error</text><text class="xt-note" x="${x + 164}" y="${legendY + 9}">each cell is one run</text>`;
       body = view.body + legend; bodyH = legendY + 18;
     }
     const height = top + bodyH + foot;
@@ -688,14 +740,13 @@
     const dark = toRGB(token('--paper')).reduce((sum, v) => sum + v, 0) < 380;
     if (dark) body = body.replace(/<image /g, '<image filter="url(#wb-invert)" ');
     const css = await exportCSS();
-    const ink = token('--ink'), accent = token('--brand-accent') || token('--salmon');
+    const ink = token('--ink'), wordmark = await dataURI(`/assets/brand/wordmark-${dark ? 'dark' : 'light'}.svg`, 'image/svg+xml');
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${W} ${height}" width="${W}" height="${height}" role="img" aria-label="WebsiteBench: ${escape(currentTitle())}"><title>WebsiteBench: ${escape(currentTitle())}</title><defs><filter id="wb-invert" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"/></filter><style><![CDATA[
 ${css}
-.xh-brand{font:500 27px 'EB Garamond',serif;fill:${ink};}
 .xh-title{font:600 15px 'Schibsted Grotesk',sans-serif;fill:${ink};}
 .xh-meta{font:500 12px 'Martian Mono',monospace;font-stretch:86%;fill:${token('--ink-3')};}
 ]]></style></defs><rect width="${W}" height="${height}" fill="${token('--paper')}"/>`
-      + `<g transform="translate(${pad} 22)"><g transform="scale(.82)"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="${ink}" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="${ink}"/><path d="M16 1.5v29" stroke="${accent}" stroke-width="2.5"/></g><text class="xh-brand" x="36" y="21">WebsiteBench</text></g>`
+      + `<image href="${wordmark}" x="${pad - 3}" y="18" width="204" height="36"/>`
       + `<text class="xh-title" x="${pad}" y="74">${escape(currentTitle())}</text>`
       + `<svg x="${pad}" y="${top}" width="${inner}" height="${bodyH}" viewBox="0 0 ${inner} ${bodyH}" overflow="visible">${body}</svg>`
       + `<line x1="${pad}" y1="${height - foot + 8}" x2="${W - pad}" y2="${height - foot + 8}" stroke="${token('--rule')}"/><text class="xh-meta" x="${pad}" y="${height - 14}">${escape(TITLE)}</text><text class="xh-meta" x="${W - pad}" y="${height - 14}" text-anchor="end">website-bench.com</text></svg>`;
@@ -716,17 +767,33 @@ ${css}
     if (state.view === 'table') {
       const columns = Object.keys(COLUMNS).filter(key => state.columns.has(key));
       table = [`| # | Model | ${columns.map(key => COLUMNS[key]).join(' | ')} |`, `|---|---|${columns.map(() => '---:').join('|')}|`,
-        ...tableModels().map((m, i) => `| ${i + 1} | ${m.name} | ${columns.map(key => WebsiteBenchLeaderboard.format(key, m[key])).join(' | ')} |`)];
+        ...tableModels().map(m => `| ${STANDING.rank[m.id]} | ${m.name} | ${columns.map(key => WebsiteBenchLeaderboard.format(key, m[key])).join(' | ')} |`)];
     } else if (state.view === 'pareto') {
       const view = paretoMarkup({width: 1000, height: 500, compact: true, models: visibleModels()});
       table = [`| Model | ${SCORES[state.score]} pass rate | Mean ${RESOURCES[state.resource]} per task | Pareto frontier |`, '|---|---:|---:|---|',
         ...view.shown.slice().sort((a, b) => b[state.score] - a[state.score]).map(m => `| ${m.name} | ${decimal(m[state.score])}% | ${formatResource(m[state.resource], state.resource)} | ${view.frontierIDs.has(m.id) ? 'Yes' : ''} |`)];
     } else {
       const {models, rows} = waffleData();
-      table = [`| Task | ${models.map(m => m.short).join(' | ')} |`, `|---|${models.map(() => '---:').join('|')}|`,
+      table = [`| Task | ${models.map(m => m.name).join(' | ')} |`, `|---|${models.map(() => '---:').join('|')}|`,
         ...rows.map(row => `| ${row.name} | ${models.map(m => { const e = entryFor(row.task, m); return e.status === 'scored' ? `${e.passed}/${e.total}` : statusText(e); }).join(' | ')} |`)];
     }
     return `**WebsiteBench: ${currentTitle()}**\n\n${table.join('\n')}\n\nSource: ${stateURL()}\n`;
+  }
+  function buildCSV() {
+    const cell = value => { const text = String(value ?? ''); return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text; };
+    let table;
+    if (state.view === 'table') {
+      const columns = Object.keys(COLUMNS).filter(key => state.columns.has(key));
+      table = [['model', ...columns.map(key => key === 'tokens' ? 'tokens_millions' : key)], ...tableModels().map(m => [m.name, ...columns.map(key => m[key])])];
+    } else if (state.view === 'pareto') {
+      const view = paretoMarkup({width: 1000, height: 500, compact: true, models: visibleModels()});
+      const mean = {cost: 'mean_cost_usd', tokens: 'mean_tokens_millions', turns: 'mean_agent_turns'}[state.resource];
+      table = [['model', `${state.score}_pass_rate`, mean, 'pareto_frontier'], ...view.shown.slice().sort((a, b) => b[state.score] - a[state.score]).map(m => [m.name, m[state.score], m[state.resource], view.frontierIDs.has(m.id)])];
+    } else {
+      const {models, rows} = waffleData();
+      table = [['task_id', 'task', 'model', 'passed', 'total', 'test_pass_rate', 'status'], ...rows.flatMap(row => models.map(m => { const e = entryFor(row.task, m); return [row.task.id, row.name, m.name, e.passed, e.total, trialScore(e), e.status]; }))];
+    }
+    return table.map(row => row.map(cell).join(',')).join('\n') + '\n';
   }
   function download(blob, extension) {
     const link = document.createElement('a');
@@ -736,16 +803,17 @@ ${css}
     setTimeout(() => URL.revokeObjectURL(link.href), 4000);
   }
   $('#export-menu').addEventListener('click', async event => {
-    const item = event.target.closest('[data-export], a'); if (!item) return;
+    const item = event.target.closest('[data-export]'); if (!item) return;
+    event.preventDefault();
     const action = item.dataset.export, source = $('#export-btn');
     closeMenus();
-    if (!action) { announce('CSV downloaded', source); return; }
     try {
+      if (action === 'csv') { download(new Blob([buildCSV()], {type: 'text/csv'}), 'csv'); announce('CSV downloaded', source); }
       if (action === 'markdown') { await navigator.clipboard.writeText(buildMarkdown()); announce('Markdown copied', source); }
       if (action === 'copy-png') { await navigator.clipboard.write([new ClipboardItem({'image/png': buildPNG()})]); announce('PNG copied', source); }
       if (action === 'png') { download(await buildPNG(), 'png'); announce('PNG downloaded', source); }
       if (action === 'svg') { const {svg} = await buildSVG(); download(new Blob([svg], {type: 'image/svg+xml'}), 'svg'); announce('SVG downloaded', source); }
-    } catch (_) { announce('Your browser blocked this. Try Download PNG.'); }
+    } catch (_) { announce({csv: 'CSV download failed', markdown: 'Markdown copy failed', 'copy-png': 'PNG copy failed', png: 'PNG download failed', svg: 'SVG download failed'}[action]); }
   });
 
   /* ---------------------------------------------------------------- wiring */

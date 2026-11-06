@@ -15,30 +15,30 @@
     if (key === 'tokens') return value.toLocaleString('en-US', oneDecimal) + 'M';
     return value.toLocaleString('en-US', oneDecimal);
   }
-  function title(m, key) {
-    if (!finite(m[key])) return '';
-    if (SCORES.includes(key)) {
-      const tests = m.score_counts[key];
-      return `${tests.passed.toLocaleString('en-US')} of ${tests.total.toLocaleString('en-US')} tests passed`;
-    }
-    return '';
-  }
-  function renderRows(models) {
+  // Rank and best scores come from all the models by Overall. Sorting and filtering change only order and visibility.
+  function standing(models) {
+    const rank = Object.fromEntries(models.slice().sort((a, b) => b.overall - a.overall).map((m, index) => [m.id, index + 1]));
     const best = Object.fromEntries(SCORES.map(k => [k, Math.max(...models.map(m => finite(m[k]) ? m[k] : -Infinity))]));
-    const isBest = (m, key) => SCORES.includes(key) && finite(m[key]) && m[key] === best[key];
-    return models.map((m, index) => {
+    return {rank, isBest: (m, key) => SCORES.includes(key) && finite(m[key]) && m[key] === best[key]};
+  }
+  const tip = (m, key) => {
+    if (!SCORES.includes(key) || !finite(m[key])) return '';
+    const tests = m.score_counts[key];
+    return ` data-tip="${tests.passed.toLocaleString('en-US')} of ${tests.total.toLocaleString('en-US')} tests passed"`;
+  };
+  function renderRows(models, {rank, isBest} = standing(models)) {
+    return models.map(m => {
       const open = m.group === 'open';
-      const sub = SCORES.slice(1).map(k => `<span data-col="${k}"><em>${k[0].toUpperCase()}</em>${format(k, m[k])}</span>`).join('');
       const overall = finite(m.overall) ? m.overall : 0;
       const cells = ['request', 'browser', 'system', ...RESOURCES].map(k =>
-        `<td data-col="${k}"${isBest(m, k) ? ' class="best"' : ''} data-value="${finite(m[k]) ? m[k] : ''}" title="${escape(title(m, k))}">${format(k, m[k])}</td>`).join('');
-      return `<tr data-model="${escape(m.id)}"><td class="rank">${index + 1}</td>`
+        `<td data-col="${k}"${isBest(m, k) ? ' class="best"' : ''} data-value="${finite(m[k]) ? m[k] : ''}"${tip(m, k)}>${format(k, m[k])}</td>`).join('');
+      return `<tr data-model="${escape(m.id)}"><td class="rank">${rank[m.id]}</td>`
         + `<th scope="row" class="model" title="${escape(m.org)}"><span class="m-name"><img class="model-logo" src="${escape(m.logo)}" alt="" width="18" height="18">${escape(m.name)}</span>`
         + `<span class="sr-only">${escape(m.org)}, ${open ? 'open-source' : 'proprietary'} model</span>`
-        + `<span class="m-sub" aria-hidden="true">${sub}</span></th>`
-        + `<td class="col-overall" data-col="overall" data-value="${finite(m.overall) ? m.overall : ''}" title="${escape(title(m, 'overall'))}"><span class="ov"><span class="bar" aria-hidden="true"><i class="${open ? 'open' : 'proprietary'}" style="width:${overall.toFixed(2)}%"></i></span><b${isBest(m, 'overall') ? ' class="best"' : ''}>${format('overall', m.overall)}</b></span></td>`
+        + '</th>'
+        + `<td class="col-overall" data-col="overall" data-value="${finite(m.overall) ? m.overall : ''}"${tip(m, 'overall')}><span class="ov"><span class="bar" aria-hidden="true"><i class="${open ? 'open' : 'proprietary'}" style="width:${overall.toFixed(2)}%"></i></span><b${isBest(m, 'overall') ? ' class="best"' : ''}>${format('overall', m.overall)}</b></span></td>`
         + `${cells}</tr>`;
     }).join('\n');
   }
-  return {renderRows, format};
+  return {renderRows, standing, format};
 });

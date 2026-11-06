@@ -1,0 +1,50 @@
+<main id="main" class="wrap page page-task" tabindex="-1">
+  <section class="task-sheet" id="task-view">
+    <header class="task-head" id="top">
+      <div class="task-picker-wrap"><h1 class="task-picker-label" id="task-picker-label">{{name}}</h1><select class="task-picker" id="task-picker" aria-label="Task" autocomplete="off">{{picker}}</select></div>
+      <nav class="results-tabs task-step" aria-label="Tasks">
+        <a href="/tasks">All tasks</a>
+        <a id="previous-task" rel="prev" href="{{prev-href}}" title="{{prev-name}}">Previous</a>
+        <a id="next-task" rel="next" href="{{next-href}}" title="{{next-name}}">Next</a>
+      </nav>
+    </header>
+    <div class="task-tools">
+      <p class="task-run" id="task-run" aria-live="polite">{{sentence}}</p>
+      <div class="board-tools">
+        <div class="results-tabs" id="view-tabs" role="group" aria-label="Pages in this comparison">{{view-tabs}}</div>
+        <div class="results-tabs" id="compare-modes" role="group" aria-label="Comparison layout">
+          <button type="button" data-mode="divider" aria-pressed="true">Divider</button>
+          <button type="button" data-mode="side" aria-pressed="false">Side<span class="mode-long"> by side</span></button>
+          <button type="button" data-mode="all" aria-pressed="false">All<span class="mode-long"> rebuilds</span></button>
+          <button type="button" class="compare-full" id="compare-full" aria-label="Show the comparison full screen" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="compare" id="compare" data-mode="divider" style="--shot-ratio:{{ratio}}">
+      <div class="stage" id="compare-stage">
+        <div class="frame" id="compare-frame" style="--split:50%">
+          <div class="layer is-ref">
+            <div class="chrome"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url"><span class="host">reference.local</span><span class="path" data-route>{{route}}</span></span></div>
+            <div class="shot-box"><img class="shot" id="shot-reference" src="{{reference}}" width="{{width}}" height="{{height}}" fetchpriority="high" decoding="async" alt="{{reference-alt}}" draggable="false"><span class="side">Reference</span></div>
+          </div>
+          <div class="layer is-cand" id="compare-rebuild">
+            <div class="chrome"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url"><span class="host">rebuild.local</span><span class="path" data-route>{{route}}</span></span></div>
+            <div class="shot-box"><img class="shot" id="shot-rebuild" src="{{rebuild}}" width="{{width}}" height="{{height}}" decoding="async" alt="{{rebuild-alt}}" draggable="false"><span class="side" id="side-rebuild">{{rebuild-label}}</span></div>
+          </div>
+          <div class="divider" id="compare-divider" role="slider" tabindex="0" aria-label="Divider between the reference and the rebuild" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50 percent reference">
+            <span class="grip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+      <ul class="rebuilds" id="rebuilds"></ul>
+      <button type="button" class="compare-exit" id="compare-exit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="task-side">
+      <div class="run-table-wrap"><table class="run-table"><caption class="sr-only" id="runs-caption">Every model on {{name}}</caption><thead><tr><th scope="col">Model</th><th class="run-bar" aria-hidden="true"></th><th class="run-passed" scope="col">Passed</th><th scope="col">%</th><th scope="col" class="run-shot"><span class="sr-only">Screenshot</span></th></tr></thead><tbody id="runs">{{runs}}</tbody></table></div>
+      <div class="task-notes">
+        <p class="link-list"><a href="/?view=waffle#results">Every result in the Waffle</a><a href="/run">Run this task</a></p>
+      </div>
+    </div>
+  </section>
+  <script type="application/json" id="task-data">{{data}}</script>
+</main>

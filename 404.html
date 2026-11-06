@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if(location.hostname==='websitebench.github.io')location.replace('https://website-bench.com'+location.pathname+location.search+location.hash)</script>
 <!-- Google tag (gtag.js) -->
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,32 +19,28 @@
 
   function gtag_report_conversion(url, event) {
     var modified = event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0);
+    var label = 'AW-18557798739/g6CwCM2c0rIdENOShpFF';
+    if (!url || modified || !window.google_tag_manager) { gtag('event', 'conversion', {send_to: label}); return true; }
     var navigated = false;
-    function followLink() {
-      if (url && !modified && !navigated) {
-        navigated = true;
-        window.location.assign(url);
-      }
-    }
-    gtag('event', 'conversion', {
-      send_to: 'AW-18557798739/g6CwCM2c0rIdENOShpFF',
-      event_callback: followLink,
-      event_timeout: 1000
-    });
-    if (url && !modified) window.setTimeout(followLink, 1000);
-    return modified;
+    function followLink() { if (!navigated) { navigated = true; window.location.assign(url); } }
+    gtag('event', 'conversion', {send_to: label, event_callback: followLink, event_timeout: 300});
+    window.setTimeout(followLink, 300);
+    return false;
   }
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
+<script>addEventListener('load',function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=AW-18557798739';document.head.appendChild(s)})</script>
+<script>(function(){var p=location.pathname.replace(/\/+$/,'').toLowerCase(),to={'/run':'/run','/tasks':'/tasks','/eval':'/eval','/analysis':'/analysis','/leaderboard':'/#results','/results':'/#results','/citation':'/#cite','/cite':'/#cite','/quickstart':'/run','/methodology':'/eval','/method':'/eval','/findings':'/analysis','/task':'/tasks'}[p];if(!to&&/^\/task\/[^/]+$/.test(p))to=p;if(to&&to!==location.pathname)location.replace(to+(to.indexOf('#')<0?location.search+location.hash:''))})()</script>
 <title>Page not found · WebsiteBench</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/assets/brand/logo.svg" type="image/svg+xml">
-<link rel="icon" href="/assets/brand/logo-32.png" type="image/png" sizes="32x32">
-<link rel="stylesheet" href="/assets/css/site.css?v=ctx9-20261106">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/site.css?v=r9i-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="/assets/js/site.js?v=ctx9-20261106" defer></script>
+<script src="/assets/js/site.js?v=r9i-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -74,13 +71,13 @@
   <header class="sec-head" id="top">
     <h1>Page not found</h1>
   </header>
-  <p class="page-intro">There is no page at this address. The leaderboard, the 70 tasks and the instructions for running the benchmark are one click away.</p>
-  <p class="run-links"><a class="link-btn" href="/">Leaderboard <span aria-hidden="true">→</span></a><a class="link-btn" href="/tasks">Browse the 70 tasks <span aria-hidden="true">→</span></a><a class="link-btn" href="/analysis">Analysis <span aria-hidden="true">→</span></a><a class="link-btn" href="/run">Run the benchmark <span aria-hidden="true">→</span></a></p>
+  <p class="page-intro">There is no page at this address.</p>
+  <p class="run-links"><a class="link-btn" href="/#results">Leaderboard<svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="link-btn" href="/run">Run<svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="link-btn" href="/tasks">Tasks<svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="link-btn" href="/eval">Eval<svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="link-btn" href="/analysis">Analysis<svg class="go-arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
 </main>
 
 <footer class="footer">
   <div class="wrap footer-in">
-    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg> <span class="brand-word"><img class="wordmark-light" src="assets/brand/wordmark-light.svg" alt="WebsiteBench" width="368" height="65"><img class="wordmark-dark" src="assets/brand/wordmark-dark.svg" alt="WebsiteBench" width="368" height="65"></span></p>
+    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg> <span class="brand-word"><img class="wordmark-light" src="/assets/brand/wordmark-light.svg" alt="WebsiteBench" width="368" height="65"><img class="wordmark-dark" src="/assets/brand/wordmark-dark.svg" alt="WebsiteBench" width="368" height="65"></span></p>
     <p class="footer-links"><a href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a><a href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Harbor Hub</a><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Dataset</a><a href="/#cite">Paper</a><a href="/tasks">Explore the tasks</a><a href="#top">Back to top</a></p>
   </div>
 </footer>

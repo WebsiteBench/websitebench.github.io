@@ -1,121 +1,115 @@
-/* Task browser: a contact sheet of the 70 websites and, for one website, every run's result beside a reference and rebuild comparison. */
-(async () => {
+/* Task browser. tools/prerender.js writes the pages; this adds sorting and search on the sheet and, on one website's page, the reference and rebuild comparison. */
+(() => {
   'use strict';
   const $ = selector => document.querySelector(selector);
-  const escape = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
-  const count = value => value.toLocaleString('en-US');
-  const taskUrl = (task, extra = {}) => `/tasks?${new URLSearchParams({task: task.id, ...extra})}`;
   const setPressed = (group, isOn) => group.querySelectorAll('button[aria-pressed]').forEach(b => b.setAttribute('aria-pressed', String(isOn(b))));
-
-  const [materials, previews] = await Promise.all(['data/task-materials.json', 'data/task-previews.json'].map(url => fetch(url).then(r => r.json())));
-
-  const tasks = materials.tasks.map(task => {
-    const runs = materials.models.map(model => {
-      const {runs: [run], status} = task.models[model.id];
-      const [passed, total] = run && run.scores.length ? run.scores[0].value.split('/').map(Number) : [null, null];
-      return {id: run ? run.id : `${model.id}-none`, model, status, passed, total, rate: total ? 100 * passed / total : null};
-    }).sort((a, b) => (a.rate === null) - (b.rate === null) || b.rate - a.rate || a.model.name.localeCompare(b.model.name));
-    // A task's hidden test count is the total used by most of its scored runs, as in tools/prerender.js.
-    const totals = new Map();
-    for (const run of runs) if (run.total) totals.set(run.total, (totals.get(run.total) || 0) + 1);
-    const tests = [...totals].sort((a, b) => b[1] - a[1])[0][0];
-    return {id: task.id, name: task.name, runs, tests, best: runs[0], views: previews.tasks[task.id]?.views || []};
-  }).sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}));
-
-  const shot = (view, run) => view.runs[run.id]?.image;
-  const runLabel = run => run.model.name;
-  const testsPassed = run => `${count(run.passed)} of ${count(run.total)} tests passed`;
 
   /* ------------------------------------------------------- contact sheet */
   const grid = $('#task-grid');
-  const sorts = {name: () => 0, best: (a, b) => b.best.rate - a.best.rate, tests: (a, b) => b.tests - a.tests};
-  const hardest = tasks.reduce((a, b) => (b.best.rate < a.best.rate ? b : a));
-  const easiest = tasks.reduce((a, b) => (b.best.rate > a.best.rate ? b : a));
-  const testCounts = tasks.map(t => t.tests);
-  $('#catalog-lede').textContent = `Best pass rate from ${hardest.best.rate.toFixed(1)}% on ${hardest.name} to ${easiest.best.rate.toFixed(1)}% on ${easiest.name}. Select a website to compare its rebuilds.`;
-  $('#catalog-facts').innerHTML = `<li><b>${tasks.length}</b> websites</li><li><b>${count(testCounts.reduce((a, b) => a + b))}</b> hidden tests</li><li><b>${count(Math.min(...testCounts))}</b> tests on the smallest</li><li><b>${count(Math.max(...testCounts))}</b> tests on the largest</li>`;
-
-  grid.innerHTML = tasks.map(task => {
-    const thumb = task.views[0]?.reference.image, {width, height} = task.views[0]?.viewport || {};
-    return `<li data-id="${escape(task.id)}"><a class="task-card" href="${taskUrl(task)}" data-nav>`
-      + `<span class="task-thumb">${thumb ? `<img src="${escape(thumb)}" width="${width}" height="${height}" loading="lazy" decoding="async" alt="">` : `<span class="task-thumb-name" aria-hidden="true">${escape(task.name)}</span>`}</span>`
-      + `<span class="rate-rule${task.best.model.group === 'open' ? ' is-open' : ''}" style="--rate:${task.best.rate.toFixed(2)}" aria-hidden="true"></span>`
-      + `<span class="task-card-name" title="${escape(task.name)}">${escape(task.name)}</span>`
-      + `<span class="task-card-meta"><span>${count(task.tests)} tests</span><span class="task-card-best" title="${escape(runLabel(task.best))}: ${testsPassed(task.best)}"><img class="model-logo" src="${escape(task.best.model.logo)}" width="13" height="13" alt=""><span class="sr-only">${escape(runLabel(task.best))}, best pass rate </span>${task.best.rate.toFixed(1)}%</span></span>`
-      + `</a></li>`;
-  }).join('');
-
-  $('#catalog-sort').addEventListener('click', e => {
-    const key = e.target.closest('button')?.dataset.sort;
-    if (!key) return;
-    setPressed(e.currentTarget, b => b.dataset.sort === key);
-    grid.append(...[...tasks].sort(sorts[key]).map(task => grid.querySelector(`[data-id="${CSS.escape(task.id)}"]`)));
-  });
-  $('#catalog-search').addEventListener('input', e => {
-    const query = e.target.value.trim().toLowerCase();
-    for (const task of tasks) grid.querySelector(`[data-id="${CSS.escape(task.id)}"]`).hidden = !task.name.toLowerCase().includes(query);
-  });
-
-  /* ------------------------------------------------------------ one task */
-  const page = $('#task-view'), compare = $('#compare'), frame = $('#compare-frame'), divider = $('#compare-divider');
-  const picker = $('#task-picker'), viewTabs = $('#view-tabs'), modes = $('#compare-modes'), runRows = $('#runs'), rebuilds = $('#rebuilds');
-  const shotImages = {reference: $('#shot-reference'), rebuild: $('#shot-rebuild')};
-  const current = {task: null, view: null, run: null};
-  picker.replaceChildren(...tasks.map(t => new Option(t.name, t.id)));
-
-  function renderRuns() {
-    const {task, view} = current;
-    $('#runs-caption').textContent = `Every model on ${task.name}`;
-    runRows.innerHTML = task.runs.map(run => {
-      const open = run.model.group === 'open' ? ' class="is-open"' : '';
-      const scored = run.rate !== null;
-      const pick = view && shot(view, run)
-        ? `<input class="sr-only" type="radio" name="run" value="${run.id}" aria-label="Compare ${escape(runLabel(run))} with the reference"><svg class="split-glyph" viewBox="0 0 16 13" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="11.5" rx="2.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="split-half" d="M8 .75h5a2.25 2.25 0 0 1 2.25 2.25v7a2.25 2.25 0 0 1-2.25 2.25H8z" fill="currentColor"/><path d="M8 .75v11.5" stroke="currentColor" stroke-width="1.5"/></svg>`
-        : '—';
-      return `<tr data-run="${run.id}"${scored ? ` style="--rate:${run.rate.toFixed(2)}"` : ''}>`
-        + `<th scope="row"${open} title="${escape(run.model.org)}"><span class="m-name"><img class="model-logo" src="${escape(run.model.logo)}" alt="" width="16" height="16">${escape(run.model.name)}</span></th>`
-        + (scored ? `<td title="${testsPassed(run)}">${count(run.passed)}</td><td title="${testsPassed(run)}">${run.rate.toFixed(1)}</td>` : `<td colspan="2" class="run-failed">${run.status === 'timeout' ? 'Timeout' : 'Error'}</td>`)
-        + `<td class="run-shot">${pick}</td></tr>`;
-    }).join('');
+  if (grid) {
+    const items = [...grid.children], tools = $('.catalog-tools'), search = $('#catalog-search'), sortGroup = $('#catalog-sort'), empty = $('#catalog-empty');
+    const sorts = {name: (a, b) => a.dataset.i - b.dataset.i, best: (a, b) => b.dataset.best - a.dataset.best, tests: (a, b) => b.dataset.tests - a.dataset.tests};
+    const folded = text => text.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const state = {sort: 'name', q: ''};
+    const syncAddress = () => {
+      const query = new URLSearchParams();
+      if (state.sort !== 'name') query.set('sort', state.sort);
+      if (state.q) query.set('q', state.q);
+      const text = query.toString();
+      history.replaceState(history.state, '', location.pathname + (text ? `?${text}` : ''));
+    };
+    // After a change the reader sees the top of the list, under the sticky tools.
+    const showGridTop = () => {
+      const under = tools.getBoundingClientRect().bottom, top = grid.getBoundingClientRect().top;
+      if (top < under) scrollBy({top: top - under - 14, behavior: 'instant'});
+    };
+    const applySort = () => {
+      setPressed(sortGroup, b => b.dataset.sort === state.sort);
+      grid.append(...items.slice().sort(sorts[state.sort]));
+    };
+    const applySearch = () => {
+      const query = folded(state.q);
+      let shown = 0;
+      for (const item of items) {
+        item.hidden = !(folded(item.dataset.name).includes(query) || folded(item.dataset.id).includes(query));
+        if (!item.hidden) shown += 1;
+      }
+      empty.hidden = shown > 0;
+    };
+    sortGroup.addEventListener('click', e => {
+      const key = e.target.closest('button')?.dataset.sort;
+      if (!key) return;
+      state.sort = key;
+      applySort(); syncAddress(); showGridTop();
+    });
+    search.addEventListener('input', () => {
+      state.q = search.value.trim();
+      applySearch(); syncAddress(); showGridTop();
+    });
+    search.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const shown = items.filter(item => !item.hidden);
+      if (shown.length === 1) shown[0].querySelector('a').click();
+    });
+    $('#catalog-clear').addEventListener('click', () => {
+      search.value = state.q = '';
+      applySearch(); syncAddress();
+      search.focus();
+    });
+    const params = new URLSearchParams(location.search);
+    if (sorts[params.get('sort')]) { state.sort = params.get('sort'); applySort(); }
+    if (params.get('q')) { state.q = search.value = params.get('q'); applySearch(); }
+    // Back from a website returns focus to its card.
+    grid.addEventListener('click', e => {
+      const id = e.target.closest('li')?.dataset.id;
+      if (id) history.replaceState({...history.state, opened: id}, '');
+    });
+    addEventListener('pageshow', () => {
+      const opened = history.state && history.state.opened;
+      const item = opened && items.find(li => li.dataset.id === opened);
+      if (item) item.querySelector('a').focus({preventScroll: true});
+    });
+    return;
   }
 
+  /* ------------------------------------------------------------ one task */
+  const {escape, taskUrl, shot, runRowsHtml, runSentence, shotAlt} = WebsiteBenchTasks;
+  const task = JSON.parse($('#task-data').textContent);
+  const runLabel = run => run.model.name;
+  const compare = $('#compare'), frame = $('#compare-frame'), divider = $('#compare-divider');
+  const picker = $('#task-picker'), viewTabs = $('#view-tabs'), modes = $('#compare-modes'), runRows = $('#runs'), rebuilds = $('#rebuilds');
+  const shotImages = {reference: $('#shot-reference'), rebuild: $('#shot-rebuild')};
+  const current = {view: null, run: null};
+  const address = new URLSearchParams(location.search);
+  let pinned = address.has('model') || address.has('run');
+
   function renderSelection() {
-    const {view, run} = current;
+    const {view, run} = current, pic = shot(view, run);
     runRows.querySelectorAll('tr').forEach(row => {
-      const on = row.dataset.run === run?.id;
+      const on = row.dataset.run === run.id;
       row.classList.toggle('is-on', on);
-      row.classList.toggle('is-linked', !on && row.dataset.run === current.linked);
-      const radio = row.querySelector('input');
-      if (radio) radio.checked = on;
+      row.querySelector('input').checked = on;
     });
-    if (!view) return;
-    $('#task-run').textContent = run
-      ? `Rebuilt by ${run.model.name}${run.rate === null ? '' : `: ${count(run.passed)} of ${count(run.total)} hidden tests passed (${run.rate.toFixed(1)}%)`}`
-      : '';
-    $('#side-rebuild').textContent = run ? runLabel(run) : '';
-    compare.classList.toggle('is-reference-only', !run);
-    modes.hidden = !run;
-    if (!run) setMode('divider');
+    if (!pic) setMode('divider');
     setPressed(viewTabs, b => b.dataset.view === view.id);
-    frame.querySelectorAll('[data-route]').forEach(path => { path.textContent = view.route; });
-    compare.style.setProperty('--shot-ratio', `${view.viewport.width} / ${view.viewport.height}`);
-    showImages(view, run);
+    showImages(view, run, pic);
     if (compare.dataset.mode === 'all') renderRebuilds();
   }
 
   // Every rebuild of this page at once, loaded only when asked for.
   function renderRebuilds() {
-    const {task, view} = current;
+    const {view} = current;
     const tile = (src, alt, label) => `<img class="rebuild-shot" src="${escape(src)}" width="${view.viewport.width}" height="${view.viewport.height}" loading="lazy" decoding="async" alt="${escape(alt)}"><span class="rebuild-label">${label}</span>`;
-    rebuilds.innerHTML = `<li class="is-reference">${tile(view.reference.image, `Reference for ${task.name}, ${view.label}`, '<span class="m-name">Reference</span>')}</li>` + task.runs.filter(run => shot(view, run)).map(run =>
-      `<li><button type="button" data-run="${run.id}"${run === current.run ? ' class="is-on"' : ''}>${tile(shot(view, run), `Rebuild by ${runLabel(run)}, ${view.label}`, `<span class="m-name"><img class="model-logo" src="${escape(run.model.logo)}" alt="" width="15" height="15">${escape(run.model.name)}${run.size ? `<small>${run.size}</small>` : ''}</span>${run.rate === null ? '' : `<b>${run.rate.toFixed(1)}%</b>`}`)}</button></li>`).join('');
+    rebuilds.innerHTML = `<li class="is-reference">${tile(view.reference.image, shotAlt(task, view, null), '<span class="m-name">Reference</span>')}</li>` + task.runs.filter(run => shot(view, run)).map(run =>
+      `<li><button type="button" data-run="${run.id}" aria-pressed="${run === current.run}"${run === current.run ? ' class="is-on"' : ''}>${tile(shot(view, run), shotAlt(task, view, run), `<span class="m-name"><img class="model-logo" src="${escape(run.model.logo)}" alt="" width="15" height="15">${escape(runLabel(run))}</span>${run.rate === null ? '' : `<b>${run.rate.toFixed(1)}%</b>`}`)}</button></li>`).join('');
   }
 
   // Both sides swap together, once both are ready, so a comparison is never half old.
   let swap = 0;
-  function showImages(view, run) {
+  function showImages(view, run, pic) {
     const token = ++swap;
-    const sides = {reference: view.reference.image, rebuild: run && shot(view, run)};
+    const sides = {reference: view.reference.image, rebuild: pic};
+    if (shotImages.reference.getAttribute('src') !== sides.reference || (pic && shotImages.rebuild.getAttribute('src') !== pic)) compare.setAttribute('aria-busy', 'true');
     const ready = Object.values(sides).filter(Boolean).map(src => new Promise(done => {
       const image = new Image();
       image.onload = image.onerror = done;
@@ -123,69 +117,84 @@
     }));
     Promise.all(ready).then(() => {
       if (token !== swap) return;
+      compare.removeAttribute('aria-busy');
+      $('#task-run').textContent = runSentence(view, run);
+      $('#side-rebuild').textContent = runLabel(run);
+      compare.classList.toggle('is-reference-only', !pic);
+      modes.hidden = !pic;
+      frame.querySelectorAll('[data-route]').forEach(path => { path.textContent = view.route; });
+      compare.style.setProperty('--shot-ratio', `${view.viewport.width} / ${view.viewport.height}`);
       shotImages.reference.src = sides.reference;
-      shotImages.reference.alt = `Reference for ${current.task.name}, ${view.label}`;
-      if (run) {
+      shotImages.reference.alt = shotAlt(task, view, null);
+      if (pic) {
         shotImages.rebuild.src = sides.rebuild;
-        shotImages.rebuild.alt = `Rebuild by ${runLabel(run)}, ${view.label}`;
+        shotImages.rebuild.alt = shotAlt(task, view, run);
       }
+      setSplit(split);
     });
   }
 
   function syncUrl() {
-    const {task, view, run} = current, extra = {};
-    if (run) Object.assign(extra, {model: run.model.id, run: run.id});
-    if (view && view !== task.views[0]) extra.view = view.id;
-    history.replaceState(null, '', taskUrl(task, extra));
+    const {view, run} = current, extra = {};
+    if (pinned || run !== defaultRun(view)) Object.assign(extra, {model: run.model.id}, run.id.endsWith('-none') ? {} : {run: run.id});
+    if (view !== task.views[0]) extra.view = view.id;
+    if (compare.dataset.mode !== 'divider') extra.mode = compare.dataset.mode;
+    history.replaceState(null, '', taskUrl(task.id, extra) + location.hash);
+    carryModel();
+  }
+  // Previous and Next keep the model the reader chose.
+  const steps = [$('#previous-task'), $('#next-task')];
+  const stepPaths = steps.map(link => link.getAttribute('href'));
+  function carryModel() {
+    const query = pinned ? `?model=${encodeURIComponent(current.run.model.id)}` : '';
+    steps.forEach((link, i) => { link.href = stepPaths[i] + query; });
   }
 
+  const defaultRun = view => task.runs.find(run => shot(view, run));
   function chooseRun(wanted) {
-    current.run = current.view && [...wanted, ...current.task.runs].find(run => shot(current.view, run));
+    current.run = wanted[0] || defaultRun(current.view);
     renderSelection();
   }
 
-  function openTask(task, params) {
-    const index = tasks.indexOf(task), wanted = task.runs.filter(r => r.id === (params.get('run') || params.get('context'))).concat(task.runs.filter(r => r.model.id === params.get('model')));
-    current.task = task;
-    current.view = task.views.find(v => v.id === params.get('view')) || task.views[0];
-    current.linked = wanted[0]?.id;
-    document.title = `${task.name} | WebsiteBench`;
-    picker.value = task.id;
-    $('#task-picker-label').textContent = task.name;
-    page.classList.toggle('no-shots', !current.view);
-    const previous = tasks[(index - 1 + tasks.length) % tasks.length], next = tasks[(index + 1) % tasks.length];
-    $('#previous-task').href = taskUrl(previous);
-    $('#previous-task').title = previous.name;
-    $('#next-task').href = taskUrl(next);
-    $('#next-task').title = next.name;
-    $('#task-facts').innerHTML = `<li><b>${count(task.tests)}</b> hidden tests</li><li><b>${task.best.rate.toFixed(1)}%</b> best pass rate</li>`;
-    viewTabs.innerHTML = task.views.map(v => `<button type="button" data-view="${escape(v.id)}" aria-pressed="false">${escape(v.label)}</button>`).join('');
-    renderRuns();
-    chooseRun(wanted);
-  }
-
-  picker.addEventListener('change', () => go(taskUrl(tasks.find(t => t.id === picker.value))));
+  // Arrow keys walk the list in place; Enter or leaving the picker opens the website shown.
+  const walks = !/Mac|iPhone|iPad/.test(navigator.platform);
+  let walking = false;
+  const open = () => { location.href = taskUrl(picker.value); };
+  picker.addEventListener('keydown', e => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown'].includes(e.key) && !e.altKey) walking = walks;
+    else if (e.key === ' ' || e.altKey || e.key === 'F4') walking = false;
+    else if (e.key === 'Enter' && walking && picker.value !== task.id) { e.preventDefault(); open(); }
+  });
+  picker.addEventListener('pointerdown', () => { walking = false; });
+  picker.addEventListener('change', () => {
+    if (!walking) { open(); return; }
+    $('#task-picker-label').textContent = picker.selectedOptions[0].textContent;
+    history.replaceState(null, '', taskUrl(picker.value));
+  });
+  picker.addEventListener('blur', () => { if (walking && picker.value !== task.id) open(); });
+  addEventListener('pageshow', () => { walking = false; picker.value = task.id; $('#task-picker-label').textContent = task.name; });
   viewTabs.addEventListener('click', e => {
     const id = e.target.closest('button')?.dataset.view;
     if (!id) return;
-    const previous = current.run;
-    current.view = current.task.views.find(v => v.id === id);
-    renderRuns();
-    chooseRun(previous ? [previous] : []);
+    current.view = task.views.find(v => v.id === id);
+    runRows.innerHTML = runRowsHtml(task, current.view, null);
+    chooseRun([current.run]);
     syncUrl();
   });
   runRows.addEventListener('click', e => {
-    if (e.target.type !== 'radio') e.target.closest('tr').querySelector('input')?.click();
+    if (e.target.type !== 'radio') e.target.closest('tr')?.querySelector('input').click();
   });
   function pickRun(id) {
-    current.linked = null;
-    chooseRun(current.task.runs.filter(r => r.id === id));
+    pinned = true;
+    chooseRun(task.runs.filter(r => r.id === id));
     syncUrl();
+    if ($('#compare-stage').getBoundingClientRect().bottom < 120) compare.scrollIntoView({block: 'start'});
   }
   // Picking one rebuild out of all of them opens it in the divider.
   function leaveAllRebuilds() {
     if (compare.dataset.mode !== 'all') return;
     setMode('divider');
+    setSplit(50);
     scrollTo({top: 0, behavior: 'instant'});
   }
   runRows.addEventListener('change', e => {
@@ -199,8 +208,8 @@
     pickRun(id);
   });
   runRows.addEventListener('pointerover', e => {
-    const run = current.task.runs.find(r => r.id === e.target.closest('tr')?.dataset.run);
-    if (run && current.view && shot(current.view, run)) new Image().src = shot(current.view, run);
+    const run = task.runs.find(r => r.id === e.target.closest('tr')?.dataset.run);
+    if (run && shot(current.view, run)) new Image().src = shot(current.view, run);
   });
 
   /* -------------------------------------------------------- the comparison */
@@ -210,6 +219,10 @@
     frame.style.setProperty('--split', split + '%');
     divider.setAttribute('aria-valuenow', String(Math.round(split)));
     divider.setAttribute('aria-valuetext', `${Math.round(split)} percent reference`);
+    // A side label stays only while it fits on its own side of the divider.
+    const w = frame.clientWidth, x = w * split / 100, sr = frame.querySelector('.layer:not(.is-cand) .side'), sc = frame.querySelector('.is-cand .side');
+    sr.classList.toggle('is-off', x < sr.offsetWidth + 44);
+    sc.classList.toggle('is-off', w - x < sc.offsetWidth + 44);
   }
   const dragTo = e => {
     const box = frame.getBoundingClientRect();
@@ -219,15 +232,25 @@
   frame.addEventListener('pointerdown', e => {
     if (compare.dataset.mode !== 'divider' || compare.classList.contains('is-reference-only') || e.button) return;
     frame.setPointerCapture(e.pointerId);
-    divider.classList.add('is-dragging');
-    if (e.pointerType === 'mouse') dragTo(e);
+    const x0 = e.clientX, y0 = e.clientY;
+    let armed = e.pointerType === 'mouse';
+    if (armed) { divider.classList.add('is-dragging'); dragTo(e); }
+    const moveTo = ev => {
+      if (!armed) {
+        const dx = Math.abs(ev.clientX - x0), dy = Math.abs(ev.clientY - y0);
+        if (dx < 8 || dy > dx) return;
+        armed = true;
+        divider.classList.add('is-dragging');
+      }
+      dragTo(ev);
+    };
     const stop = () => {
       divider.classList.remove('is-dragging');
-      frame.removeEventListener('pointermove', dragTo);
+      frame.removeEventListener('pointermove', moveTo);
       frame.removeEventListener('pointerup', stop);
       frame.removeEventListener('pointercancel', stop);
     };
-    frame.addEventListener('pointermove', dragTo);
+    frame.addEventListener('pointermove', moveTo);
     frame.addEventListener('pointerup', stop);
     frame.addEventListener('pointercancel', stop);
   });
@@ -242,39 +265,23 @@
     compare.dataset.mode = mode;
     setPressed(modes, b => b.dataset.mode === mode);
     if (mode === 'all') renderRebuilds();
+    if (mode === 'divider') setSplit(split);
   }
   modes.addEventListener('click', e => {
     const mode = e.target.closest('button')?.dataset.mode;
-    if (mode) setMode(mode);
+    if (mode) { setMode(mode); syncUrl(); }
   });
   $('#compare-full').hidden = !document.fullscreenEnabled;
   $('#compare-full').addEventListener('click', () => compare.requestFullscreen());
+  $('#compare-exit').addEventListener('click', () => document.exitFullscreen());
+  addEventListener('resize', () => setSplit(split));
 
-  /* ------------------------------------------------------------- routing */
-  // Returning to the sheet returns to the same place on it.
-  history.scrollRestoration = 'manual';
-  let sheetScroll = 0;
-  function route() {
-    const params = new URLSearchParams(location.search);
-    const task = tasks.find(t => t.id === params.get('task'));
-    if (!$('#catalog').hidden) sheetScroll = scrollY;
-    $('#catalog').hidden = Boolean(task);
-    page.hidden = !task;
-    if (task) openTask(task, params);
-    else document.title = 'Tasks | WebsiteBench';
-    scrollTo({top: task ? 0 : sheetScroll, behavior: 'instant'});
-  }
-  function go(url) {
-    history.pushState(null, '', url);
-    route();
-  }
-  addEventListener('popstate', route);
-  document.addEventListener('click', e => {
-    const link = e.target.closest('a[data-nav]');
-    if (!link || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button) return;
-    e.preventDefault();
-    go(link.getAttribute('href'));
-    if (!link.offsetParent) $('#main').focus({preventScroll: true});
-  });
-  route();
+  /* ----------------------------------------------- what the address asks for */
+  const wanted = task.runs.filter(r => r.id === address.get('run')).concat(task.runs.filter(r => r.model.id === address.get('model')));
+  current.view = task.views.find(v => v.id === address.get('view')) || task.views[0];
+  if (current.view !== task.views[0]) runRows.innerHTML = runRowsHtml(task, current.view, null);
+  chooseRun(wanted);
+  if (['side', 'all'].includes(address.get('mode')) && shot(current.view, current.run)) setMode(address.get('mode'));
+  carryModel();
+  if (address.has('context')) syncUrl();
 })();
