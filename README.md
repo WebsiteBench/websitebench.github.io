@@ -58,7 +58,7 @@ python3 -m unittest discover -s tools -p 'test_*.py'
 - `tools/render-og.js` redraws the social card `assets/og.png` from `tools/og.html`. It needs Playwright; set `PLAYWRIGHT` to use an existing installation and `CHROMIUM_PATH` to use an existing browser.
 - The tests check that every page, data file and export covers the same 70 tasks and that the published numbers agree.
 
-`CITATION.bib` is the source of the homepage BibTeX block. Update it together with `CITATION.cff` and the plain-text citation in `index.html`.
+`CITATION.bib` is the source of the homepage BibTeX block. Update it together with `CITATION.cff`.
 
 ## Deploy on GitHub Pages
 

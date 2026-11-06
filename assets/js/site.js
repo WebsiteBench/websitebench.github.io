@@ -52,20 +52,18 @@
   scrollers.forEach(el => { markScroll(el); el.addEventListener('scroll', () => markScroll(el), { passive: true }); });
   if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => scrollers.forEach(markScroll)); scrollers.forEach(el => ro.observe(el)); }
 
-  // On the homepage, the section links follow the reader.
-  const tocLinks = $$('.toc a[href^="#"]');
-  if ('IntersectionObserver' in window && tocLinks.length) {
-    const spy = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        tocLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + e.target.id));
-      });
-    }, { rootMargin: '-40% 0px -55% 0px' });
-    tocLinks.map(a => $(a.getAttribute('href'))).filter(Boolean).forEach(s => spy.observe(s));
-    const heroTop = $('.hero-row');
-    if (heroTop) {
-      new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) tocLinks.forEach(a => a.classList.remove('is-active')); }), { rootMargin: '-40% 0px -55% 0px' }).observe(heroTop);
-    }
+  // On the homepage, a section link stays active until the reader reaches the next one.
+  const tocMarks = $$('.toc a[href^="#"]').map(a => [a, $(a.getAttribute('href'))]).filter(([, section]) => section);
+  if (tocMarks.length) {
+    const follow = () => {
+      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      let current = atEnd ? tocMarks[tocMarks.length - 1][0] : null;
+      if (!atEnd) tocMarks.forEach(([a, section]) => { if (section.getBoundingClientRect().top <= innerHeight * .4) current = a; });
+      tocMarks.forEach(([a]) => a.classList.toggle('is-active', a === current));
+    };
+    addEventListener('scroll', follow, { passive: true });
+    addEventListener('resize', follow);
+    follow();
   }
 
   /* ============================================================ the demo */
@@ -558,18 +556,10 @@
     };
     try { navigator.clipboard.writeText(text).then(() => done('Copied'), fallback); } catch (e) { fallback(); }
   }
-  tabset($('#cite-tabs'), t => {
-    $$('.cite-panel').forEach(p => { p.hidden = p.id !== t.getAttribute('aria-controls'); });
-    const lab = $('#copy-bib span');
-    if (lab) lab.textContent = t.dataset.copy;
-  });
   const copyBtn = $('#copy-bib');
   if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-      const pre = $$('.cite-panel').find(p => !p.hidden) || $('#bibtex');
-      const selected = () => $('#cite-tabs [aria-selected="true"]');
-      copyText(copyBtn, pre.textContent, $('span', copyBtn), () => (selected() ? selected().dataset.copy : 'Copy BibTeX'), pre);
-    });
+    const bib = $('#bibtex');
+    copyBtn.addEventListener('click', () => copyText(copyBtn, bib.textContent, $('span', copyBtn), () => 'Copy BibTeX', bib));
   }
   $$('[data-copy-target]').forEach(button => {
     const target = document.getElementById(button.dataset.copyTarget);
