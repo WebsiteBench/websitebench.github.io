@@ -15,7 +15,7 @@
           },
           "models": {
             "qwen": {
-              "image": "assets/previews/medium/qwen-home.png"
+              "image": "assets/previews/medium/qwen-home.png", "context": "200k-max"
             }
           }
         },
@@ -32,7 +32,7 @@
           },
           "models": {
             "qwen": {
-              "image": "assets/previews/medium/qwen-about.png"
+              "image": "assets/previews/medium/qwen-about.png", "context": "200k-max"
             }
           }
         }

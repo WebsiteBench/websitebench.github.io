@@ -4,7 +4,7 @@ The project website for *WebsiteBench: Can AI Agents Rebuild Websites through Br
 
 WebsiteBench asks agents to explore a reference website through a browser and rebuild it without its source code. This site shows the leaderboard for the 70 released tasks, a task explorer, analysis pages and the commands to run the benchmark. The benchmark code is at [TIGER-AI-Lab/WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench), and the tasks are on [Hugging Face](https://huggingface.co/datasets/TIGER-Lab/WebsiteBench) and [Harbor Hub](https://hub.harborframework.com/datasets/websitebench/WebsiteBench).
 
-The site is static and has no build step. The homepage, the leaderboard table and the CSV downloads work without JavaScript; scripts add sorting, the Pareto and Waffle views, the task demo and failure-mode animation, theme selection, copy buttons and the task explorer.
+The site is static and has no build step. The homepage, the leaderboard table and the CSV downloads work without JavaScript; scripts add sorting, the Pareto and Waffle views, the task demo and the failure tree's lines, theme selection, copy buttons and the task explorer.
 
 ## Preview locally
 
@@ -29,7 +29,6 @@ python3 -m http.server 8000
 All views use the same results for the 70 tasks and nine models.
 
 - Scores are test-pooled pass rates: 100 × sum(passed tests) / sum(total tests), for Overall and for each test group (Request, Browser and System).
-- A task without a valid result is left out of that model's average instead of counting as zero. Every metric shows its coverage.
 - Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point uses the same task subset on both axes.
 - The context selector applies to all three views. Overview uses Qwen at 200K, DeepSeek at 1M, GLM at 1M with eight 200K results (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker), and the recorded setting for the other models. The 1M and 200K views use only that context.
 
@@ -60,8 +59,6 @@ python3 -m unittest discover -s tools -p 'test_*.py'
 - The tests check that every page, data file and export covers the same 70 tasks and that the published numbers agree.
 
 `CITATION.bib` is the source of the homepage BibTeX block. Update it together with `CITATION.cff` and the plain-text citation in `index.html`.
-
-The task explorer's interactive replay and remote trajectories need the local preview service. They stay hidden unless `data/viewer-config.json` sets `"replay_service": true`.
 
 ## Deploy on GitHub Pages
 

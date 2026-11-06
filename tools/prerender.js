@@ -35,8 +35,11 @@ const facts = {
   'tests-max': Math.max(...perTask).toLocaleString('en-US'),
   'best-model': best.name,
   'best-overall': best.overall.toFixed(1) + '%',
-  'best-turns': Number.isFinite(best.turns) ? Math.round(best.turns).toLocaleString('en-US') : '—',
+  'best-turns': Math.round(best.turns).toLocaleString('en-US'),
   'one-in': words[oneIn] || String(oneIn),
+  'demo-site': demo.site,
+  'demo-model': demo.model,
+  'demo-context': demo.context,
   'demo-run-passed': demoCount(demo.run.passed),
   'demo-run-total': demoCount(demo.run.total),
   'demo-run-score': (100 * demo.run.passed / demo.run.total).toFixed(1) + '%',
@@ -52,7 +55,7 @@ const inject = (marker, value) => { if (!marker.test(html)) throw Error('Generat
 inject(/(<tbody id="board-body">)[\s\S]*?(<\/tbody><!--\/board-body-->)/, '\n' + renderRows(overview) + '\n');
 for (const [id, data] of [['waffle-data', waffle], ['leaderboard-data', board]]) inject(new RegExp(`(<script type="application/json" id="${id}">)[\\s\\S]*?(<\\/script><!--\\/${id}-->)`), JSON.stringify(data).replace(/</g, '\\u003c'));
 inject(/(<pre[^>]*id="bibtex"[^>]*><code>)[\s\S]*?(<\/code><\/pre>)/, escape(fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim()));
-inject(/(<ul class="chips" id="site-list"[^>]*>)[\s\S]*?(<\/ul><!--\/site-list-->)/, cohort.tasks.slice().sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'})).map(t => `<li><a href="tasks.html?task=${encodeURIComponent(t.id)}">${escape(t.name)}</a></li>`).join(''));
+inject(/(<ul class="site-index" id="site-list"[^>]*>)[\s\S]*?(<\/ul><!--\/site-list-->)/, cohort.tasks.slice().sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'})).map(t => `<li><a href="tasks.html?task=${encodeURIComponent(t.id)}">${escape(t.name)}</a></li>`).join(''));
 
 // The task demo: its page tabs, hidden test rows, score and inline data follow data/demo-task.json.
 const DEMO_ICON = {
@@ -78,7 +81,7 @@ fs.writeFileSync(path.join(root, 'index.html'), html);
 
 // llms.txt: the leaderboard block and the headline sentence follow the data.
 let llms = fs.readFileSync(path.join(root, 'llms.txt'), 'utf8');
-const pct = value => (typeof value === 'number' && Number.isFinite(value) ? value.toFixed(1) : '—');
+const pct = value => (value === null ? '—' : value.toFixed(1));
 const lines = overview.map(m => `- ${m.name}: ${pct(m.overall)} / ${pct(m.request)} / ${pct(m.browser)} / ${pct(m.system)}`).join('\n');
 if (!/## Leaderboard[^\n]*\n[\s\S]*?\n(?=## )/.test(llms)) throw Error('llms.txt leaderboard block missing');
 llms = llms.replace(/(## Leaderboard[^\n]*\n)[\s\S]*?\n(?=## )/, `$1${lines}\n\n`);

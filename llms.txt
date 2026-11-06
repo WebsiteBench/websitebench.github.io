@@ -13,7 +13,7 @@
 - The homepage compares one run with its reference: Claude Opus 5.5 with a 1M context window on the Amazon task, which passes 582 of 1,025 hidden tests.
 
 ## Results
-Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). A task without a score is left out of that model's average instead of counting as zero, and each metric shows its coverage. Cost, tokens and turns are means over the tasks with recorded values; Pareto uses the same task subset on both axes.
+Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are means over the tasks with recorded values; Pareto uses the same task subset on both axes.
 
 ## Leaderboard (test-pooled percent of hidden tests passed: overall / Request / Browser / System)
 - Claude Opus 5.5: 26.2 / 71.2 / 21.8 / 35.4

@@ -35,62 +35,66 @@
   }
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18557798739"></script>
-<title>Run · WebsiteBench</title>
+<title>Run | WebsiteBench</title>
 <meta name="description" content="Run an agent on WebsiteBench tasks with Harbor 0.25.0, from Harbor Hub or a downloaded copy.">
 <link rel="canonical" href="https://website-bench.com/run.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WebsiteBench">
 <meta property="og:url" content="https://website-bench.com/run.html">
-<meta property="og:title" content="Run · WebsiteBench">
+<meta property="og:title" content="Run | WebsiteBench">
 <meta property="og:description" content="Run an agent on WebsiteBench tasks with Harbor.">
 <meta property="og:image" content="https://website-bench.com/assets/og.png?v=e3ea9b0d">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="WebsiteBench: Can AI agents rebuild websites through browser exploration? 70 expert-built websites, nine models, 16 hours per run.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Run · WebsiteBench">
+<meta name="twitter:title" content="Run | WebsiteBench">
 <meta name="twitter:description" content="Run an agent on WebsiteBench tasks with Harbor.">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#22252E" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=same-20261106">
+<link rel="preload" href="assets/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css?v=sheet2-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=same-20261106" defer></script>
+<script src="assets/js/site.js?v=sheet2-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="topbar is-sub" id="topbar">
-  <div class="wrap topbar-in">
-    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg><span>WebsiteBench</span></a>
-    <nav class="toc" id="toc" aria-label="Site">
-      <a href="index.html#results">Leaderboard</a>
-      <a href="tasks.html">Tasks</a>
-      <a href="analysis.html">Analysis</a>
-      <a href="run.html" aria-current="page">Run</a>
-    </nav>
-    <div class="topbar-actions">
-      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="toc" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="wrap sheet topbar-in">
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg><span class="brand-word"><img class="wordmark-light" src="assets/brand/wordmark-light.svg" alt="WebsiteBench" width="368" height="65"><img class="wordmark-dark" src="assets/brand/wordmark-dark.svg" alt="WebsiteBench" width="368" height="60"></span></a>
+    <div class="topbar-field">
+      <nav class="toc" id="toc" aria-label="Site">
+        <a href="index.html#results">Leaderboard</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="analysis.html">Analysis</a>
+        <a href="run.html" aria-current="page">Run</a>
+      </nav>
+      <div class="topbar-actions">
+      
       <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark theme">
         <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
         <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
-      <a class="btn btn-ink btn-sm" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a>
+      <a class="icon-btn" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)" aria-label="Code on GitHub" title="Code on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.86v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2.2z"/></svg></a>
+      </div>
     </div>
   </div>
 </header>
 
-<main id="main" class="wrap page">
-  <header class="sec-head" id="top">
+<main id="main" class="wrap sheet page">
+  <div class="rail" id="top">
     <h1>Run the benchmark</h1>
-    <a class="route" href="#top">/run</a>
-  </header>
-  <p class="page-intro">Requires uv and Docker. These commands set up the repository and run an agent on one task with Harbor, which fetches the task from Harbor Hub.</p>
-  <div class="run-block">
-    <div class="code-wrap">
-      <div class="code-head"><span>Run one task</span><button class="dt-btn" type="button" data-copy-target="quickstart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
+    <p class="rail-text" style="margin-top:8px">Requires uv and Docker. These commands set up the repository and run an agent on one task with Harbor, which fetches the task from Harbor Hub.</p>
+    <p class="link-list is-column" style="margin-top:14px"><a href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Setup details on GitHub</a><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Tasks on Hugging Face</a><a href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Tasks on Harbor Hub</a><a href="tasks.html">Browse the 70 tasks</a></p>
+  </div>
+  <div class="field">
+    <div class="code-card">
+      <div class="code-head"><span>Run one task</span><button class="code-copy" type="button" data-copy-target="quickstart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
 <pre class="code" id="quickstart"><code>git clone https://github.com/TIGER-AI-Lab/WebsiteBench.git
 cd WebsiteBench
 uv sync
@@ -112,12 +116,11 @@ uv run harbor run --task websitebench/medium@v1 \
       <li>Each task gives the agent up to 16 hours and the verifier up to 8 hours. Most tasks request 8 CPUs, 8 GiB of memory and 20 GiB of disk.</li>
     </ul>
   </div>
-  <p class="run-links"><a class="link-btn" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Setup details on GitHub <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Tasks on Hugging Face <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Tasks on Harbor Hub <span aria-hidden="true">↗</span></a><a class="link-btn" href="tasks.html">Browse the 70 tasks <span aria-hidden="true">→</span></a></p>
 </main>
 
 <footer class="footer">
-  <div class="wrap footer-in">
-    <p class="footer-brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg>WebsiteBench</p>
+  <div class="wrap sheet footer-in">
+    <span class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5h9a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4h-9z" fill="currentColor"/><path d="M16 1.5v29" stroke="var(--brand-accent)" stroke-width="2.5"/></svg><span class="brand-word"><img class="wordmark-light" src="assets/brand/wordmark-light.svg" alt="WebsiteBench" width="368" height="65"><img class="wordmark-dark" src="assets/brand/wordmark-dark.svg" alt="WebsiteBench" width="368" height="60"></span></span>
     <p class="footer-links"><a href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Code</a><a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Dataset</a><a href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Harbor Hub</a><a href="index.html#cite">Cite</a><a href="#top">Back to top</a></p>
   </div>
 </footer>
