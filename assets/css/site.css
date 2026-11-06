@@ -319,7 +319,6 @@ select:hover { border-color: var(--ink-3); }
 .board thead th.model { position: sticky; left: 0; z-index: 2; }
 .m-name { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; line-height: 1.3; color: var(--ink); }
 .model-logo { display: block; flex: none; object-fit: contain; }
-.m-org { display: block; margin: 0 0 0 28px; font-size: 12.5px; line-height: 1.3; color: var(--ink-3); }
 .m-sub { display: none; }
 .phone-only { display: none; }
 .col-overall { width: 28%; }
@@ -332,8 +331,6 @@ select:hover { border-color: var(--ink-3); }
 .board td:not(.rank), .ov b { font-family: var(--font-mono); font-stretch: 84%; font-size: 14px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
 .ov b { font-weight: 500; color: var(--ink); text-align: right; }
 .board .best, .ov b.best { font-weight: 750; color: var(--ink); }
-.cov { display: block; margin-top: 1px; font: 500 11px/1.3 var(--font-mono); font-stretch: 84%; color: var(--ink-3); }
-.ov .cov { grid-column: 2; text-align: right; margin-top: -10px; }
 .board tbody tr:hover > * { background: var(--paper-2); }
 .board-wrap.can-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); }
 .table-note { margin: 12px 0 0; max-width: 92ch; font-size: 14px; color: var(--ink-3); }
@@ -358,7 +355,6 @@ select:hover { border-color: var(--ink-3); }
   .phone-only { display: inline !important; }
   .board .ov { grid-template-columns: 44px minmax(36px, 1fr); gap: 10px; }
   .board .ov b { order: -1; }
-  .ov .cov { grid-column: 1; text-align: left; margin-top: 0; }
   .board .col-overall { width: 36%; }
   .board th, .board td { padding: 12px 10px; }
   .board thead th:last-child, .board thead th.col-overall { padding-right: 20px; }
