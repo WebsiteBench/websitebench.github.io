@@ -10,11 +10,15 @@
   // Sections that moved off the homepage keep working from their old addresses.
   const cleanPath = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
   if (cleanPath !== location.pathname) history.replaceState(history.state, '', cleanPath + location.search + location.hash);
-  if (location.pathname === '/') {
+  const followMovedSection = () => {
+    if (location.pathname !== '/') return false;
     const moved = location.hash.slice(1);
     const page = moved === 'run' ? '/run' : ['task', 'benchmark', 'tests'].includes(moved) ? `/eval#${moved}` : (moved === 'why' || moved === 'findings' || /^f\d/.test(moved)) ? `/analysis#${moved}` : '';
-    if (page) { location.replace(page); return; }
-  }
+    if (page) location.replace(page);
+    return Boolean(page);
+  };
+  if (followMovedSection()) return;
+  addEventListener('hashchange', followMovedSection);
 
   /* ------------------------------------------------------------------ theme */
   const root = document.documentElement;

@@ -10,10 +10,10 @@
 - It builds a full-stack site that runs offline, within 16 hours, and may revisit the reference while coding and testing.
 - Hidden tests then compare candidate and reference. Request (T1) tests check page responses and form submissions. Browser (T2) tests check interface behavior at three levels: immediate responses (L1), state changes read back (L2), and persistence, other users and recovery (L3). System (T3) tests check builds, restarts, process health and security.
 - A test scores 1 only if its functional checks pass and every visual checkpoint reaches the baseline-normalized SSIM threshold: 0.99 in the released tasks, 0.75 in the runs behind the published scores. Browser workflow tests repeat a sequence of user actions and check its result. Each must pass with two independent executors, Playwright and Browser Use.
-- The homepage compares one run with its reference: Qwen 3.8 Max with a 200K context window on the Uber Eats task, which passes 39 of 338 hidden tests.
+- The Eval page compares one run with its reference: Qwen 3.8 Max on the Uber Eats task, which passes 39 of 338 hidden tests.
 
 ## Results
-Table, Pareto and Waffle use the same selected results and context settings. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point plots the model's Table values.
+Table, Pareto and Waffle use the same results. Overall and Request/Browser/System scores are test-pooled: 100 × sum(passed tests) / sum(total tests). Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point plots the model's Table values.
 
 ## Leaderboard (test-pooled percent of hidden tests passed: overall / Request / Browser / System)
 - Claude Opus 5.5: 26.2 / 71.2 / 21.8 / 35.4
@@ -37,7 +37,7 @@ Table, Pareto and Waffle use the same selected results and context settings. Ove
 - Tasks on Harbor Hub: https://hub.harborframework.com/datasets/websitebench/WebsiteBench
 - Project page: https://website-bench.com/
 - Tasks and models: https://website-bench.com/data/cohort.json
-- Contexts and aggregates: https://website-bench.com/data/leaderboard-views.json
+- Aggregates: https://website-bench.com/data/leaderboard-views.json
 - Per-task scores: https://website-bench.com/data/waffle.json
 - Run instructions: https://website-bench.com/run
 - Task browser, with every run's result and screenshots: https://website-bench.com/tasks

@@ -7,8 +7,8 @@ const cohort = read('cohort.json'), waffle = read('waffle.json'), board = read('
 const ids = cohort.tasks.map(t => t.id), modelIDs = waffle.models.map(m => m.id), same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 if (ids.length !== 70 || new Set(ids).size !== 70 || !same(ids, waffle.tasks.map(t => t.id)) || !same(ids, materials.tasks.map(t => t.id))) throw Error('Current views must share the exact 70-task cohort');
 if (modelIDs.length !== 8 || new Set(modelIDs).size !== 8) throw Error('Expected the eight leaderboard models');
-for (const view of ['overview', '1m', '200k']) for (const model of board.views[view]) {
-  const entries = waffle.tasks.map(t => t.results[model.id].contexts[model.variable_context ? view : 'recorded']).filter(e => e.status === 'scored');
+for (const model of board.views.overview) {
+  const entries = waffle.tasks.map(t => t.results[model.id].contexts.overview).filter(e => e.status === 'scored');
   const passed = entries.reduce((n, e) => n + e.passed, 0), total = entries.reduce((n, e) => n + e.total, 0);
   if (Math.abs(model.overall - 100 * passed / total) > 1e-9 || model.score_counts.overall.passed !== passed || model.score_counts.overall.total !== total) throw Error('Leaderboard and Waffle test counts disagree');
 }
@@ -37,6 +37,7 @@ const facts = {
   'best-overall': best.overall.toFixed(1) + '%',
   'best-turns': best.turns.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1}),
   'one-in': words[oneIn] || String(oneIn),
+  'demo-model': demo.model,
   'demo-run-passed': demoCount(demo.run.passed),
   'demo-run-total': demoCount(demo.run.total),
   'demo-run-score': (100 * demo.run.passed / demo.run.total).toFixed(1) + '%',

@@ -10,11 +10,11 @@
   const [materials, previews] = await Promise.all(['data/task-materials.json', 'data/task-previews.json'].map(url => fetch(url).then(r => r.json())));
 
   const tasks = materials.tasks.map(task => {
-    const runs = materials.models.flatMap(model => task.models[model.id].runs.map(run => {
-      const [passed, total] = run.scores.length ? run.scores[0].value.split('/').map(Number) : [null, null];
-      const [size, effort] = run.context.split('-');
-      return {id: run.id, model, size: size.toUpperCase(), effort, passed, total, rate: total && 100 * passed / total};
-    })).sort((a, b) => (a.rate === null) - (b.rate === null) || b.rate - a.rate || a.model.name.localeCompare(b.model.name));
+    const runs = materials.models.map(model => {
+      const {runs: [run], status} = task.models[model.id];
+      const [passed, total] = run && run.scores.length ? run.scores[0].value.split('/').map(Number) : [null, null];
+      return {id: run ? run.id : `${model.id}-none`, model, status, passed, total, rate: total ? 100 * passed / total : null};
+    }).sort((a, b) => (a.rate === null) - (b.rate === null) || b.rate - a.rate || a.model.name.localeCompare(b.model.name));
     // A task's hidden test count is the total used by most of its scored runs, as in tools/prerender.js.
     const totals = new Map();
     for (const run of runs) if (run.total) totals.set(run.total, (totals.get(run.total) || 0) + 1);
@@ -23,7 +23,7 @@
   }).sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}));
 
   const shot = (view, run) => view.runs[run.id]?.image;
-  const runLabel = run => run.model.name + (run.size ? `, ${run.size}` : '');
+  const runLabel = run => run.model.name;
   const testsPassed = run => `${count(run.passed)} of ${count(run.total)} tests passed`;
 
   /* ------------------------------------------------------- contact sheet */
@@ -32,7 +32,7 @@
   const hardest = tasks.reduce((a, b) => (b.best.rate < a.best.rate ? b : a));
   const easiest = tasks.reduce((a, b) => (b.best.rate > a.best.rate ? b : a));
   const testCounts = tasks.map(t => t.tests);
-  $('#catalog-lede').textContent = `Every website in the benchmark, with its hidden tests and the best pass rate any model reached on it: from ${hardest.best.rate.toFixed(1)}% on ${hardest.name} to ${easiest.best.rate.toFixed(1)}% on ${easiest.name}. Select one to compare each model’s rebuild with the reference.`;
+  $('#catalog-lede').textContent = `Best pass rate from ${hardest.best.rate.toFixed(1)}% on ${hardest.name} to ${easiest.best.rate.toFixed(1)}% on ${easiest.name}. Select a website to compare its rebuilds.`;
   $('#catalog-facts').innerHTML = `<li><b>${tasks.length}</b> websites</li><li><b>${count(testCounts.reduce((a, b) => a + b))}</b> hidden tests</li><li><b>${count(Math.min(...testCounts))}</b> tests on the smallest</li><li><b>${count(Math.max(...testCounts))}</b> tests on the largest</li>`;
 
   grid.innerHTML = tasks.map(task => {
@@ -65,17 +65,16 @@
 
   function renderRuns() {
     const {task, view} = current;
-    $('#runs-caption').textContent = `Every model and run on ${task.name}`;
+    $('#runs-caption').textContent = `Every model on ${task.name}`;
     runRows.innerHTML = task.runs.map(run => {
       const open = run.model.group === 'open' ? ' class="is-open"' : '';
-      const org = [run.model.org, run.size, run.effort].filter(Boolean).join(', ');
       const scored = run.rate !== null;
       const pick = view && shot(view, run)
         ? `<input class="sr-only" type="radio" name="run" value="${run.id}" aria-label="Compare ${escape(runLabel(run))} with the reference"><svg class="split-glyph" viewBox="0 0 16 13" aria-hidden="true"><rect x=".75" y=".75" width="14.5" height="11.5" rx="2.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="split-half" d="M8 .75h5a2.25 2.25 0 0 1 2.25 2.25v7a2.25 2.25 0 0 1-2.25 2.25H8z" fill="currentColor"/><path d="M8 .75v11.5" stroke="currentColor" stroke-width="1.5"/></svg>`
         : '—';
       return `<tr data-run="${run.id}"${scored ? ` style="--rate:${run.rate.toFixed(2)}"` : ''}>`
-        + `<th scope="row"${open} title="${escape(org)}"><span class="m-name"><img class="model-logo" src="${escape(run.model.logo)}" alt="" width="16" height="16">${escape(run.model.name)}${run.size ? `<small>${run.size}</small>` : ''}</span></th>`
-        + (scored ? `<td title="${testsPassed(run)}">${count(run.passed)}</td><td title="${testsPassed(run)}">${run.rate.toFixed(1)}</td>` : '<td>—</td><td>—</td>')
+        + `<th scope="row"${open} title="${escape(run.model.org)}"><span class="m-name"><img class="model-logo" src="${escape(run.model.logo)}" alt="" width="16" height="16">${escape(run.model.name)}</span></th>`
+        + (scored ? `<td title="${testsPassed(run)}">${count(run.passed)}</td><td title="${testsPassed(run)}">${run.rate.toFixed(1)}</td>` : `<td colspan="2" class="run-failed">${run.status === 'timeout' ? 'Timeout' : 'Error'}</td>`)
         + `<td class="run-shot">${pick}</td></tr>`;
     }).join('');
   }
@@ -91,7 +90,7 @@
     });
     if (!view) return;
     $('#task-run').textContent = run
-      ? `Rebuilt by ${run.model.name}${run.size ? ` with a ${run.size} context window` : ''}${run.rate === null ? '' : `: ${count(run.passed)} of ${count(run.total)} hidden tests passed (${run.rate.toFixed(1)}%)`}`
+      ? `Rebuilt by ${run.model.name}${run.rate === null ? '' : `: ${count(run.passed)} of ${count(run.total)} hidden tests passed (${run.rate.toFixed(1)}%)`}`
       : '';
     $('#side-rebuild').textContent = run ? runLabel(run) : '';
     compare.classList.toggle('is-reference-only', !run);
@@ -135,7 +134,7 @@
 
   function syncUrl() {
     const {task, view, run} = current, extra = {};
-    if (run) Object.assign(extra, {model: run.model.id, context: run.id});
+    if (run) Object.assign(extra, {model: run.model.id, run: run.id});
     if (view && view !== task.views[0]) extra.view = view.id;
     history.replaceState(null, '', taskUrl(task, extra));
   }
@@ -146,12 +145,13 @@
   }
 
   function openTask(task, params) {
-    const index = tasks.indexOf(task), wanted = task.runs.filter(r => r.id === params.get('context')).concat(task.runs.filter(r => r.model.id === params.get('model')));
+    const index = tasks.indexOf(task), wanted = task.runs.filter(r => r.id === (params.get('run') || params.get('context'))).concat(task.runs.filter(r => r.model.id === params.get('model')));
     current.task = task;
     current.view = task.views.find(v => v.id === params.get('view')) || task.views[0];
     current.linked = wanted[0]?.id;
     document.title = `${task.name} | WebsiteBench`;
     picker.value = task.id;
+    $('#task-picker-label').textContent = task.name;
     page.classList.toggle('no-shots', !current.view);
     const previous = tasks[(index - 1 + tasks.length) % tasks.length], next = tasks[(index + 1) % tasks.length];
     $('#previous-task').href = taskUrl(previous);

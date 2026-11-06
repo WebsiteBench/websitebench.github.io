@@ -55,9 +55,9 @@
 <link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=pages3-20261106">
+<link rel="stylesheet" href="assets/css/site.css?v=ctx8-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=pages3-20261106" defer></script>
+<script src="assets/js/site.js?v=ctx8-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -87,16 +87,26 @@
 <main id="main" class="wrap page">
   <header class="sec-head" id="top">
     <h1>Run the benchmark</h1>
-    <a class="route" href="#top">/run</a>
   </header>
-  <p class="page-intro">Requires uv and Docker. These commands set up the repository and run an agent on one task with Harbor, which fetches the task from Harbor Hub.</p>
+  <p class="page-intro">Requires uv and Docker. Harbor fetches the tasks from Harbor Hub.</p>
   <div class="run-block">
     <div class="code-wrap">
-      <div class="code-head"><span>Run one task</span><button class="dt-btn" type="button" data-copy-target="quickstart"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
-<pre class="code" id="quickstart"><code>git clone https://github.com/TIGER-AI-Lab/WebsiteBench.git
+      <div class="code-head"><span>Run all 70 tasks</span><button class="dt-btn" type="button" data-copy-target="run-all"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
+<pre class="code" id="run-all"><code>git clone https://github.com/TIGER-AI-Lab/WebsiteBench.git
 cd WebsiteBench
 uv sync
-uv run harbor run --task websitebench/medium@v1 \
+uv run harbor run --dataset websitebench/WebsiteBench@v1 \
+  --agent codex --model '&lt;model&gt;' \
+  --allow-environment-host snapshot.debian.org \
+  --allow-environment-host deb.debian.org \
+  --allow-environment-host raw.githubusercontent.com \
+  --allow-environment-host github.com \
+  --allow-environment-host nodejs.org \
+  --allow-environment-host registry.npmjs.org</code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-head"><span>Run one task</span><button class="dt-btn" type="button" data-copy-target="run-one"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
+<pre class="code" id="run-one"><code>uv run harbor run --task websitebench/medium@v1 \
   --agent codex --model '&lt;model&gt;' \
   --allow-environment-host snapshot.debian.org \
   --allow-environment-host deb.debian.org \
@@ -106,12 +116,12 @@ uv run harbor run --task websitebench/medium@v1 \
   --allow-environment-host registry.npmjs.org</code></pre>
     </div>
     <ul class="notes">
-      <li>The repository pins Harbor 0.25.0. The 70 tasks form the Harbor Hub dataset <code>websitebench/WebsiteBench@v1</code>; replace <code>--task websitebench/medium@v1</code> with <code>--dataset websitebench/WebsiteBench@v1</code> to run all of them.</li>
-      <li>The same tasks are on <a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Hugging Face</a>. To run a task directory you have downloaded, pass <code>--path</code> with that directory instead of <code>--task</code>.</li>
-      <li>Set <code>--agent</code> and <code>--model</code> to the agent and model you want to evaluate.</li>
-      <li>Harbor installs the agent inside the task container during setup, and the task network allows only the browser there. The <code>--allow-environment-host</code> flags open the installer's download hosts for that step only. For Claude Code, allow <code>snapshot.debian.org</code>, <code>deb.debian.org</code> and <code>downloads.claude.ai</code> instead.</li>
-      <li>The Docker host needs Linux 6.7 or newer (Landlock ABI 4, used by the verifier's sandbox) and nftables <code>fib</code> support (used to enforce the task network policy).</li>
-      <li>Each task gives the agent up to 16 hours and the verifier up to 8 hours. Most tasks request 8 CPUs, 8 GiB of memory and 20 GiB of disk.</li>
+      <li>The repository pins Harbor 0.25.0.</li>
+      <li>The same tasks are on <a href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Hugging Face</a>. Pass <code>--path</code> to run a downloaded task.</li>
+      <li>Set <code>--agent</code> and <code>--model</code> to what you want to evaluate.</li>
+      <li><code>--allow-environment-host</code> opens the agent installer’s download hosts during setup. For Claude Code, allow <code>snapshot.debian.org</code>, <code>deb.debian.org</code> and <code>downloads.claude.ai</code>.</li>
+      <li>The Docker host needs Linux 6.7 or newer and nftables <code>fib</code> support.</li>
+      <li>Each task allows the agent 16 hours and the verifier 8 hours. Most request 8 CPUs, 8 GiB of memory and 20 GiB of disk.</li>
     </ul>
   </div>
   <p class="run-links"><a class="link-btn" href="https://github.com/TIGER-AI-Lab/WebsiteBench" onclick="return gtag_report_conversion(this.href, event)">Setup details on GitHub <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://huggingface.co/datasets/TIGER-Lab/WebsiteBench">Tasks on Hugging Face <span aria-hidden="true">↗</span></a><a class="link-btn" href="https://hub.harborframework.com/datasets/websitebench/WebsiteBench">Tasks on Harbor Hub <span aria-hidden="true">↗</span></a><a class="link-btn" href="/tasks">Browse the 70 tasks <span aria-hidden="true">→</span></a></p>

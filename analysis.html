@@ -55,9 +55,9 @@
 <link rel="icon" href="assets/brand/logo.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/logo-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
-<link rel="stylesheet" href="assets/css/site.css?v=pages3-20261106">
+<link rel="stylesheet" href="assets/css/site.css?v=ctx8-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=pages3-20261106" defer></script>
+<script src="assets/js/site.js?v=ctx8-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -87,14 +87,12 @@
 <main id="main" class="wrap page">
   <header class="sec-head" id="top">
     <h1>Analysis</h1>
-    <a class="route" href="#top">/analysis</a>
   </header>
 <section class="section" id="why" aria-labelledby="why-h">
   <header class="sec-head">
     <h2 id="why-h">Why even the best agent passes only about one test in <span data-fact="one-in">four</span></h2>
-    <a class="route" href="#why">/why</a>
   </header>
-  <p class="intro">A <strong>user workflow</strong> is a sequence of actions that completes a user goal and ends in an observable result. For example: browse products, add an item to the cart, check out and see the order confirmation.</p>
+  <p class="intro">A <strong>user workflow</strong> ends in an observable result, such as an order confirmation.</p>
   <figure class="tree is-armed" id="tree" aria-labelledby="tree-cap">
     <div class="tree-grid" id="tree-grid">
       <div class="group" data-cat="1">
@@ -131,15 +129,14 @@
 <section class="section" id="findings" aria-labelledby="findings-h">
   <header class="sec-head">
     <h2 id="findings-h">Three ways the rebuilds go wrong</h2>
-    <a class="route" href="#findings">/findings</a>
   </header>
-  <p class="intro">We traced Grok 4.6 runs from what the agent observed, to the code it wrote, to the tests it failed, and compared runs with and without a human exploration trace.</p>
+  <p class="intro">Grok 4.6 runs, traced from what the agent saw to the code it wrote to the tests it failed.</p>
   <article class="finding" aria-labelledby="f1-h">
     <div class="finding-text">
       <p class="finding-tag"><span>1</span>Underexploration</p>
       <h3 id="f1-h">Agents visit the pages but seldom follow a workflow to its end</h3>
-      <p>By their first code edit, agents had visited nearly every core page and started nearly every core workflow, but had followed only a few to their final step. They stop a multi-step interaction before it ends, so they never see what a checkout confirms or what a saved record looks like afterwards.</p>
-      <p>A human exploration trace, a log of browser actions with no page content, raised the scores. The largest gains came on websites where the agent exploring alone had passed no hidden tests.</p>
+      <p>By their first code edit, agents had started nearly every core workflow but followed only a few to the end.</p>
+      <p>A human exploration trace raised scores most where the agent alone had passed no hidden tests.</p>
     </div>
     <div class="finding-viz">
       <p class="viz-title">A checkout workflow, and where agents stop</p>
@@ -156,8 +153,8 @@
     <div class="finding-text">
       <p class="finding-tag"><span>2</span>Failure to implement observed behavior</p>
       <h3 id="f2-h">What agents observe rarely reaches their code</h3>
-      <p>We checked the behaviors that an agent had observed during exploration and that its trajectory and submitted code let us verify: page contents, workflows and persisted state. Almost none were implemented the way the agent had seen them.</p>
-      <p>Effort is lopsided too. Most tool calls explored the reference or checked the rebuild, and only a small share edited code.</p>
+      <p>Almost none of the behaviors agents observed were implemented the way they saw them.</p>
+      <p>Most tool calls explored the reference or checked the rebuild. Few edited code.</p>
     </div>
     <div class="finding-viz">
       <p class="viz-title">Two traced Grok 4.6 runs: what the agent saw, and what it built</p>
@@ -179,8 +176,8 @@
     <div class="finding-text">
       <p class="finding-tag"><span>3</span>Early stopping</p>
       <h3 id="f3-h">Agents stop with most of the clock left</h3>
-      <p>Runs may take 16 hours, yet most ended well before the limit. We then enabled Claude Code’s <code>/goal</code> hook for Kimi K3 on the Lowe’s task, so that a review had to accept each attempt to stop.</p>
-      <p>At 10.25 hours the agent declared its repairs complete. The hook rejected the exit, and the agent went on to check that cart, order, account and session state survived a restart. The score rose from 0% to 31.3%.</p>
+      <p>Runs may take 16 hours, yet most end well before the limit.</p>
+      <p>With Claude Code’s <code>/goal</code> hook rejecting the early exit, Kimi K3 on Lowe’s went from 0% to 31.3%.</p>
     </div>
     <div class="finding-viz">
       <p class="viz-title">Kimi K3 on Lowe’s, without and with the <code>/goal</code> hook</p>
@@ -197,74 +194,21 @@
       </dl>
     </div>
   </article>
-  <p class="findings-more"><a class="link-btn" href="/analysis">How the three studies were run, with two traced cases, on the Analysis page <span aria-hidden="true">→</span></a></p>
 </section>
-  <p class="page-intro page-intro-studies">The paper traces why agents fall short through three studies.</p>
-  <nav class="tabs page-nav" aria-label="Analysis sections"><a class="tab" href="#human-trajectory">Human trajectory</a><a class="tab" href="#exploration-implementation">Exploration and implementation</a><a class="tab" href="#early-stopping">Early stopping</a><a class="tab" href="#benchmark">Evaluation</a></nav>
 
   <section class="study" id="human-trajectory" aria-labelledby="human-trajectory-heading">
     <header class="study-head"><h2 id="human-trajectory-heading">Human trajectory</h2><p class="study-scope"><span>Grok 4.6</span><span>paired runs</span><span>16-hour limit</span></p></header>
-    <p class="study-summary">A human exploration trace raised reconstruction scores. <strong>The largest gains came on websites where the agent exploring alone passed no hidden tests.</strong></p>
     <div class="design-wrap">
       <table class="design">
         <caption>Each website is rebuilt twice, with the same model, agent and time limit</caption>
         <thead><tr><th scope="col">Run</th><th scope="col">What the agent has</th></tr></thead>
         <tbody>
           <tr><th scope="row">Explores alone</th><td>The reference website, through the browser.</td></tr>
-          <tr><th scope="row">With a human trace</th><td>The same browser access, plus a read-only log of the actions a website developer took while exploring the reference. The log holds no page content, so the agent still explores with its own tools.</td></tr>
+          <tr><th scope="row">With a human trace</th><td>The same browser access, plus a read-only log of a developer’s actions on the reference.</td></tr>
         </tbody>
       </table>
     </div>
-    <p>With the trace, agents had seen the final result of more workflows before their first code edit. People also explore far faster than agents: a recorded human session lasts minutes and visits more distinct pages than an agent reaches in hours of exploration.</p>
-  </section>
-
-  <section class="study" id="exploration-implementation" aria-labelledby="exploration-implementation-heading">
-    <header class="study-head"><h2 id="exploration-implementation-heading">Exploration and implementation</h2><p class="study-scope"><span>Grok 4.6</span><span>one run per website</span></p></header>
-    <p class="study-summary">By their first code edit, agents had visited nearly every core page and started nearly every core workflow, but <strong>few workflows had reached their final result</strong>.</p>
-    <p>We also checked requirements that the agent had observed and that its trajectory and submitted code let us verify: page contents, workflows and persisted state. Almost none were implemented the way the reference behaved. Most tool calls explored the reference or checked the rebuild, and a small share edited code.</p>
-    <div class="design-wrap">
-      <table class="design cases-table">
-        <caption>Two traced cases: what the agent observed, and what it built</caption>
-        <thead><tr><th scope="col">Website</th><th scope="col">Observed in the reference</th><th scope="col">In the rebuild</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">AMC Theatres</th><td data-label="Observed in the reference">The agent opened <code>/movies?tab=coming-soon</code> and captured the Coming Soon list.</td><td data-label="In the rebuild">Clicking the tab works, but the server ignores the <code>tab</code> query, so the URL opens the default list.</td></tr>
-          <tr><th scope="row">PetSmart</th><td data-label="Observed in the reference">A screenshot of the homepage shows the Fish, Bird and Small Pet cards with matching artwork.</td><td data-label="In the rebuild">The cards keep their labels, but all three show dog artwork.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="study" id="early-stopping" aria-labelledby="early-stopping-heading">
-    <header class="study-head"><h2 id="early-stopping-heading">Early stopping</h2><p class="study-scope"><span>16-hour limit</span><span>one continuation case</span></p></header>
-    <p class="study-summary">Most runs in the main experiments ended <strong>well before the 16-hour limit</strong>.</p>
-    <p>In a Kimi K3 rebuild of Lowe’s, Claude Code’s <code>/goal</code> hook reviewed each attempt to stop. At 10.25 hours the agent declared its repairs complete; the hook rejected the exit, and the agent went on to check that cart, order, account and session state survived a restart. The run ended at 10.9 hours instead of 1.0, and the score rose from 0% to 31.3%.</p>
-    <div class="design-wrap continuation">
-      <table class="design">
-        <caption>Kimi K3 on Lowe’s, without and with the <code>/goal</code> hook</caption>
-        <thead><tr><th scope="col">Measure</th><th scope="col">Original run</th><th scope="col">With <code>/goal</code></th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Duration</th><td class="num">1.0 h</td><td class="num">10.9 h</td></tr>
-          <tr><th scope="row">Test pass rate</th><td class="num">0%</td><td class="num">31.3%</td></tr>
-          <tr><th scope="row">Agent steps</th><td class="num">130</td><td class="num">879</td></tr>
-          <tr><th scope="row">Tokens</th><td class="num">10.6M</td><td class="num">87.9M</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="study" id="benchmark" aria-labelledby="evaluation-heading">
-    <header class="study-head"><h2 id="evaluation-heading">Evaluation</h2><p class="study-scope"><span>Three groups of hidden tests</span></p></header>
-    <div class="design-wrap">
-      <table class="design">
-        <thead><tr><th scope="col">Group</th><th scope="col">What it checks</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Request</th><td>HTTP responses and form submissions.</td></tr>
-          <tr><th scope="row">Browser</th><td>Appearance, sequences of user actions that complete a goal, and persistent state.</td></tr>
-          <tr><th scope="row">System</th><td>Offline builds, health, and restarts.</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="run-links"><a class="link-btn" href="/eval#benchmark">Test levels and scoring rules <span aria-hidden="true">→</span></a></p>
+    <p>A recorded human session lasts minutes. An agent explores for hours before its first edit.</p>
   </section>
 </main>
 

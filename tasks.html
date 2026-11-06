@@ -57,10 +57,10 @@
 <link rel="apple-touch-icon" href="assets/brand/logo-1024.png">
 <link rel="preload" href="assets/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=pages3-20261106">
+<link rel="stylesheet" href="assets/css/site.css?v=ctx8-20261106">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=pages3-20261106" defer></script>
-<script src="assets/js/tasks.js?v=pages3-20261106" defer></script>
+<script src="assets/js/site.js?v=ctx8-20261106" defer></script>
+<script src="assets/js/tasks.js?v=ctx8-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -112,7 +112,7 @@
 
   <section class="task-sheet" id="task-view" hidden>
     <header class="task-head">
-      <h1><select class="task-picker" id="task-picker" aria-label="Task"></select></h1>
+      <h1 class="task-picker-wrap"><span class="task-picker-label" id="task-picker-label" aria-hidden="true"></span><select class="task-picker" id="task-picker" aria-label="Task"></select></h1>
       <nav class="results-tabs task-step" aria-label="Tasks">
         <a href="/tasks" data-nav>All tasks</a>
         <a id="previous-task" href="" data-nav>Previous</a>

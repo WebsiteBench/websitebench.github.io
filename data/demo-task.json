@@ -2,16 +2,24 @@
   "task": "ubereats",
   "site": "Uber Eats",
   "model": "Qwen 3.8 Max",
-  "context": "200K",
   "threshold": 0.75,
   "run": {
     "recording": "a1f93a9dd1349a75ab750e80",
     "passed": 39,
     "total": 338,
     "groups": {
-      "request": [9, 50],
-      "browser": [17, 209],
-      "system": [13, 79]
+      "request": [
+        9,
+        50
+      ],
+      "browser": [
+        17,
+        209
+      ],
+      "system": [
+        13,
+        79
+      ]
     }
   },
   "pages": [
@@ -22,7 +30,10 @@
       "width": 1440,
       "height": 793,
       "split": 40,
-      "urls": { "reference": "/", "rebuild": "/" }
+      "urls": {
+        "reference": "/",
+        "rebuild": "/"
+      }
     },
     {
       "id": "feed",
@@ -32,7 +43,10 @@
       "width": 1440,
       "height": 793,
       "split": 45,
-      "urls": { "reference": "/?view=feed", "rebuild": "/?view=feed" }
+      "urls": {
+        "reference": "/?view=feed",
+        "rebuild": "/?view=feed"
+      }
     },
     {
       "id": "search",
@@ -42,7 +56,10 @@
       "width": 1440,
       "height": 793,
       "split": 50,
-      "urls": { "reference": "/?view=search", "rebuild": "/?view=search" }
+      "urls": {
+        "reference": "/?view=search",
+        "rebuild": "/?view=search"
+      }
     },
     {
       "id": "store",
@@ -52,7 +69,10 @@
       "width": 1440,
       "height": 793,
       "split": 50,
-      "urls": { "reference": "/?view=store", "rebuild": "/?view=store" }
+      "urls": {
+        "reference": "/?view=store",
+        "rebuild": "/?view=store"
+      }
     }
   ],
   "markers": [
@@ -62,7 +82,12 @@
       "x": 97,
       "y": 37,
       "align": "right",
-      "box": { "x": 63.8, "y": 40, "w": 34.5, "h": 49.5 },
+      "box": {
+        "x": 63.8,
+        "y": 40,
+        "w": 34.5,
+        "h": 49.5
+      },
       "label": "drawn, not a photo",
       "title": "Photo replaced by a drawing",
       "body": "The reference’s hero is a photograph of burgers, fries and a can on a wooden table. The rebuild draws them as flat shapes, using SVG art from its own script, tools/gen_images.py. The page’s test stops earlier, at a missing main.landing element, before any screenshot comparison.",
@@ -75,7 +100,12 @@
       "x": 13,
       "y": 29.5,
       "align": "left",
-      "box": { "x": 0, "y": 19.8, "w": 12.4, "h": 19.3 },
+      "box": {
+        "x": 0,
+        "y": 19.8,
+        "w": 12.4,
+        "h": 19.3
+      },
       "label": "wrapper redrawn",
       "title": "Foil wrapper becomes a flat packet",
       "body": "At the top left, the reference has a photographed, crumpled foil wrapper. The rebuild has a red rectangle with a cream border.",
@@ -98,7 +128,12 @@
       "x": 72,
       "y": 3.6,
       "align": "center",
-      "box": { "x": 0, "y": 0, "w": 100, "h": 7.1 },
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 100,
+        "h": 7.1
+      },
       "label": "white, not green",
       "title": "White top bar, narrower banner",
       "body": "The reference’s green top bar runs into a full-width banner. The rebuild’s bar is white, its logo is plain text with a green “Eats”, and the banner starts after the side menu. The page’s test stops earlier, at a missing main.feed-page element, before any screenshot comparison.",
@@ -111,7 +146,12 @@
       "x": 56,
       "y": 25,
       "align": "left",
-      "box": { "x": 53.8, "y": 7.1, "w": 36.8, "h": 21.2 },
+      "box": {
+        "x": 53.8,
+        "y": 7.1,
+        "w": 36.8,
+        "h": 21.2
+      },
       "label": "flat banner art",
       "title": "Banner art simplified",
       "body": "The reference has white 3D shapes and a red % badge. The rebuild has flat white tiles and a pink + badge.",
@@ -123,7 +163,12 @@
       "x": 65,
       "y": 61,
       "align": "right",
-      "box": { "x": 65.2, "y": 56.3, "w": 6, "h": 9.8 },
+      "box": {
+        "x": 65.2,
+        "y": 56.3,
+        "w": 6,
+        "h": 9.8
+      },
       "label": "smaller logo",
       "title": "Dodgers logo redrawn",
       "body": "The reference’s large script logo with a baseball becomes a small serif word with an X in a circle above it.",
@@ -135,7 +180,12 @@
       "x": 50,
       "y": 80,
       "align": "left",
-      "box": { "x": 13.2, "y": 83.5, "w": 86.8, "h": 16.5 },
+      "box": {
+        "x": 13.2,
+        "y": 83.5,
+        "w": 86.8,
+        "h": 16.5
+      },
       "label": "drawn food",
       "title": "Restaurant photos replaced by drawings",
       "body": "Thai Kitchen, Curry Boys DTLA, Eggslut and King Taco show food photographs in the reference and flat drawings in the rebuild. The category icons above them are redrawn too.",
@@ -147,7 +197,12 @@
       "x": 97,
       "y": 17,
       "align": "right",
-      "box": { "x": 19.3, "y": 20.3, "w": 77.9, "h": 41.9 },
+      "box": {
+        "x": 19.3,
+        "y": 20.3,
+        "w": 77.9,
+        "h": 41.9
+      },
       "label": "drawn plates",
       "title": "Drawn plates, taller images",
       "body": "Each result shows a drawn plate where the reference has a food photograph. The images are 332 px tall, not 232 px, so the second row starts 94 px lower. The page’s test stops earlier, at a missing main.results-page element, before any screenshot comparison.",
@@ -160,7 +215,12 @@
       "x": 82,
       "y": 3.6,
       "align": "right",
-      "box": { "x": 82.6, "y": 0.7, "w": 15.7, "h": 5.7 },
+      "box": {
+        "x": 82.6,
+        "y": 0.7,
+        "w": 15.7,
+        "h": 5.7
+      },
       "label": "plain buttons",
       "title": "Header buttons lose their fill",
       "body": "The reference has a black cart button, a grey Log in and a black Sign up. The rebuild has a plain cart icon, plain Log in text and a white, outlined Sign up.",
@@ -172,7 +232,12 @@
       "x": 97,
       "y": 39.5,
       "align": "right",
-      "box": { "x": 50, "y": 7.1, "w": 50, "h": 36.3 },
+      "box": {
+        "x": 50,
+        "y": 7.1,
+        "w": 50,
+        "h": 36.3
+      },
       "label": "drawn dish",
       "title": "Dish photo replaced by a drawing",
       "body": "The reference shows a photograph of curry on a dark table. The rebuild shows a flat drawing, and so do the menu items below it. The store name and menu sit about 240 px further right. The page’s test stops earlier, at a missing main.store-page element, before any screenshot comparison.",
@@ -185,7 +250,12 @@
       "x": 95,
       "y": 94.5,
       "align": "right",
-      "box": { "x": 43.9, "y": 89, "w": 50.5, "h": 3.2 },
+      "box": {
+        "x": 43.9,
+        "y": 89,
+        "w": 50.5,
+        "h": 3.2
+      },
       "label": "no $ sign",
       "title": "Prices lose the dollar sign",
       "body": "Menu prices read 15.88 in the rebuild and $15.88 in the reference.",
@@ -193,15 +263,80 @@
     }
   ],
   "tests": [
-    { "id": "ubereats-t1a-002", "group": "Request", "text": "GET /?view=feed answers like the reference", "functional": true, "detail": "response matches" },
-    { "id": "ubereats-t1a-004", "group": "Request", "text": "GET /?view=store answers like the reference", "functional": false, "detail": "text similarity 0.6053, below 0.75" },
-    { "id": "ubereats-t2-0001", "group": "Browser L1", "text": "Home page looks the same at 1,440 px", "functional": false, "detail": "no main.landing", "page": "home" },
-    { "id": "ubereats-t2-0003", "group": "Browser L1", "text": "/api/me looks the same at 1,440 px", "functional": true, "ssim": 1.0, "detail": "similarity 1.0000" },
-    { "id": "ubereats-t2-0040", "group": "Browser L2", "text": "Restaurant feed: open Health from the side menu", "functional": false, "detail": "no main.feed-page", "page": "feed" },
-    { "id": "ubereats-t2-0045", "group": "Browser L2", "text": "Search results: filter to Under 30 min", "functional": false, "detail": "no main.results-page", "page": "search" },
-    { "id": "ubereats-t2-0049", "group": "Browser L2", "text": "Restaurant page: open Soups from the menu", "functional": false, "detail": "no main.store-page", "page": "store" },
-    { "id": "ubereats-t2-0241", "group": "Browser L3", "text": "Send a sign-up code, restart the server, reopen the form", "functional": true, "detail": "both browser runs match" },
-    { "id": "ubereats-t3-000", "group": "System", "text": "compile.sh produces one executable", "functional": true, "detail": "exit status 0" },
-    { "id": "ubereats-t3-035", "group": "System", "text": "Session cookie is host-only and scoped to its owner", "functional": false, "detail": "probe returned 200, expected 401" }
+    {
+      "id": "ubereats-t1a-002",
+      "group": "Request",
+      "text": "GET /?view=feed answers like the reference",
+      "functional": true,
+      "detail": "response matches"
+    },
+    {
+      "id": "ubereats-t1a-004",
+      "group": "Request",
+      "text": "GET /?view=store answers like the reference",
+      "functional": false,
+      "detail": "text similarity 0.6053, below 0.75"
+    },
+    {
+      "id": "ubereats-t2-0001",
+      "group": "Browser L1",
+      "text": "Home page looks the same at 1,440 px",
+      "functional": false,
+      "detail": "no main.landing",
+      "page": "home"
+    },
+    {
+      "id": "ubereats-t2-0003",
+      "group": "Browser L1",
+      "text": "/api/me looks the same at 1,440 px",
+      "functional": true,
+      "ssim": 1.0,
+      "detail": "similarity 1.0000"
+    },
+    {
+      "id": "ubereats-t2-0040",
+      "group": "Browser L2",
+      "text": "Restaurant feed: open Health from the side menu",
+      "functional": false,
+      "detail": "no main.feed-page",
+      "page": "feed"
+    },
+    {
+      "id": "ubereats-t2-0045",
+      "group": "Browser L2",
+      "text": "Search results: filter to Under 30 min",
+      "functional": false,
+      "detail": "no main.results-page",
+      "page": "search"
+    },
+    {
+      "id": "ubereats-t2-0049",
+      "group": "Browser L2",
+      "text": "Restaurant page: open Soups from the menu",
+      "functional": false,
+      "detail": "no main.store-page",
+      "page": "store"
+    },
+    {
+      "id": "ubereats-t2-0241",
+      "group": "Browser L3",
+      "text": "Send a sign-up code, restart the server, reopen the form",
+      "functional": true,
+      "detail": "both browser runs match"
+    },
+    {
+      "id": "ubereats-t3-000",
+      "group": "System",
+      "text": "compile.sh produces one executable",
+      "functional": true,
+      "detail": "exit status 0"
+    },
+    {
+      "id": "ubereats-t3-035",
+      "group": "System",
+      "text": "Session cookie is host-only and scoped to its owner",
+      "functional": false,
+      "detail": "probe returned 200, expected 401"
+    }
   ]
 }

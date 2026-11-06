@@ -31,13 +31,12 @@ All views use the same results for the 70 tasks and eight models.
 
 - Scores are test-pooled pass rates: 100 × sum(passed tests) / sum(total tests), for Overall and for each test group (Request, Browser and System).
 - Cost, tokens and turns are means over the tasks with recorded values. Each Pareto point plots the model's Table values.
-- The context selector applies to all three views. Overview uses Qwen at 200K, DeepSeek at 1M, GLM at 1M with eight 200K results (Eat This Much, Eventbrite, Fandango, Insurify, Notion, Rate My Professors, Tripadvisor and Warby Parker), and the recorded setting for the other models. Prefer 1M and Prefer 200K change GLM, DeepSeek and Qwen, the three models with both contexts; the other six keep their one recorded context.
 
 | File | Content |
 | --- | --- |
 | `data/cohort.json` | The 70 tasks and eight models |
-| `data/leaderboard-views.json` | Aggregates for each context view; `data/leaderboard.json` holds the Overview |
-| `data/waffle.json` | Per-task results for every model and context |
+| `data/leaderboard-views.json` | Aggregates; `data/leaderboard.json` holds the same list |
+| `data/waffle.json` | Per-task results for every model |
 | `data/leaderboard*.csv`, `data/waffle-*.csv` | CSV exports of the same numbers |
 | `data/task-materials.json` | Task browser catalog: recorded runs and their published scores |
 | `data/task-previews.json`, `assets/previews/` | Screenshots of each task's reference and of each run's rebuild, by page |

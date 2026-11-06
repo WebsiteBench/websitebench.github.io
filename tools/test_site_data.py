@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data'
-VIEWS = ('overview', '1m', '200k')
+VIEWS = ('overview',)
 
 
 def load(name):
@@ -22,7 +22,7 @@ def rows(name):
 
 
 def entry(task, model, view):
-    return task['results'][model['id']]['contexts'][view if model['variable_context'] else 'recorded']
+    return task['results'][model['id']]['contexts'][view]
 
 
 def case_count(task):
@@ -80,7 +80,7 @@ class SiteDataTests(unittest.TestCase):
             for model in self.board['views'][view]:
                 with self.subTest(view=view, model=model['id']):
                     self.assertFalse(banned & set(model))
-            self.assertEqual(list(rows(f'leaderboard-{view}.csv')[0]), ['model', 'context', 'overall', 'request', 'browser', 'system', 'cost', 'tokens', 'turns'])
+            self.assertEqual(list(rows(f'leaderboard-{view}.csv')[0]), ['model', 'overall', 'request', 'browser', 'system', 'cost', 'tokens', 'turns'])
         self.assertNotIn('Coverage', self.board['aggregation'])
 
     def test_csv_exports_match_the_json(self):
@@ -127,15 +127,13 @@ class SiteDataTests(unittest.TestCase):
         for task in self.waffle['tasks']:
             for result in task['results'].values():
                 for e in result['contexts'].values():
-                    self.assertLessEqual(set(e), {'status', 'passed', 'total', 'value', 'label', 'context', 'run', 'failure_kind'})
+                    self.assertLessEqual(set(e), {'status', 'passed', 'total', 'value', 'run', 'failure_kind'})
         for task in self.materials['tasks']:
             for value in task['models'].values():
                 for run in value['runs']:
-                    self.assertLessEqual(set(run), {'id', 'context', 'scores', 'score_note', 'code', 'failure_kind'})
-                    if not run['scores']:
-                        self.assertTrue(run['context'])
+                    self.assertLessEqual(set(run), {'id', 'scores', 'score_note', 'code', 'failure_kind'})
                     for score in run['scores']:
-                        self.assertLessEqual(set(score), {'value', 'context'})
+                        self.assertLessEqual(set(score), {'value'})
 
     def test_pages_embed_the_current_data(self):
         self.assertEqual(inline_json('index.html', 'waffle-data'), self.waffle)
@@ -173,12 +171,12 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual(sum(g[1] for g in run['groups'].values()), run['total'])
         model = next(m for m in self.waffle['models'] if m['name'] == demo['model'])
         task = next(t for t in self.waffle['tasks'] if t['id'] == demo['task'])
-        self.assertEqual((demo['task'], demo['model'], demo['context']), ('ubereats', 'Qwen 3.8 Max', '200K'))
+        self.assertEqual((demo['task'], demo['model']), ('ubereats', 'Qwen 3.8 Max'))
         self.assertEqual((run['recording'], run['passed'], run['total']), ('a1f93a9dd1349a75ab750e80', 39, 338))
         self.assertEqual(run['groups'], {'request': [9, 50], 'browser': [17, 209], 'system': [13, 79]})
         contexts = task['results'][model['id']]['contexts']
         # The Overview column shows this cell, so the demo, the Waffle and the leaderboard all read the same result.
-        for key in (demo['context'].lower(), 'overview'):
+        for key in ('overview',):
             with self.subTest(context=key):
                 self.assertEqual(contexts[key]['run'], run['recording'])
                 self.assertEqual(contexts[key]['total'], run['total'])
@@ -220,7 +218,7 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual(inline_json('eval.html', 'demo-data'), demo)
         for stale in ('Amazon (local copy)', '1M context', 'demo-data">{"task":"amazon"'):
             self.assertNotIn(stale, manifest)
-        for text in (f"<b>{demo['site']}</b><span>{demo['model']}, {demo['context']} context</span>", f"Rebuild: {demo['model']}", f"Reference: {demo['site']} (local copy)"):
+        for text in (f"<b>{demo['site']}</b><span>{demo['model']}</span>", f"Rebuild: {demo['model']}", f"Reference: {demo['site']} (local copy)"):
             self.assertIn(text, manifest)
 
         for name in ('index.html', 'eval.html', 'assets/js/site.js', 'assets/css/site.css', 'llms.txt', 'README.md'):
