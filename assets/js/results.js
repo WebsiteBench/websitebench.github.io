@@ -537,19 +537,31 @@
     try { await navigator.clipboard.writeText(stateURL()); announce('Link copied', event.currentTarget || $('#copy-link')); }
     catch (_) { announce('Copy this page address from the browser'); }
   });
+  const SHARE_SENTENCE = 'Given a production-level website they can explore through a browser, agents must reverse-engineer a full-stack version that matches its appearance and behavior as closely as possible.';
+  const SHARE_SHORT = 'Agents must reverse-engineer a full-stack copy of a production-level website.';
+  const shareLines = url => [
+    'GitHub: https://github.com/TIGER-AI-Lab/WebsiteBench',
+    `Website: ${url}`,
+    'Harbor Hub: https://hub.harborframework.com/datasets/websitebench/WebsiteBench',
+    'HF: https://huggingface.co/datasets/TIGER-Lab/WebsiteBench',
+  ].join('\n');
   function refreshShareLinks() {
     const url = stateURL();
-    const best = Math.max(...allModels.map(m => m.overall));
-    const text = `${TITLE} The best model passes ${decimal(best)}% of the hidden tests on WebsiteBench.`;
+    const headline = `WebsiteBench: ${TITLE}`;
     const links = {
-      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`WebsiteBench\n${TITLE}\n${SHARE_SHORT}\n\n${shareLines(url)}`)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      reddit: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
-      hn: `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(url)}&t=${encodeURIComponent(TITLE)}`,
+      reddit: `https://www.reddit.com/submit?title=${encodeURIComponent(headline)}&text=${encodeURIComponent(`${SHARE_SENTENCE}\n\n${shareLines(url)}`)}`,
+      hn: `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(url)}&t=${encodeURIComponent(headline)}`,
     };
     $$('[data-share]').forEach(link => { link.href = links[link.dataset.share]; });
   }
   $('#share-menu').addEventListener('click', event => { if (event.target.closest('a')) closeMenus(); });
+  $('#share-copy').addEventListener('click', async () => {
+    closeMenus();
+    await navigator.clipboard.writeText(`WebsiteBench\n${TITLE}\n\n${SHARE_SENTENCE}\n\n${shareLines(stateURL())}`);
+    announce('Text copied', $('#share-btn'));
+  });
 
   /* ---------------------------------------------------------------- filter and columns */
   function renderFilter() {
