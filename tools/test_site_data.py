@@ -166,9 +166,19 @@ class SiteDataTests(unittest.TestCase):
         self.assertEqual(sum(g[1] for g in run['groups'].values()), run['total'])
         model = next(m for m in self.waffle['models'] if m['name'] == demo['model'])
         task = next(t for t in self.waffle['tasks'] if t['id'] == demo['task'])
-        published = task['results'][model['id']]['contexts']['recorded']
-        self.assertEqual(published['total'], run['total'])
-        self.assertEqual(published['passed'], run['passed'])
+        self.assertEqual((demo['task'], demo['model'], demo['context']), ('ubereats', 'Qwen 3.8 Max', '200K'))
+        self.assertEqual((run['recording'], run['passed'], run['total']), ('a1f93a9dd1349a75ab750e80', 39, 338))
+        self.assertEqual(run['groups'], {'request': [9, 50], 'browser': [17, 209], 'system': [13, 79]})
+        contexts = task['results'][model['id']]['contexts']
+        # The Overview column shows this cell, so the demo, the Waffle and the leaderboard all read the same result.
+        for key in (demo['context'].lower(), 'overview'):
+            with self.subTest(context=key):
+                self.assertEqual(contexts[key]['run'], run['recording'])
+                self.assertEqual(contexts[key]['total'], run['total'])
+                self.assertEqual(contexts[key]['passed'], run['passed'])
+        materials = next(t for t in load('task-materials.json')['tasks'] if t['id'] == demo['task'])
+        row = next(r for r in materials['models'][model['id']]['runs'] if r['id'] == run['recording'])
+        self.assertEqual(row['scores'][0]['value'], f"{run['passed']}/{run['total']}")
 
         pages = {p['id']: p for p in demo['pages']}
         markers = {m['test']: m for m in demo['markers'] if 'test' in m}
@@ -201,6 +211,10 @@ class SiteDataTests(unittest.TestCase):
                 if test['id'] in markers:
                     self.assertEqual(markers[test['id']]['page'], test['page'])
         self.assertEqual(inline_json('index.html', 'demo-data'), demo)
+        for stale in ('Amazon (local copy)', '1M context', 'demo-data">{"task":"amazon"'):
+            self.assertNotIn(stale, manifest)
+        for text in (f"<b>{demo['site']}</b><span>{demo['model']}, {demo['context']} context</span>", f"Rebuild: {demo['model']}", f"Reference: {demo['site']} (local copy)"):
+            self.assertIn(text, manifest)
 
         for name in ('index.html', 'assets/js/site.js', 'assets/css/site.css', 'llms.txt', 'README.md'):
             text = (ROOT / name).read_text(encoding='utf-8').lower()
