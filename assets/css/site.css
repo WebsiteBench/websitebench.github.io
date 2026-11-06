@@ -687,6 +687,7 @@ h4 { margin: 0; }
 .demo:has(.stage[data-mode="side"]) #devtools { margin-top: 12px; border-radius: var(--window); max-width: none; }
 #stage-wrap:has(.stage[data-mode="side"]) { max-width: none; }
 .demo-nav .demo-modes { flex: none; }
+.demo-nav .demo-modes button { padding: 10px 0 12px; line-height: 1.6; }
 .demo-nav .mode-long { display: inline; }
 @media (max-width: 600px) {
   .stage[data-mode="side"] .frame { grid-template-columns: minmax(0, 1fr); }
