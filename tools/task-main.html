@@ -13,14 +13,14 @@
       <div class="board-tools">
         <div class="results-tabs" id="view-tabs" role="group" aria-label="Pages in this comparison">{{view-tabs}}</div>
         <div class="results-tabs" id="compare-modes" role="group" aria-label="Comparison layout">
-          <button type="button" data-mode="divider" aria-pressed="true">Divider</button>
-          <button type="button" data-mode="side" aria-pressed="false">Side<span class="mode-long"> by side</span></button>
+          <button type="button" data-mode="side" aria-pressed="true">Side<span class="mode-long"> by side</span></button>
+          <button type="button" data-mode="divider" aria-pressed="false">Divider</button>
           <button type="button" data-mode="all" aria-pressed="false">All<span class="mode-long"> rebuilds</span></button>
           <button type="button" class="compare-full" id="compare-full" aria-label="Show the comparison full screen" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>
     </div>
-    <div class="compare" id="compare" data-mode="divider" style="--shot-ratio:{{ratio}}">
+    <div class="compare" id="compare" data-mode="side" style="--shot-ratio:{{ratio}}">
       <div class="stage" id="compare-stage">
         <div class="frame" id="compare-frame" style="--split:50%">
           <div class="layer is-ref">

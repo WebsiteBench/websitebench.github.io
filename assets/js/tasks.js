@@ -82,6 +82,7 @@
   const current = {view: null, run: null};
   const address = new URLSearchParams(location.search);
   let pinned = address.has('model') || address.has('run');
+  let chosenMode = 'side';
 
   function renderSelection() {
     const {view, run} = current, pic = shot(view, run);
@@ -90,7 +91,8 @@
       row.classList.toggle('is-on', on);
       row.querySelector('input').checked = on;
     });
-    if (!pic) setMode('divider');
+    if (!pic) setMode('divider', false);
+    else if (compare.dataset.mode === 'divider' && chosenMode !== 'divider') setMode(chosenMode, false);
     setPressed(viewTabs, b => b.dataset.view === view.id);
     showImages(view, run, pic);
     if (compare.dataset.mode === 'all') renderRebuilds();
@@ -138,7 +140,7 @@
     const {view, run} = current, extra = {};
     if (pinned || run !== defaultRun(view)) Object.assign(extra, {model: run.model.id}, run.id.endsWith('-none') ? {} : {run: run.id});
     if (view !== task.views[0]) extra.view = view.id;
-    if (compare.dataset.mode !== 'divider') extra.mode = compare.dataset.mode;
+    if (compare.dataset.mode !== 'side' && !compare.classList.contains('is-reference-only')) extra.mode = compare.dataset.mode;
     history.replaceState(null, '', taskUrl(task.id, extra) + location.hash);
     carryModel();
   }
@@ -190,11 +192,10 @@
     syncUrl();
     if ($('#compare-stage').getBoundingClientRect().bottom < 120) compare.scrollIntoView({block: 'start'});
   }
-  // Picking one rebuild out of all of them opens it in the divider.
+  // Picking one rebuild out of all of them opens it side by side.
   function leaveAllRebuilds() {
     if (compare.dataset.mode !== 'all') return;
-    setMode('divider');
-    setSplit(50);
+    setMode('side');
     scrollTo({top: 0, behavior: 'instant'});
   }
   runRows.addEventListener('change', e => {
@@ -261,7 +262,8 @@
     e.preventDefault();
     setSplit(to);
   });
-  function setMode(mode) {
+  function setMode(mode, chosen = true) {
+    if (chosen) chosenMode = mode;
     compare.dataset.mode = mode;
     setPressed(modes, b => b.dataset.mode === mode);
     if (mode === 'all') renderRebuilds();
@@ -281,7 +283,7 @@
   current.view = task.views.find(v => v.id === address.get('view')) || task.views[0];
   if (current.view !== task.views[0]) runRows.innerHTML = runRowsHtml(task, current.view, null);
   chooseRun(wanted);
-  if (['side', 'all'].includes(address.get('mode')) && shot(current.view, current.run)) setMode(address.get('mode'));
+  if (['divider', 'all'].includes(address.get('mode')) && shot(current.view, current.run)) setMode(address.get('mode'));
   carryModel();
   if (address.has('context')) syncUrl();
 })();

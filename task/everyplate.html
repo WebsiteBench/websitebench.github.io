@@ -59,12 +59,12 @@
 <link rel="preload" href="/assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://website-bench.com/task/everyplate#page","url":"https://website-bench.com/task/everyplate","name":"EveryPlate: AI agent rebuilds compared · WebsiteBench","description":"EveryPlate on WebsiteBench: 2,016 hidden tests. Best pass rate 47.8%, by Claude Opus 5.5. Compare every model’s rebuild with the reference.","inLanguage":"en","isPartOf":{"@id":"https://website-bench.com/#website"},"about":{"@id":"https://website-bench.com/#dataset"},"primaryImageOfPage":{"@type":"ImageObject","contentUrl":"https://website-bench.com/assets/previews/everyplate/reference-home.webp","width":1440,"height":900}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebsiteBench","item":"https://website-bench.com/"},{"@type":"ListItem","position":2,"name":"Tasks","item":"https://website-bench.com/tasks"},{"@type":"ListItem","position":3,"name":"EveryPlate","item":"https://website-bench.com/task/everyplate"}]}]}</script>
 <link rel="preload" as="image" href="/assets/previews/everyplate/reference-home.webp" fetchpriority="high">
-<link rel="stylesheet" href="/assets/css/site.css?v=r9i-20261106">
+<link rel="stylesheet" href="/assets/css/site.css?v=r9s-20261106">
 <noscript><style>#view-tabs,#compare-modes,.task-picker,.divider,.run-shot{display:none!important}.task-picker-label{background:none!important;padding-right:0!important}</style></noscript>
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="/assets/js/site.js?v=r9i-20261106" defer></script>
-<script src="/assets/js/tasks-view.js?v=r9i-20261106" defer></script>
-<script src="/assets/js/tasks.js?v=r9i-20261106" defer></script>
+<script src="/assets/js/site.js?v=r9s-20261106" defer></script>
+<script src="/assets/js/tasks-view.js?v=r9s-20261106" defer></script>
+<script src="/assets/js/tasks.js?v=r9s-20261106" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -106,14 +106,14 @@
       <div class="board-tools">
         <div class="results-tabs" id="view-tabs" role="group" aria-label="Pages in this comparison"><button type="button" data-view="home" aria-pressed="true">Home</button><button type="button" data-view="weekly-menu" aria-pressed="false">Weekly menu</button></div>
         <div class="results-tabs" id="compare-modes" role="group" aria-label="Comparison layout">
-          <button type="button" data-mode="divider" aria-pressed="true">Divider</button>
-          <button type="button" data-mode="side" aria-pressed="false">Side<span class="mode-long"> by side</span></button>
+          <button type="button" data-mode="side" aria-pressed="true">Side<span class="mode-long"> by side</span></button>
+          <button type="button" data-mode="divider" aria-pressed="false">Divider</button>
           <button type="button" data-mode="all" aria-pressed="false">All<span class="mode-long"> rebuilds</span></button>
           <button type="button" class="compare-full" id="compare-full" aria-label="Show the comparison full screen" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>
     </div>
-    <div class="compare" id="compare" data-mode="divider" style="--shot-ratio:1440 / 900">
+    <div class="compare" id="compare" data-mode="side" style="--shot-ratio:1440 / 900">
       <div class="stage" id="compare-stage">
         <div class="frame" id="compare-frame" style="--split:50%">
           <div class="layer is-ref">
