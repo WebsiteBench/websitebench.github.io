@@ -150,6 +150,9 @@
   }
   const niceStep = value => { const power = 10 ** Math.floor(Math.log10(value)); const f = value / power; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * power; };
 
+  const nameRuler = document.createElement('canvas').getContext('2d');
+  const nameWidth = name => { nameRuler.font = `600 12.5px ${token('--font-sans')}`; return nameRuler.measureText(name).width; };
+
   function paretoMarkup({width, height, compact, models}) {
     const {score, resource} = state, log = state.scale === 'log', full = state.range === 'full';
     const shown = models.filter(m => m[resource] !== null && m[score] !== null && (!log || m[resource] > 0));
@@ -190,7 +193,24 @@
     body += `<text class="axis-title" x="${left + plotW / 2}" y="${height - 8}" text-anchor="middle">Mean ${RESOURCES[resource]} per task${compact ? '' : log ? ' · log scale' : ' · linear scale'}</text><text class="axis-title" transform="translate(${compact ? 11 : 14} ${top + plotH / 2}) rotate(-90)" text-anchor="middle">${SCORES[score]} pass rate</text>`;
 
     const r = compact ? 11 : 13, logo = compact ? 12 : 15;
-    const points = shown.map(m => ({model: m, x: X(m[resource]), y: Y(m[score]), on: frontierIDs.has(m.id)}));
+    const points = shown.map(m => ({model: m, x: X(m[resource]), y: Y(m[score]), trueX: X(m[resource]), trueY: Y(m[score]), on: frontierIDs.has(m.id)}));
+    // Circles that would overlap move apart; the dashed frontier and the guides stay on the true positions.
+    const apart = 2 * r + 4, pad = r + 1;
+    for (let pass = 0; pass < 60; pass++) {
+      let moved = false;
+      points.forEach((a, i) => points.slice(i + 1).forEach(b => {
+        const dx = b.x - a.x, dy = b.y - a.y, distance = Math.hypot(dx, dy);
+        if (distance >= apart - .01) return;
+        const push = (apart - distance) / 2, ux = distance ? dx / distance : 0, uy = distance ? dy / distance : -1;
+        a.x -= ux * push; a.y -= uy * push; b.x += ux * push; b.y += uy * push;
+        moved = true;
+      }));
+      points.forEach(p => {
+        p.x = clamp(p.x, Math.min(p.trueX, left + pad), Math.max(p.trueX, endX - pad));
+        p.y = clamp(p.y, Math.min(p.trueY, top + pad), Math.max(p.trueY, floorY - pad));
+      });
+      if (!moved) break;
+    }
     let labels = '';
     if (!compact) {
       const boxes = [], leaders = [];
@@ -198,8 +218,10 @@
       const ordered = [...points].sort((a, b) => Number(b.on) - Number(a.on) || a.y - b.y);
       ordered.forEach(point => {
         const m = point.model, value = `${decimal(m[score])}% · ${formatResource(m[resource], resource)}`;
-        const w = Math.max(m.name.length * 7, value.length * 7.2) + 6, h = 32, g = r + 5;
+        const w = Math.max(nameWidth(m.name), value.length * 7.2) + 2, h = 32, g = r + 5;
         const spots = [[g, 3], [-w - g, -h - 3], [g, -h / 2], [-w - g, -h / 2], [g, -h - 3], [-w - g, 3], [-w / 2, g], [-w / 2, -h - g], [g + 12, 22], [-w - g - 12, -h - 22], [g + 12, -h - 22], [-w - g - 12, 22]];
+        const inset = clamp(point.x - w / 2, left + 3, endX - w - 2) - point.x;
+        spots.push([inset, g], [inset, g - 4], [inset, -h - g]);
         const fits = box => box.x >= left + 3 && box.x + box.w <= endX - 2 && box.y >= top + 2 && box.y + box.h <= floorY - 2;
         const clear = box => fits(box) && !boxes.some(other => intersects(box, other))
           && !points.some(other => other !== point && intersects(box, {x: other.x - r - 2, y: other.y - r - 2, w: 2 * r + 4, h: 2 * r + 4}))
@@ -220,7 +242,13 @@
     }
     body += `<g class="plot-guides"></g>` + labels;
     [...points].sort((a, b) => a.y === b.y ? 0 : b.y - a.y).forEach(({model: m, x, y, on}) => {
-      body += `<g class="plot-point${on ? ' on-frontier' : ''}" tabindex="0" data-model="${escape(m.id)}" aria-label="${escape(m.name)}: ${decimal(m[score])}% ${SCORES[score]} pass rate, ${formatResource(m[resource], resource)} mean ${RESOURCES[resource]} per task${on ? ', on the Pareto frontier' : ''}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/><image class="plot-logo" href="${escape(m.logo)}" x="${(x - logo / 2).toFixed(1)}" y="${(y - logo / 2).toFixed(1)}" width="${logo}" height="${logo}"/></g>`;
+      body += `<g class="plot-point${on ? ' on-frontier' : ''}" tabindex="0" data-model="${escape(m.id)}" aria-label="${escape(m.name)}: ${decimal(m[score])}% ${SCORES[score]} pass rate, ${formatResource(m[resource], resource)} mean ${RESOURCES[resource]} per task${on ? ', on the Pareto frontier' : ''}"><circle class="plot-disc" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/><image class="plot-logo" href="${escape(m.logo)}" x="${(x - logo / 2).toFixed(1)}" y="${(y - logo / 2).toFixed(1)}" width="${logo}" height="${logo}"/></g>`;
+    });
+    // A circle pushed clear of its own position keeps a line back to it.
+    points.forEach(({model: m, x, y, trueX, trueY}) => {
+      const offset = Math.hypot(x - trueX, y - trueY);
+      if (offset <= r + 1) return;
+      body += `<g class="plot-true" data-model="${escape(m.id)}"><line class="plot-true-line" x1="${trueX.toFixed(1)}" y1="${trueY.toFixed(1)}" x2="${(x + (trueX - x) * r / offset).toFixed(1)}" y2="${(y + (trueY - y) * r / offset).toFixed(1)}"/><circle class="plot-true-dot" cx="${trueX.toFixed(1)}" cy="${trueY.toFixed(1)}" r="1.5"/></g>`;
     });
     return {body, shown, frontier, frontierIDs, geom: {X, Y, left, floorY, top, endX}, positions: Object.fromEntries(points.map(p => [p.model.id, [p.x, p.y]]))};
   }
@@ -266,7 +294,7 @@
     chart.classList.add('has-hot');
     chart.querySelectorAll('.is-hot').forEach(el => el.classList.remove('is-hot'));
     point.classList.add('is-hot');
-    const label = chart.querySelector(`.plot-label[data-model="${CSS.escape(m.id)}"]`); if (label) label.classList.add('is-hot');
+    chart.querySelectorAll(`.plot-label[data-model="${CSS.escape(m.id)}"], .plot-true[data-model="${CSS.escape(m.id)}"]`).forEach(el => el.classList.add('is-hot'));
     const x = X(m[resource]), y = Y(m[score]), xText = formatResource(m[resource], resource), yText = decimal(m[score]) + '%';
     const chipY = yText.length * 6.8 + 12, chipX = xText.length * 6.8 + 12;
     chart.querySelectorAll('.plot-tick-x').forEach(tick => tick.classList.toggle('is-under', Math.abs(Number(tick.getAttribute('x')) - x) < chipX / 2 + tick.getComputedTextLength() / 2 + 2));
@@ -370,8 +398,9 @@
     const blocks = width >= 640 ? 2 : 1, gutter = 24;
     const blockW = (width - gutter * (blocks - 1)) / blocks;
     const labelW = 148, longest = Math.min(19, Math.max(...models.map(model => model.name.length)));
-    const headH = Math.ceil(longest * 5.6 * Math.sin(angle)) + 12, rightPad = Math.ceil(longest * 5.6 * Math.cos(angle)) - 8;
-    const colPitch = clamp(Math.floor((blockW - labelW - rightPad) / m), 14, 26), rowPitch = state.large ? 20 : 15;
+    const pitchFor = perChar => clamp(Math.floor((blockW - labelW - Math.ceil(longest * perChar * Math.cos(angle)) + 8) / m), 14, 26);
+    const tight = pitchFor(5.6) < 18, perChar = tight ? 5 : 5.6;
+    const headH = Math.ceil(longest * perChar * Math.sin(angle)) + 12, colPitch = pitchFor(perChar), rowPitch = state.large ? 20 : 15;
     const perBlock = Math.ceil(n / blocks);
     height = headH + perBlock * rowPitch + 4;
     cellAt = (r, c) => {
@@ -382,7 +411,7 @@
       const offset = block * (blockW + gutter);
       models.forEach((model, r) => {
         const x = offset + labelW + r * colPitch + colPitch / 2 + 2;
-        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.name, 19))}</text></g>`;
+        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name${tight ? ' is-tight' : ''}" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.name, 19))}</text></g>`;
       });
     }
     rows.forEach((row, c) => {
@@ -553,6 +582,7 @@
       if (button.id === 'share-btn') refreshShareLinks();
       pop.hidden = false; button.setAttribute('aria-expanded', 'true');
       const first = pop.querySelector('a, button, input'); if (first) first.focus({preventScroll: true});
+      pop.scrollIntoView({block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
     });
   });
   document.addEventListener('click', event => { if (!event.target.closest('.tool-pop')) closeMenus(); });

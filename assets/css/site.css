@@ -429,6 +429,7 @@ select { max-width: 100%; min-height: 34px; padding: 6px 30px 6px 11px; border: 
 .tool-status.is-on { opacity: 1; }
 .tool-pop { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 190px; padding: 6px; border: 1px solid var(--rule-2); border-radius: 10px; background: var(--paper); box-shadow: 0 8px 24px rgba(13, 17, 23, .14); }
 .tool-pop[hidden] { display: none; }
+.tool-pop { scroll-margin-bottom: 16px; }
 .tool-pop-end { left: auto; right: 0; }
 .tool-menu a, .tool-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px; border: 0; border-radius: 6px; background: none; color: var(--ink); font: 500 14px/1.3 var(--font-sans); text-align: left; text-decoration: none; white-space: nowrap; cursor: pointer; }
 .tool-menu a:focus-visible, .tool-menu button:focus-visible { background: var(--paper-2); color: var(--ink); }
@@ -475,19 +476,22 @@ select { max-width: 100%; min-height: 34px; padding: 6px 30px 6px 11px; border: 
 .plot-label line { stroke: var(--ink-3); stroke-width: .8; opacity: .6; }
 .plot-label.on-frontier .plot-name { fill: var(--ink); }
 .plot-label.on-frontier .plot-value { fill: var(--ink-2); }
-.plot-point circle { fill: var(--paper); stroke: var(--ring); stroke-width: 1.5; }
-.plot-point.on-frontier circle { stroke: var(--ink); stroke-width: 2; }
+.plot-disc { fill: var(--paper); stroke: var(--ring); stroke-width: 1.5; }
+.plot-point.on-frontier .plot-disc { stroke: var(--ink); stroke-width: 2; }
+.plot-true { pointer-events: none; transition: opacity .15s ease; }
+.plot-true-line { stroke: var(--ink-3); stroke-width: 1; }
+.plot-true-dot { fill: var(--ink-2); }
 .plot-point { cursor: default; outline: none; transition: transform .45s cubic-bezier(.2, .7, .2, 1), opacity .15s ease; }
 .plot-label { transition: opacity .15s ease; }
-.pareto-chart.has-hot .plot-point:not(.is-hot), .pareto-chart.has-hot .plot-label:not(.is-hot) { opacity: .28; }
-.plot-point.is-hot circle { stroke: var(--ink); stroke-width: 2.5; }
-.plot-point:focus-visible circle { stroke: var(--focus); stroke-width: 3; }
+.pareto-chart.has-hot .plot-point:not(.is-hot), .pareto-chart.has-hot .plot-label:not(.is-hot), .pareto-chart.has-hot .plot-true:not(.is-hot) { opacity: .28; }
+.plot-point.is-hot .plot-disc { stroke: var(--ink); stroke-width: 2.5; }
+.plot-point:focus-visible .plot-disc { stroke: var(--focus); stroke-width: 3; }
 .plot-label { cursor: pointer; }
 .plot-tick.is-under { opacity: 0; }
 .plot-guides line { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
 .plot-guides rect { fill: var(--ink); }
 .plot-guides text { fill: var(--on-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 600; font-stretch: 86%; }
-.pareto-chart.is-entering .plot-label, .pareto-chart.is-entering .frontier-line { animation: plot-in .4s ease; }
+.pareto-chart.is-entering .plot-label, .pareto-chart.is-entering .plot-true, .pareto-chart.is-entering .frontier-line { animation: plot-in .4s ease; }
 @keyframes plot-in { from { opacity: 0; } to { opacity: 1; } }
 .frontier-key { border: 2px solid var(--ink); }
 .other-key { border: 1.5px solid var(--ring); }
@@ -511,6 +515,7 @@ select { max-width: 100%; min-height: 34px; padding: 6px 30px 6px 11px; border: 
 @media (hover: hover) { .wf-task:hover text { fill: var(--ink); font-weight: 650; } }
 .wf-model { cursor: pointer; }
 .wf-model-name { fill: var(--ink); font: 600 12.5px var(--font-sans); }
+.wf-model-name.is-tight { font-size: 11px; }
 .wf-model-score { fill: var(--ink-3); font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; font-stretch: 86%; }
 .wf-model.is-hot .wf-model-score { fill: var(--ink); }
 @media (hover: hover) { .wf-model:hover .wf-model-score { fill: var(--ink); } }
@@ -1139,12 +1144,15 @@ main:focus { outline: 0; }
 .compare[data-mode="divider"] .is-ref .side { left: auto; right: calc(100% - var(--split) + 34px); }
 .compare[data-mode="divider"] .is-cand .side { right: auto; left: calc(var(--split) + 34px); }
 .compare[data-mode="side"] .side { top: auto; bottom: 10px; }
-.compare.is-reference-only .is-ref .side { right: auto; left: 10px; }
 @container (max-width: 480px) {
   .compare .side { padding: 2px 6px; font: 600 11px/1.3 var(--font-sans); }
   .compare[data-mode="divider"] .is-ref .side { right: calc(100% - var(--split) + 26px); }
   .compare[data-mode="divider"] .is-cand .side { left: calc(var(--split) + 26px); }
   .compare[data-mode="side"] .side { bottom: 6px; left: 6px; right: auto; }
+}
+.compare.is-reference-only .is-ref .side { top: auto; bottom: 10px; left: 10px; right: auto; transform: none; }
+@container (max-width: 480px) {
+  .compare.is-reference-only .is-ref .side { bottom: 6px; left: 6px; }
 }
 .compare[data-mode="side"] .stage { border: 0; border-radius: 0; overflow: visible; background: none; }
 .compare[data-mode="side"] .frame { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; cursor: auto; }
