@@ -62,7 +62,11 @@
     // Back from a website returns focus to its card.
     grid.addEventListener('click', e => {
       const id = e.target.closest('li')?.dataset.id;
-      if (id) history.replaceState({...history.state, opened: id}, '');
+      if (id) {
+        history.replaceState({...history.state, opened: id}, '');
+        const link = e.target.closest('a');
+        if (link) link.search = location.search;
+      }
     });
     addEventListener('pageshow', () => {
       const opened = history.state && history.state.opened;
@@ -82,7 +86,7 @@
   const current = {view: null, run: null};
   const address = new URLSearchParams(location.search);
   let pinned = address.has('model') || address.has('run');
-  let chosenMode = 'side';
+  let chosenMode = ['divider', 'all'].includes(address.get('mode')) ? address.get('mode') : 'side';
 
   function renderSelection() {
     const {view, run} = current, pic = shot(view, run);
@@ -112,23 +116,32 @@
     const token = ++swap;
     const sides = {reference: view.reference.image, rebuild: pic};
     if (shotImages.reference.getAttribute('src') !== sides.reference || (pic && shotImages.rebuild.getAttribute('src') !== pic)) compare.setAttribute('aria-busy', 'true');
-    const ready = Object.values(sides).filter(Boolean).map(src => new Promise(done => {
+    const ready = Object.entries(sides).map(async ([side, src]) => {
+      if (!src) return [side, false];
       const image = new Image();
-      image.onload = image.onerror = done;
-      image.src = src;
-    }));
-    Promise.all(ready).then(() => {
+      const loaded = await new Promise(done => {
+        image.onload = () => done(true);
+        image.onerror = () => done(false);
+        image.src = src;
+      });
+      if (loaded) await image.decode().catch(() => {});
+      return [side, loaded];
+    });
+    Promise.all(ready).then(results => {
+      const loaded = Object.fromEntries(results);
       if (token !== swap) return;
       compare.removeAttribute('aria-busy');
       $('#task-run').textContent = runSentence(view, run);
       $('#side-rebuild').textContent = runLabel(run);
-      compare.classList.toggle('is-reference-only', !pic);
-      modes.hidden = !pic;
+      compare.classList.toggle('is-reference-only', !loaded.reference || !loaded.rebuild);
+      modes.hidden = !loaded.reference || !loaded.rebuild;
       frame.querySelectorAll('[data-route]').forEach(path => { path.textContent = view.route; });
       compare.style.setProperty('--shot-ratio', `${view.viewport.width} / ${view.viewport.height}`);
-      shotImages.reference.src = sides.reference;
+      if (loaded.reference) shotImages.reference.src = sides.reference;
+      else shotImages.reference.removeAttribute('src');
+      shotImages.reference.style.visibility = loaded.reference ? '' : 'hidden';
       shotImages.reference.alt = shotAlt(task, view, null);
-      if (pic) {
+      if (loaded.rebuild) {
         shotImages.rebuild.src = sides.rebuild;
         shotImages.rebuild.alt = shotAlt(task, view, run);
       }
@@ -138,18 +151,36 @@
 
   function syncUrl() {
     const {view, run} = current, extra = {};
-    if (pinned || run !== defaultRun(view)) Object.assign(extra, {model: run.model.id}, run.id.endsWith('-none') ? {} : {run: run.id});
+    if (pinned || run !== defaultRun(view)) extra.model = run.model.id;
+    for (const key of ['sort', 'q']) if (address.has(key)) extra[key] = address.get(key);
     if (view !== task.views[0]) extra.view = view.id;
     if (compare.dataset.mode !== 'side' && !compare.classList.contains('is-reference-only')) extra.mode = compare.dataset.mode;
     history.replaceState(null, '', taskUrl(task.id, extra) + location.hash);
     carryModel();
   }
-  // Previous and Next keep the model the reader chose.
+  // Carry the chosen comparison through the catalog's current order.
   const steps = [$('#previous-task'), $('#next-task')];
-  const stepPaths = steps.map(link => link.getAttribute('href'));
   function carryModel() {
-    const query = pinned ? `?model=${encodeURIComponent(current.run.model.id)}` : '';
-    steps.forEach((link, i) => { link.href = stepPaths[i] + query; });
+    const folded = text => text.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g, '');
+    let catalog = task.catalog.slice();
+    if (address.get('q')) {
+      const query = folded(address.get('q'));
+      catalog = catalog.filter(t => folded(t.name).includes(query) || folded(t.id).includes(query));
+    }
+    if (address.get('sort') === 'best') catalog.sort((a, b) => b.best - a.best);
+    if (address.get('sort') === 'tests') catalog.sort((a, b) => b.tests - a.tests);
+    const index = catalog.findIndex(t => t.id === task.id);
+    if (index < 0 || !catalog.length) return;
+    steps.forEach((link, i) => {
+      const next = catalog[(index + (i ? 1 : -1) + catalog.length) % catalog.length], extra = {};
+      if (pinned) extra.model = current.run.model.id;
+      if (chosenMode !== 'side') extra.mode = chosenMode;
+      const view = next.views.includes(current.view.id) ? current.view.id : next.views[0];
+      if (view !== next.views[0]) extra.view = view;
+      for (const key of ['sort', 'q']) if (address.has(key)) extra[key] = address.get(key);
+      link.href = taskUrl(next.id, extra);
+      link.title = next.name;
+    });
   }
 
   const defaultRun = view => task.runs.find(run => shot(view, run));

@@ -152,12 +152,12 @@ for (const [index, task] of taskPages.entries()) {
   const title = `${task.name}: AI agent rebuilds compared · WebsiteBench`;
   const description = `${task.name} on WebsiteBench: ${count(task.tests)} hidden tests. Best pass rate ${task.best.rate.toFixed(1)}%, by ${task.best.model.name}. Compare every model’s rebuild with the reference.`;
   const fields = {
-    name: escape(task.name), picker: taskPages.map(t => `<option value="${escape(t.id)}"${t === task ? ' selected' : ''}>${escape(t.name)}</option>`).join(''),
+    id: escape(task.id), name: escape(task.name), picker: taskPages.map(t => `<option value="${escape(t.id)}"${t === task ? ' selected' : ''}>${escape(t.name)}</option>`).join(''),
     'prev-href': taskPath(previous.id), 'prev-name': escape(previous.name), 'next-href': taskPath(next.id), 'next-name': escape(next.name),
     sentence: escape(runSentence(view, run)), 'view-tabs': viewTabsHtml(task, view), ratio: `${view.viewport.width} / ${view.viewport.height}`, route: escape(view.route),
     reference: escape(view.reference.image), rebuild: escape(shot(view, run)), width: view.viewport.width, height: view.viewport.height,
     'reference-alt': escape(shotAlt(task, view, null)), 'rebuild-alt': escape(shotAlt(task, view, run)), 'rebuild-label': escape(run.model.name),
-    runs: runRowsHtml(task, view, run), data: jsonLd({id: task.id, name: task.name, runs: task.runs, views: task.views}),
+    runs: runRowsHtml(task, view, run), data: jsonLd({id: task.id, name: task.name, runs: task.runs, views: task.views, catalog: taskPages.map(t => ({id: t.id, name: t.name, best: t.best.rate, tests: t.tests, views: t.views.map(v => v.id)}))}),
   };
   const main = taskMain.replace(/\{\{([\w-]+)\}\}/g, (_, key) => { if (!(key in fields)) throw Error('Unknown field: ' + key); return fields[key]; });
   const graph = {'@context': 'https://schema.org', '@graph': [{'@type': 'WebPage', '@id': `${url}#page`, url, name: title, description, inLanguage: 'en', isPartOf: WEBSITE, about: DATASET, primaryImageOfPage: {'@type': 'ImageObject', contentUrl: `${ORIGIN}${view.reference.image}`, width: view.viewport.width, height: view.viewport.height}}, {'@type': 'BreadcrumbList', itemListElement: [{'@type': 'ListItem', position: 1, name: 'WebsiteBench', item: `${ORIGIN}/`}, {'@type': 'ListItem', position: 2, name: 'Tasks', item: `${ORIGIN}/tasks`}, {'@type': 'ListItem', position: 3, name: task.name, item: url}]}]};

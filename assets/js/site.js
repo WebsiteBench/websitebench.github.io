@@ -72,7 +72,17 @@
 
   // Tables that scroll sideways show a fade until the reader reaches their last column.
   const scrollers = $$('.board-wrap, .design-wrap, pre.code');
-  const markScroll = el => el.classList.toggle('can-scroll', el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+  const markScroll = el => {
+    el.classList.toggle('can-scroll', el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+    if (el.matches('.board-wrap')) {
+      if (el.scrollWidth > el.clientWidth) el.setAttribute('tabindex', '0');
+      else el.removeAttribute('tabindex');
+    }
+  };
+  addEventListener('resize', () => scrollers.forEach(markScroll));
+  scrollers.filter(el => el.matches('.board-wrap')).forEach(el => {
+    new MutationObserver(() => markScroll(el)).observe(el.querySelector('table'), {childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'class', 'style']});
+  });
   scrollers.forEach(el => { markScroll(el); el.addEventListener('scroll', () => markScroll(el), { passive: true }); });
   if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => scrollers.forEach(markScroll)); scrollers.forEach(el => ro.observe(el)); }
 
@@ -606,10 +616,26 @@
     lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
   }
 
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download')) return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin || url.pathname !== location.pathname || url.search !== location.search || !url.hash) return;
+    const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+    if (!target) return;
+    event.preventDefault();
+    history.pushState(history.state, '', url.hash);
+    target.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({preventScroll: true});
+  });
+
   /* ========================================================= copy text */
   function copyText(button, text, label, restore, target) {
     const done = msg => {
       label.textContent = msg;
+      const status = $('#copy-status');
+      if (status) status.textContent = msg;
       button.classList.add('is-done');
       setTimeout(() => { label.textContent = restore(); button.classList.remove('is-done'); }, 2200);
     };
@@ -619,7 +645,7 @@
       const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
-      done('Selected');
+      done(matchMedia('(pointer:coarse)').matches ? 'Selected' : /Mac|iPhone|iPad/.test(navigator.platform) ? 'Press ⌘C' : 'Press Ctrl+C');
     };
     try { navigator.clipboard.writeText(text).then(() => done('Copied'), fallback); } catch (e) { fallback(); }
   }

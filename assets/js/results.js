@@ -186,7 +186,7 @@
     else for (let tick = 0; tick <= xMax + 1e-9; tick += linearStep) xTicks.push(tick);
 
     let body = '';
-    for (let tick = yMin; tick <= yMax + 1e-9; tick += yStep) body += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${endX}" y2="${Y(tick)}"/><text class="plot-tick plot-tick-y" x="${left - 9}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
+    for (let tick = Math.ceil(yMin / yStep) * yStep; tick <= yMax + 1e-9; tick += yStep) body += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${endX}" y2="${Y(tick)}"/><text class="plot-tick plot-tick-y" x="${left - 9}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
     xTicks.forEach(tick => { body += `<line class="plot-grid" x1="${X(tick)}" y1="${top}" x2="${X(tick)}" y2="${floorY}"/><text class="plot-tick plot-tick-x" x="${X(tick)}" y="${floorY + 19}" text-anchor="middle">${formatTick(tick, resource)}</text>`; });
     body += `<line class="plot-axis" x1="${left}" y1="${top}" x2="${left}" y2="${floorY}"/><line class="plot-axis" x1="${left}" y1="${floorY}" x2="${endX}" y2="${floorY}"/>`;
     if (frontier.length > 1) body += `<polyline class="frontier-line" points="${frontier.map(m => `${X(m[resource]).toFixed(1)},${Y(m[score]).toFixed(1)}`).join(' ')}"/>`;
@@ -275,7 +275,7 @@
     $('#pareto-summary').textContent = `${view.shown.length} of ${allModels.length} models · ${view.frontier.length} on the frontier`;
     // Points glide from where they were when an axis changes.
     if (lastPositions && lastPositions.width === padded && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      chart.querySelectorAll('.plot-point').forEach(point => {
+      chart.querySelectorAll('.plot-point, .plot-label').forEach(point => {
         const before = lastPositions.points[point.dataset.model], after = view.positions[point.dataset.model];
         if (!before || !after || (before[0] === after[0] && before[1] === after[1])) return;
         point.style.transition = 'none';
@@ -302,6 +302,11 @@
     chart.querySelector('.plot-guides').innerHTML = `<line x1="${left}" y1="${y}" x2="${x}" y2="${y}"/><line x1="${x}" y1="${y}" x2="${x}" y2="${floorY}"/>`
       + `<rect x="${left - chipY - 4}" y="${y - 10}" width="${chipY}" height="20" rx="4"/><text x="${left - 4 - chipY / 2}" y="${y + 4}" text-anchor="middle">${yText}</text>`
       + `<rect x="${x - chipX / 2}" y="${floorY + 5}" width="${chipX}" height="20" rx="4"/><text x="${x}" y="${floorY + 19}" text-anchor="middle">${xText}</text>`;
+    const chips = [...chart.querySelectorAll('.plot-guides rect')].map(el => el.getBoundingClientRect());
+    chart.querySelectorAll('.axis-title').forEach(title => {
+      const box = title.getBoundingClientRect();
+      title.classList.toggle('is-under', chips.some(chip => box.left < chip.right && box.right > chip.left && box.top < chip.bottom && box.bottom > chip.top));
+    });
     const rows = Object.keys(SCORES).map(key => `<div><dt>${SCORES[key]}</dt><dd>${decimal(m[key])}%</dd></div>`).join('')
       + Object.keys(RESOURCE_LABELS).map(key => `<div><dt>${RESOURCE_LABELS[key]}</dt><dd>${formatResource(m[key], key)}</dd></div>`).join('');
     showTooltip(point, `<strong>${escape(m.name)}</strong><span>${escape(m.org)}</span><dl>${rows}</dl><span class="tooltip-status">${paretoView.frontierIDs.has(m.id) ? 'On the Pareto frontier' : 'Another model passes more for less'}</span>`, event);
@@ -342,7 +347,7 @@
       return {...model, mean: total ? 100 * passed / total : null};
     }).sort(byMeanDescending);
     let rows = tasks.map(task => {
-      const scores = models.map(model => trialScore(entryFor(task, model))).filter(score => score !== null);
+      const scores = waffleModels.map(model => trialScore(entryFor(task, model))).filter(score => score !== null);
       return {task, name: task.name, mean: scores.length ? scores.reduce((sum, s) => sum + s, 0) / scores.length : null};
     }).sort(byMeanDescending);
     if (state.sort === 'name') rows = rows.slice().sort((a, b) => a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}));
@@ -389,7 +394,7 @@
       models.forEach((model, r) => {
         const y = headH + r * rowPitch + cellH / 2;
         const logo = 14;
-        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><rect class="wf-model-hit" x="0" y="${headH + r * rowPitch - 1}" width="${labelW - 6}" height="${rowPitch}" fill="transparent"/><image class="plot-logo" href="${escape(model.logo)}" x="0" y="${y - logo / 2}" width="${logo}" height="${logo}"/><text class="wf-model-name" x="20" y="${y + 4}">${escape(clip(model.name, 19))}</text><text class="wf-model-score" x="${labelW - 10}" y="${y + 3.5}" text-anchor="end">${model.mean === null ? '' : `${decimal(model.mean)}%`}</text></g>`;
+        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><rect class="wf-model-hit" x="0" y="${headH + r * rowPitch - 1}" width="${labelW - 6}" height="${rowPitch}" fill="transparent"/><image class="plot-logo" href="${escape(model.logo)}" x="0" y="${y - logo / 2}" width="${logo}" height="${logo}"/><text class="wf-model-name${!exporting && state.sort === model.id ? ' is-sorted' : ''}" x="20" y="${y + 4}">${escape(clip(model.name, 19))}</text>${!exporting && state.sort === model.id ? `<path class="wf-caret" d="M${labelW - 62} ${y - 2}h8l-4 5z"/>` : ''}<text class="wf-model-score" x="${labelW - 10}" y="${y + 3.5}" text-anchor="end">${model.mean === null ? '' : `${decimal(model.mean)}%`}</text></g>`;
         rows.forEach((row, c) => { body += cell(r, c, cellAt(r, c)); });
       });
       return {body, width: Math.max(total, width), height, contentWidth: total, cellAt, horizontal, labelW, headH, gridW, pitch, rowsTop: headH};
@@ -411,7 +416,7 @@
       const offset = block * (blockW + gutter);
       models.forEach((model, r) => {
         const x = offset + labelW + r * colPitch + colPitch / 2 + 2;
-        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name${tight ? ' is-tight' : ''}" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.name, 19))}</text></g>`;
+        body += `<g class="wf-model" data-r="${r}" data-model="${escape(model.id)}"><text class="wf-model-name${tight ? ' is-tight' : ''}${!exporting && state.sort === model.id ? ' is-sorted' : ''}" transform="translate(${x} ${headH - 6}) rotate(-58)">${escape(clip(model.name, 19))}</text>${!exporting && state.sort === model.id ? `<path class="wf-caret" d="M${x - 8} ${headH - 4}h8l-4 5z"/>` : ''}</g>`;
       });
     }
     rows.forEach((row, c) => {
@@ -527,7 +532,7 @@
       else return;
       event.preventDefault();
       const next = chart.querySelector(`.wf-link[data-r="${r}"][data-c="${c}"]`);
-      if (next) { link.setAttribute('tabindex', '-1'); next.setAttribute('tabindex', '0'); next.focus({preventScroll: true}); }
+      if (next) { link.setAttribute('tabindex', '-1'); next.setAttribute('tabindex', '0'); next.focus({preventScroll: true}); next.scrollIntoView({block: 'nearest', inline: 'nearest', behavior: 'instant'}); }
     });
     $('#waffle-expand').addEventListener('click', () => { state.large = !state.large; renderWaffle(); syncURL(); });
     $('#waffle-sort').addEventListener('change', event => { state.sort = event.target.value; renderWaffle(); syncURL(); });

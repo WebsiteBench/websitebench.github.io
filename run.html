@@ -59,9 +59,9 @@
 <link rel="preload" href="assets/fonts/eb-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/martian-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://website-bench.com/run#page","url":"https://website-bench.com/run","name":"Run the benchmark · WebsiteBench","description":"Run an agent on WebsiteBench tasks with Harbor 0.25.0, from Harbor Hub or a downloaded copy.","inLanguage":"en","isPartOf":{"@id":"https://website-bench.com/#website"},"about":{"@id":"https://website-bench.com/#dataset"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebsiteBench","item":"https://website-bench.com/"},{"@type":"ListItem","position":2,"name":"Run","item":"https://website-bench.com/run"}]}]}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=r9x-20261108">
+<link rel="stylesheet" href="assets/css/site.css?v=r9y-20261108">
 <script>try{var t=localStorage.getItem('wb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script src="assets/js/site.js?v=r9x-20261108" defer></script>
+<script src="assets/js/site.js?v=r9y-20261108" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -93,12 +93,14 @@
     <h1>Run the benchmark</h1>
   </header>
   <p class="page-intro">Requires uv and Docker. Harbor fetches the tasks from Harbor Hub.</p>
+  <p id="copy-status" class="sr-only" role="status"></p>
   <div class="run-block">
     <div class="code-wrap">
       <div class="code-head"><h2>Run all 70 tasks</h2><button class="dt-btn" type="button" data-copy-target="run-all"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
 <pre class="code" id="run-all"><code>git clone https://github.com/TIGER-AI-Lab/WebsiteBench.git
 cd WebsiteBench
 uv sync
+export OPENAI_API_KEY='&lt;key&gt;'
 uv run harbor run --dataset websitebench/WebsiteBench@v1 \
   --agent codex --model '&lt;model&gt;' \
   --allow-environment-host snapshot.debian.org \
@@ -109,7 +111,8 @@ uv run harbor run --dataset websitebench/WebsiteBench@v1 \
     </div>
     <div class="code-wrap">
       <div class="code-head"><h2>Run one task</h2><button class="dt-btn" type="button" data-copy-target="run-one"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button></div>
-<pre class="code" id="run-one"><code>uv run harbor run --task websitebench/medium@v1 \
+<pre class="code" id="run-one"><code>export OPENAI_API_KEY='&lt;key&gt;'
+uv run harbor run --task websitebench/medium@v1 \
   --agent codex --model '&lt;model&gt;' \
   --allow-environment-host snapshot.debian.org \
   --allow-environment-host raw.githubusercontent.com \
