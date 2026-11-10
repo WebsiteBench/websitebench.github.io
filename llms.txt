@@ -12,7 +12,6 @@
 ## Read by id
 - Any page as Markdown: `curl -sL https://website-bench.com/<kind>/<id>/index.md`, for example [Amazon](https://website-bench.com/task/amazon/index.md) for `curl -sL https://website-bench.com/task/amazon/index.md`
 - [Agent guide](https://website-bench.com/AGENTS.md): read commands, JSON data, citation and contact
-- [Full site as text](https://website-bench.com/llms-full.txt): every page in one file
 
 ## Leaderboard (percent of hidden tests passed: overall / Request / Browser / System)
 - Claude Opus 5.5: 26.2 / 71.2 / 21.8 / 35.4
@@ -97,6 +96,7 @@
 - [Zenni Optical](https://website-bench.com/task/zennioptical/index.md): 558 hidden tests, best 40.5%
 
 ## Optional
+- [Full site as text](https://website-bench.com/llms-full.txt): every page in one file
 - [Code](https://github.com/TIGER-AI-Lab/WebsiteBench)
 - [Tasks on Hugging Face](https://huggingface.co/datasets/TIGER-Lab/WebsiteBench)
 - [Tasks on Harbor Hub](https://hub.harborframework.com/datasets/websitebench/WebsiteBench)
