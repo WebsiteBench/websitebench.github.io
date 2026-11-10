@@ -7,7 +7,7 @@ type: benchmark
 
 # WebsiteBench
 
-WebsiteBench is a benchmark of 70 production-level websites that AI agents rebuild through browser exploration. An agent explores a reference site in a browser and builds a full-stack offline version, scored by 46,916 hidden tests. Eight models were evaluated with a 16-hour limit per run. The best, Claude Opus 5.5, passes 26.2% of the tests.
+WebsiteBench is a benchmark of 70 production-level websites that AI agents rebuild through browser exploration. An agent explores a reference site in a browser and builds a full-stack offline version, scored by 46,916 hidden tests. Eight models were evaluated with a 16-hour limit per run. The best, Claude Opus 5.5, has a 26.2% pass rate.
 
 ## Leaderboard
 
