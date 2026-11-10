@@ -5,6 +5,8 @@ const {execFileSync} = require('node:child_process');
 const {createHash} = require('node:crypto');
 const {renderRows} = require('../assets/js/leaderboard-view.js');
 const tasksView = require('../assets/js/tasks-view.js');
+const {faqItems, plain, html: faqHtml} = require('./faq.js');
+const agents = require('./agents.js');
 const root = path.join(__dirname, '..'), read = name => JSON.parse(fs.readFileSync(path.join(root, 'data', name), 'utf8'));
 const cohort = read('cohort.json'), waffle = read('waffle.json'), board = read('leaderboard-views.json'), materials = read('task-materials.json');
 const ids = cohort.tasks.map(t => t.id), modelIDs = waffle.models.map(m => m.id), same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -51,7 +53,7 @@ const facts = {
 };
 
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
-const pageFiles = ['index.html', 'eval.html', 'analysis.html'];
+const pageFiles = ['index.html', 'run.html', 'eval.html', 'analysis.html'];
 const pages = Object.fromEntries(pageFiles.map(file => [file, fs.readFileSync(path.join(root, file), 'utf8')]));
 const inject = (marker, value) => {
   const hits = pageFiles.filter(file => marker.test(pages[file]));
@@ -78,7 +80,16 @@ inject(/(<ul class="dt-list" id="dt-list"[^>]*>)[\s\S]*?(<\/ul><!--\/dt-list-->)
 inject(/(<div class="tabs demo-tabs" id="demo-tabs"[^>]*>)[\s\S]*?(<\/div><!--\/demo-tabs-->)/, demo.pages.map((p, i) => `<button class="tab" type="button" role="tab" id="demo-tab-${p.id}" data-page="${p.id}" aria-controls="stage" aria-selected="${i === 0}"${i ? ' tabindex="-1"' : ''}>${p.short ? `<span class="tab-long">${escape(p.label)}</span><span class="tab-short">${escape(p.short)}</span>` : escape(p.label)}</button>`).join(''));
 inject(/(<span class="dt-score" id="dt-score"[^>]*>)[\s\S]*?(<\/span><!--\/dt-score-->)/, `<b>${demo.tests.filter(demoPassed).length}</b> of ${demo.tests.length} shown tests passed`);
 inject(/(<script type="application\/json" id="demo-data">)[\s\S]*?(<\/script><!--\/demo-data-->)/, JSON.stringify(demo).replace(/</g, '\\u003c'));
-pages['index.html'] = pages['index.html'].replace(/(benchmark of AI agents rebuilding )\d+( production-level websites through browser exploration: )[\d,]+( hidden tests, )\w+( models, best score )[\d.]+%/g, `$1${facts.tasks}$2${facts.tests}$3${words[modelIDs.length]}$4${facts['best-overall']}`).replace(/(is a benchmark of )\d+( expert-built website tasks and )[\d,]+( hidden tests)/, `$1${facts.tasks}$2${facts.tests}$3`).replace(/(Results cover )\w+( models)/, `$1${words[modelIDs.length]}$2`);
+pages['index.html'] = pages['index.html'].replace(/(tests AI agents rebuilding )\d+( production-level websites through browser exploration: )[\d,]+( hidden tests, )\w+( models, best score )[\d.]+%/g, `$1${facts.tasks}$2${facts.tests}$3${words[modelIDs.length]}$4${facts['best-overall']}`).replace(/(is a benchmark of )\d+( expert-built website tasks and )[\d,]+( hidden tests)/, `$1${facts.tasks}$2${facts.tests}$3`).replace(/(Results cover )\w+( models)/, `$1${words[modelIDs.length]}$2`);
+const faq = faqItems({facts, ranked});
+inject(/(<dl class="faq" id="faq-list">)[\s\S]*?(<\/dl><!--\/faq-list-->)/, faq.map(f => `<div><dt>${escape(f.q)}</dt><dd>${faqHtml(f.a, escape)}</dd></div>`).join(''));
+const bibtex = fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim();
+const OWNER = {'@id': 'https://website-bench.com/#org'};
+inject(/(<script type="application\/ld\+json" id="ld-answers">)[\s\S]*?(<\/script><!--\/ld-answers-->)/, JSON.stringify({'@context': 'https://schema.org', '@graph': [
+  {'@type': 'Organization', '@id': 'https://website-bench.com/#org', name: 'WebsiteBench', url: 'https://website-bench.com/', logo: 'https://website-bench.com/assets/brand/logo-512.png', sameAs: ['https://github.com/TIGER-AI-Lab/WebsiteBench', 'https://huggingface.co/datasets/TIGER-Lab/WebsiteBench', 'https://hub.harborframework.com/datasets/websitebench/WebsiteBench']},
+  {'@type': 'ScholarlyArticle', '@id': 'https://website-bench.com/#paper', headline: 'WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?', name: 'WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?', url: 'https://website-bench.com/', datePublished: '2026', inLanguage: 'en', author: {'@type': 'Organization', name: 'WebsiteBench Authors'}, publisher: OWNER, about: {'@id': 'https://website-bench.com/#dataset'}, isPartOf: {'@id': 'https://website-bench.com/#website'}, abstract: `WebsiteBench is a benchmark of ${facts.tasks} production-level websites that AI agents rebuild through browser exploration, scored by ${facts.tests} hidden tests. The best of ${facts.models} models, ${best.name}, has a ${facts['best-overall']} pass rate.`},
+  {'@type': 'FAQPage', '@id': 'https://website-bench.com/#faq', isPartOf: {'@id': 'https://website-bench.com/#website'}, mainEntity: faq.map(f => ({'@type': 'Question', name: f.q, acceptedAnswer: {'@type': 'Answer', text: plain(f.a)}}))},
+]}).replace(/</g, '\\u003c'));
 pageFiles.forEach(file => {
   pages[file] = pages[file].replace(/(<[^>]*\bdata-fact="([\w-]+)"[^>]*>)[^<]*(<)/g, (match, open, key, close) => {
     if (!(key in facts)) throw Error('Unknown fact: ' + key);
@@ -86,16 +97,6 @@ pageFiles.forEach(file => {
   });
   fs.writeFileSync(path.join(root, file), pages[file]);
 });
-
-// llms.txt: the leaderboard block and the headline sentence follow the data.
-let llms = fs.readFileSync(path.join(root, 'llms.txt'), 'utf8');
-const pct = value => (typeof value === 'number' && Number.isFinite(value) ? value.toFixed(1) : '—');
-const lines = ranked.map(m => `- ${m.name}: ${pct(m.overall)} / ${pct(m.request)} / ${pct(m.browser)} / ${pct(m.system)}`).join('\n');
-if (!/## Leaderboard[^\n]*\n[\s\S]*?\n(?=## )/.test(llms)) throw Error('llms.txt leaderboard block missing');
-llms = llms.replace(/(## Leaderboard[^\n]*\n)[\s\S]*?\n(?=## )/, `$1${lines}\n\n`);
-llms = llms.replace(/It has \d+ tasks with [\d,]+ hidden tests\./, `It has ${facts.tasks} tasks with ${facts.tests} hidden tests.`);
-llms = llms.replace(/which passes [\d,]+ of [\d,]+ hidden tests[^.]*(?:\.\d+)?\./, `which passes ${facts['demo-run-passed']} of ${facts['demo-run-total']} hidden tests.`);
-llms = llms.replace(/The best overall score is [\d.]+% \([^)]*\)\./, `The best overall score is ${facts['best-overall']} (${best.name}).`);
 
 // The Tasks pages: the sheet in tasks.html and one static page per website in task/.
 const ORIGIN = 'https://website-bench.com';
@@ -135,7 +136,7 @@ fs.mkdirSync(path.join(root, 'task'));
 const fillHead = (shell, {title, description, url, image, imageAlt}) => shell
   .replace(/<title>[^<]*<\/title>/, () => `<title>${escape(title)}</title>`)
   .replace(/<meta name="description" content="[^"]*">/, () => `<meta name="description" content="${escape(description)}">`)
-  .replace(/<link rel="canonical" href="[^"]*">/, () => `<link rel="canonical" href="${url}">`)
+  .replace(/<link rel="canonical" href="[^"]*">\n?(<link rel="alternate" type="text\/markdown"[^>]*>)?/, () => `<link rel="canonical" href="${url}">\n<link rel="alternate" type="text/markdown" href="${url}/index.md">`)
   .replace(/<meta property="og:url" content="[^"]*">/, () => `<meta property="og:url" content="${url}">`)
   .replace(/<meta property="og:title" content="[^"]*">/, () => `<meta property="og:title" content="${escape(title)}">`)
   .replace(/<meta property="og:description" content="[^"]*">/, () => `<meta property="og:description" content="${escape(description)}">`)
@@ -145,22 +146,25 @@ const fillHead = (shell, {title, description, url, image, imageAlt}) => shell
   .replace(/<meta name="twitter:image" content="[^"]*">/, () => `<meta name="twitter:image" content="${image}">`)
   .replace(/<meta property="og:image:alt" content="[^"]*">/, () => `<meta property="og:image:alt" content="${escape(imageAlt)}">`)
   .replace(/<meta name="twitter:image:alt" content="[^"]*">/, () => `<meta name="twitter:image:alt" content="${escape(imageAlt)}">`);
+const taskSlug = task => taskPath(task.id).slice('/task/'.length);
+const taskTitle = task => [`${task.name}: AI agent rebuilds compared · WebsiteBench`, `${task.name}: agent rebuilds · WebsiteBench`, `${task.name} · WebsiteBench`].find(t => t.length <= 60);
+const taskAnswer = task => `${task.name} is one of the ${facts.tasks} WebsiteBench tasks: an AI agent explores it in a browser and rebuilds it, scored by ${count(task.tests)} hidden tests. The best rebuild passes ${task.best.rate.toFixed(1)}% of them (${task.best.model.name}).`;
 for (const [index, task] of taskPages.entries()) {
   const previous = taskPages[(index - 1 + taskPages.length) % taskPages.length], next = taskPages[(index + 1) % taskPages.length];
   const view = task.views[0], run = firstShot(task), url = `${ORIGIN}${taskPath(task.id)}`, card = ogCards.get(task.id);
   const image = `${ORIGIN}/assets/og/${card.slug}.png?v=${card.key}`, imageAlt = `${task.name}: the reference beside the rebuild by ${run.model.name}`;
-  const title = `${task.name}: AI agent rebuilds compared · WebsiteBench`;
+  const title = taskTitle(task);
   const description = `${task.name} on WebsiteBench: ${count(task.tests)} hidden tests. Best pass rate ${task.best.rate.toFixed(1)}%, by ${task.best.model.name}. Compare every model’s rebuild with the reference.`;
   const fields = {
     id: escape(task.id), name: escape(task.name), picker: taskPages.map(t => `<option value="${escape(t.id)}"${t === task ? ' selected' : ''}>${escape(t.name)}</option>`).join(''),
     'prev-href': taskPath(previous.id), 'prev-name': escape(previous.name), 'next-href': taskPath(next.id), 'next-name': escape(next.name),
-    sentence: escape(runSentence(view, run)), 'view-tabs': viewTabsHtml(task, view), ratio: `${view.viewport.width} / ${view.viewport.height}`, route: escape(view.route),
+    sentence: escape(runSentence(view, run)), answer: escape(taskAnswer(task)), 'view-tabs': viewTabsHtml(task, view), ratio: `${view.viewport.width} / ${view.viewport.height}`, route: escape(view.route),
     reference: escape(view.reference.image), rebuild: escape(shot(view, run)), width: view.viewport.width, height: view.viewport.height,
     'reference-alt': escape(shotAlt(task, view, null)), 'rebuild-alt': escape(shotAlt(task, view, run)), 'rebuild-label': escape(run.model.name),
     runs: runRowsHtml(task, view, run), data: jsonLd({id: task.id, name: task.name, runs: task.runs, views: task.views, catalog: taskPages.map(t => ({id: t.id, name: t.name, best: t.best.rate, tests: t.tests, views: t.views.map(v => v.id)}))}),
   };
   const main = taskMain.replace(/\{\{([\w-]+)\}\}/g, (_, key) => { if (!(key in fields)) throw Error('Unknown field: ' + key); return fields[key]; });
-  const graph = {'@context': 'https://schema.org', '@graph': [{'@type': 'WebPage', '@id': `${url}#page`, url, name: title, description, inLanguage: 'en', isPartOf: WEBSITE, about: DATASET, primaryImageOfPage: {'@type': 'ImageObject', contentUrl: `${ORIGIN}${view.reference.image}`, width: view.viewport.width, height: view.viewport.height}}, {'@type': 'BreadcrumbList', itemListElement: [{'@type': 'ListItem', position: 1, name: 'WebsiteBench', item: `${ORIGIN}/`}, {'@type': 'ListItem', position: 2, name: 'Tasks', item: `${ORIGIN}/tasks`}, {'@type': 'ListItem', position: 3, name: task.name, item: url}]}]};
+  const graph = {'@context': 'https://schema.org', '@graph': [{'@type': 'WebPage', '@id': `${url}#page`, url, name: title, description, inLanguage: 'en', isPartOf: WEBSITE, about: DATASET, primaryImageOfPage: {'@type': 'ImageObject', contentUrl: `${ORIGIN}${view.reference.image}`, width: view.viewport.width, height: view.viewport.height}}, {'@type': 'Dataset', '@id': `${url}#dataset`, name: `${task.name} (WebsiteBench task)`, description: taskAnswer(task), url, isPartOf: DATASET, license: 'https://www.apache.org/licenses/LICENSE-2.0', isAccessibleForFree: true, inLanguage: 'en', creator: {'@type': 'Organization', name: 'WebsiteBench Authors'}}, {'@type': 'BreadcrumbList', itemListElement: [{'@type': 'ListItem', position: 1, name: 'WebsiteBench', item: `${ORIGIN}/`}, {'@type': 'ListItem', position: 2, name: 'Tasks', item: `${ORIGIN}/tasks`}, {'@type': 'ListItem', position: 3, name: task.name, item: url}]}]};
   const page = fillHead(sheet, {title, description, url, image, imageAlt})
     .replace(/<script>\(function\(\)\{var q=new URLSearchParams[\s\S]*?<\/script>\n/, '')
     .replace(/<noscript><style>[^<]*<\/style><\/noscript>/, () => `<noscript><style>${NOJS_TASK}</style></noscript>`)
@@ -180,11 +184,10 @@ lastmod = lastmod || new Date().toISOString().slice(0, 10);
 const sitemapPaths = ['/', '/run', '/tasks', '/eval', '/analysis', ...taskPages.map(t => taskPath(t.id))];
 fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapPaths.map(p => `  <url><loc>${ORIGIN}${p}</loc><lastmod>${lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 
-llms = llms.replace(/\b(\w+) models were evaluated/, () => `${words[modelIDs.length][0].toUpperCase()}${words[modelIDs.length].slice(1)} models were evaluated`);
-llms = llms.replace(/## Task pages\n[\s\S]*$/, () => `## Task pages\n${taskPages.map(t => `- [${t.name}](${ORIGIN}${taskPath(t.id)}): ${count(t.tests)} hidden tests, best ${t.best.rate.toFixed(1)}%`).join('\n')}\n`);
-fs.writeFileSync(path.join(root, 'llms.txt'), llms);
 
 fs.writeFileSync(path.join(root, 'data/evaluated-tasks.json'), JSON.stringify(ids, null, 2) + '\n');
 const taskCatalog = {models: materials.models, tasks: materials.tasks.map(t => ({id: t.id, name: t.name, views: previews.tasks[t.id]?.views || []}))};
 fs.writeFileSync(path.join(root, 'data/task-catalog.json'), JSON.stringify(taskCatalog, null, 2) + '\n');
+const nTwins = agents.build({root, modelWord: words[modelIDs.length][0].toUpperCase() + words[modelIDs.length].slice(1), facts, ranked, taskPages, lastmod, faq, bibtex, demo, best, taskSlug, taskTitle, taskAnswer});
+console.log(`Wrote ${nTwins} Markdown twins, llms.txt, llms-full.txt and AGENTS.md.`);
 console.log(`Verified and rendered ${ids.length} tasks × ${modelIDs.length} models; ${facts.tests} hidden tests; best ${facts['best-overall']} (${best.name}).`);
