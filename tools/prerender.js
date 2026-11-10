@@ -5,7 +5,7 @@ const {execFileSync} = require('node:child_process');
 const {createHash} = require('node:crypto');
 const {renderRows} = require('../assets/js/leaderboard-view.js');
 const tasksView = require('../assets/js/tasks-view.js');
-const {faqItems, plain, html: faqHtml} = require('./faq.js');
+const {faqItems} = require('./faq.js');
 const agents = require('./agents.js');
 const root = path.join(__dirname, '..'), read = name => JSON.parse(fs.readFileSync(path.join(root, 'data', name), 'utf8'));
 const cohort = read('cohort.json'), waffle = read('waffle.json'), board = read('leaderboard-views.json'), materials = read('task-materials.json');
@@ -82,13 +82,11 @@ inject(/(<span class="dt-score" id="dt-score"[^>]*>)[\s\S]*?(<\/span><!--\/dt-sc
 inject(/(<script type="application\/json" id="demo-data">)[\s\S]*?(<\/script><!--\/demo-data-->)/, JSON.stringify(demo).replace(/</g, '\\u003c'));
 pages['index.html'] = pages['index.html'].replace(/(tests AI agents rebuilding )\d+( production-level websites through browser exploration: )[\d,]+( hidden tests, )\w+( models, best score )[\d.]+%/g, `$1${facts.tasks}$2${facts.tests}$3${words[modelIDs.length]}$4${facts['best-overall']}`).replace(/(is a benchmark of )\d+( expert-built website tasks and )[\d,]+( hidden tests)/, `$1${facts.tasks}$2${facts.tests}$3`).replace(/(Results cover )\w+( models)/, `$1${words[modelIDs.length]}$2`);
 const faq = faqItems({facts, ranked});
-inject(/(<dl class="faq" id="faq-list">)[\s\S]*?(<\/dl><!--\/faq-list-->)/, faq.map(f => `<div><dt>${escape(f.q)}</dt><dd>${faqHtml(f.a, escape)}</dd></div>`).join(''));
 const bibtex = fs.readFileSync(path.join(root, 'CITATION.bib'), 'utf8').trim();
 const OWNER = {'@id': 'https://website-bench.com/#org'};
 inject(/(<script type="application\/ld\+json" id="ld-answers">)[\s\S]*?(<\/script><!--\/ld-answers-->)/, JSON.stringify({'@context': 'https://schema.org', '@graph': [
   {'@type': 'Organization', '@id': 'https://website-bench.com/#org', name: 'WebsiteBench', url: 'https://website-bench.com/', logo: 'https://website-bench.com/assets/brand/logo-512.png', sameAs: ['https://github.com/TIGER-AI-Lab/WebsiteBench', 'https://huggingface.co/datasets/TIGER-Lab/WebsiteBench', 'https://hub.harborframework.com/datasets/websitebench/WebsiteBench']},
   {'@type': 'ScholarlyArticle', '@id': 'https://website-bench.com/#paper', headline: 'WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?', name: 'WebsiteBench: Can AI Agents Rebuild Websites through Browser Exploration?', url: 'https://website-bench.com/', datePublished: '2026', inLanguage: 'en', author: {'@type': 'Organization', name: 'WebsiteBench Authors'}, publisher: OWNER, about: {'@id': 'https://website-bench.com/#dataset'}, isPartOf: {'@id': 'https://website-bench.com/#website'}, abstract: `WebsiteBench is a benchmark of ${facts.tasks} production-level websites that AI agents rebuild through browser exploration, scored by ${facts.tests} hidden tests. The best of ${facts.models} models, ${best.name}, has a ${facts['best-overall']} pass rate.`},
-  {'@type': 'FAQPage', '@id': 'https://website-bench.com/#faq', isPartOf: {'@id': 'https://website-bench.com/#website'}, mainEntity: faq.map(f => ({'@type': 'Question', name: f.q, acceptedAnswer: {'@type': 'Answer', text: plain(f.a)}}))},
 ]}).replace(/</g, '\\u003c'));
 pageFiles.forEach(file => {
   pages[file] = pages[file].replace(/(<[^>]*\bdata-fact="([\w-]+)"[^>]*>)[^<]*(<)/g, (match, open, key, close) => {
