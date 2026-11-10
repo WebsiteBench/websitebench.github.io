@@ -33,7 +33,7 @@ Percent of hidden tests passed.
 - A test scores 1 only if its functional checks pass and every visual checkpoint reaches the similarity threshold. Browser workflow tests repeat a sequence of user actions and check its result. Each must pass with two independent executors, Playwright and Browser Use.
 - Scores are pass rates: 100 × sum(passed tests) / sum(total tests), for Overall and for each test group. Cost, tokens and turns are per-task means.
 
-## Questions
+## FAQ
 
 ### What is WebsiteBench?
 

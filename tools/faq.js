@@ -1,4 +1,4 @@
-// The home page FAQ: one source for the visible list, the FAQPage JSON-LD and the Markdown twin.
+// The home FAQ: one source for the Markdown twin, llms-full.txt and AGENTS.md.
 // Answers use [label](url) links; every number comes from the same facts as the rest of the site.
 function faqItems({facts, ranked, tasksRange}) {
   const top = [...ranked].sort((a, b) => b.overall - a.overall).slice(0, 3);

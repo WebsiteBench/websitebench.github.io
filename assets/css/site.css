@@ -1294,14 +1294,8 @@ html:has(.compare:fullscreen) { scrollbar-gutter: auto; }
   .compare .side { font-size: 11px; padding-inline: 6px; }
 }
 
-/* Answer paragraph on task pages and the home FAQ */
+/* Answer paragraph on task pages */
 .task-answer { margin: 6px 0 0; max-width: 72ch; color: var(--ink-2); font-size: 14px; line-height: 1.5; }
-.faq { max-width: 760px; margin: 0; }
-.faq > div { padding: 16px 0; border-top: 1px solid var(--rule); }
-.faq > div:last-child { border-bottom: 1px solid var(--rule); }
-.faq dt { margin: 0 0 6px; font: 600 16px/1.35 var(--font-ui, inherit); color: var(--ink); }
-.faq dd { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.55; }
-.faq a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
 .task-sheet { display: flex; flex-direction: column; }
 .task-sheet > .task-head { order: -2; }
 .task-sheet > .task-answer { order: -1; margin: 4px 0 10px; }
