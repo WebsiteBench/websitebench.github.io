@@ -1302,3 +1302,6 @@ html:has(.compare:fullscreen) { scrollbar-gutter: auto; }
 .faq dt { margin: 0 0 6px; font: 600 16px/1.35 var(--font-ui, inherit); color: var(--ink); }
 .faq dd { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.55; }
 .faq a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link-line); text-underline-offset: 3px; }
+.task-sheet { display: flex; flex-direction: column; }
+.task-sheet > .task-head { order: -2; }
+.task-sheet > .task-answer { order: -1; margin: 4px 0 10px; }
