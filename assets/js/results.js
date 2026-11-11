@@ -186,11 +186,17 @@
     else for (let tick = 0; tick <= xMax + 1e-9; tick += linearStep) xTicks.push(tick);
 
     let body = '';
+    if (frontier.length) {
+      const line = frontier.map(m => `${X(m[resource]).toFixed(1)},${Y(m[score]).toFixed(1)}`);
+      const first = frontier[0], last = frontier[frontier.length - 1];
+      body += `<polygon class="plot-reach" points="${left},${top} ${endX},${top} ${endX},${Y(last[score]).toFixed(1)} ${line.slice().reverse().join(' ')} ${X(first[resource]).toFixed(1)},${floorY} ${left},${floorY}"/>`;
+    }
     for (let tick = Math.ceil(yMin / yStep) * yStep; tick <= yMax + 1e-9; tick += yStep) body += `<line class="plot-grid" x1="${left}" y1="${Y(tick)}" x2="${endX}" y2="${Y(tick)}"/><text class="plot-tick plot-tick-y" x="${left - 9}" y="${Y(tick) + 4}" text-anchor="end">${tick}%</text>`;
     xTicks.forEach(tick => { body += `<line class="plot-grid" x1="${X(tick)}" y1="${top}" x2="${X(tick)}" y2="${floorY}"/><text class="plot-tick plot-tick-x" x="${X(tick)}" y="${floorY + 19}" text-anchor="middle">${formatTick(tick, resource)}</text>`; });
     body += `<line class="plot-axis" x1="${left}" y1="${top}" x2="${left}" y2="${floorY}"/><line class="plot-axis" x1="${left}" y1="${floorY}" x2="${endX}" y2="${floorY}"/>`;
     if (frontier.length > 1) body += `<polyline class="frontier-line" points="${frontier.map(m => `${X(m[resource]).toFixed(1)},${Y(m[score]).toFixed(1)}`).join(' ')}"/>`;
     body += `<text class="axis-title" x="${left + plotW / 2}" y="${height - 8}" text-anchor="middle">Mean ${RESOURCES[resource]} per task${compact ? '' : log ? ' · log scale' : ' · linear scale'}</text><text class="axis-title" transform="translate(${compact ? 11 : 14} ${top + plotH / 2}) rotate(-90)" text-anchor="middle">${SCORES[score]} pass rate</text>`;
+    if (!compact) body += `<text class="plot-hint" x="${left + 12}" y="${top + 19}">↖ Better: higher score, lower ${RESOURCE_LABELS[resource].toLowerCase()}</text>`;
 
     const r = compact ? 11 : 13, logo = compact ? 12 : 15;
     const points = shown.map(m => ({model: m, x: X(m[resource]), y: Y(m[score]), trueX: X(m[resource]), trueY: Y(m[score]), on: frontierIDs.has(m.id)}));

@@ -1,5 +1,5 @@
 ---
-title: "WebsiteBench: AI Agents Rebuilding 70 Websites"
+title: "WebsiteBench: Can AI agents rebuild websites through browser exploration?"
 url: https://website-bench.com/
 updated: 2026-11-06
 type: benchmark
