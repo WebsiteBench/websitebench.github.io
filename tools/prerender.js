@@ -173,9 +173,9 @@ for (const [index, task] of taskPages.entries()) {
   fs.writeFileSync(file, page);
 }
 
-// Crawlers: the sitemap follows the pages; its date is the last change to the published data.
+// Crawlers: the sitemap follows the pages; its date is the last change to the published data or pages.
 let lastmod;
-try { lastmod = execFileSync('git', ['-C', root, 'log', '-1', '--format=%cs', '--', 'data'], {encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']}).trim(); } catch (_) { /* not a repository */ }
+try { lastmod = execFileSync('git', ['-C', root, 'log', '-1', '--format=%cs', '--', 'data', 'index.html', 'run.html', 'tasks.html', 'eval.html', 'analysis.html', 'task'], {encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']}).trim(); } catch (_) { /* not a repository */ }
 lastmod = lastmod || new Date().toISOString().slice(0, 10);
 const sitemapPaths = ['/', '/run', '/tasks', '/eval', '/analysis', ...taskPages.map(t => taskPath(t.id))];
 fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapPaths.map(p => `  <url><loc>${ORIGIN}${p}</loc><lastmod>${lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
